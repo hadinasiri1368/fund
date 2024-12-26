@@ -1,17 +1,15 @@
 package org.fund.config.dataBase;
 
-import javax.sql.DataSource;
-
 public class TenantContext {
-
-    private static ThreadLocal<DataSource> currentDataSource = new ThreadLocal<>();
-
-    public static void setCurrentDataSource(DataSource dataSource) {
-        currentDataSource.set(dataSource);
+    private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();
+    public static void setCurrentTenant(String tenant) {
+        currentTenant.set(tenant);
     }
-
-    public static DataSource getCurrentDataSource() {
-        return currentDataSource.get();
+    public static String getCurrentTenant() {
+        return currentTenant.get();
+    }
+    public static void clear() {
+        currentTenant.remove();
     }
 }
 

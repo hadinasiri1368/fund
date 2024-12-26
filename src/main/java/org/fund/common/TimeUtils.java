@@ -12,7 +12,7 @@ public class TimeUtils {
 
     public static String getNowTime(TimeFormat timeFormat) {
         LocalTime currentTime = LocalTime.now();
-        if (CommonUtils.isNull(timeFormat))
+        if (FundUtils.isNull(timeFormat))
             timeFormat = TimeFormat.HOUR_MINUTE_SECOND;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(timeFormat.getValue());
         return currentTime.format(formatter);
