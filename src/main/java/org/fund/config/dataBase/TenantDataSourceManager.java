@@ -68,7 +68,7 @@ public class TenantDataSourceManager {
                         , resultSet.getString("DB_URL")
                         , resultSet.getString("SCHEMA_PASS"));
                 if (!FundUtils.isNull(tenantDataSource)) {
-                    tenantDataSources.put(schemaName, tenantDataSource);
+                    tenantDataSources.put(Consts.DATASOURCE_MAP_KEY, tenantDataSource);
                     log.info(String.format("connection to schema %s was established at %s", schemaName, TimeUtils.getNowTime()));
                 }
                 count++;
@@ -95,7 +95,7 @@ public class TenantDataSourceManager {
                         , map.get("db_url").toString()
                         , map.get("schema_pass").toString());
                 if (!FundUtils.isNull(tenantDataSource)) {
-                    tenantDataSources.put(schemaName, tenantDataSource);
+                    tenantDataSources.put( map.get(Consts.DATASOURCE_MAP_KEY).toString(), tenantDataSource);
                     log.info(String.format("connection to schema %s was established at %s", schemaName, TimeUtils.getNowTime()));
                 }
                 count++;

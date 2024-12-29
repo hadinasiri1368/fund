@@ -7,4 +7,6 @@ public class Consts {
     public static final String PREFIX_API_URL = "/api/" ;
     public static final String JDBC_URL_PREFIX = "jdbc:oracle:thin:@";
     public static final String HEADER_TENANT_PARAM_NAME = "X-TenantId";
+    public static final String DATASOURCE_MAP_KEY = "app_no";
+    public static final int JPA_BATCH_SIZE = 50;
 }

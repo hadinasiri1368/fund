@@ -1,6 +1,7 @@
 package org.fund.config.dataBase;
 
 import org.hibernate.cfg.Environment;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,9 @@ import java.util.Properties;
 
 @Configuration
 public class JpaConfig {
+    @Autowired
+    private TenantDataSourceManager tenantDataSourceManager;
+
 
     private final DataSource dataSource;
 
@@ -19,32 +23,21 @@ public class JpaConfig {
     }
 
     @Bean
-    public org.hibernate.cfg.Configuration hibernateConfiguration(
-            CustomMultiTenantConnectionProvider multiTenantConnectionProvider,
-            CustomTenantIdentifierResolver tenantIdentifierResolver) {
-
-        Properties properties = new Properties();
-        properties.put(Environment.MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProvider);
-        properties.put(Environment.MULTI_TENANT_IDENTIFIER_RESOLVER, tenantIdentifierResolver);
-
-        org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
-        configuration.setProperties(properties);
-        return configuration;
-    }
-
-    @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder, DataSource dataSource) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder, DataSource dataSource, CustomMultiTenantConnectionProvider multiTenantConnectionProvider,
+                                                                       CustomTenantIdentifierResolver tenantIdentifierResolver) {
         LocalContainerEntityManagerFactoryBean factory = builder
                 .dataSource(dataSource)
                 .packages("org.fund")
                 .build();
         factory.getJpaPropertyMap().put(Environment.DIALECT, "org.hibernate.dialect.OracleDialect");
+        factory.getJpaPropertyMap().put(Environment.MULTI_TENANT_CONNECTION_PROVIDER, multiTenantConnectionProvider);
+        factory.getJpaPropertyMap().put(Environment.MULTI_TENANT_IDENTIFIER_RESOLVER, tenantIdentifierResolver);
         return factory;
     }
 
     @Bean
     public CustomMultiTenantConnectionProvider multiTenantConnectionProvider() {
-        return new CustomMultiTenantConnectionProvider(dataSource);
+        return new CustomMultiTenantConnectionProvider(tenantDataSourceManager,dataSource);
     }
 
     @Bean

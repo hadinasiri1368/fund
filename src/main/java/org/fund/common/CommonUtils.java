@@ -4,6 +4,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -44,4 +47,33 @@ public class CommonUtils {
         Resource resource = resolver.getResource(path);
         return new String(Files.readAllBytes(Paths.get(resource.getURI())), StandardCharsets.UTF_8);
     }
+
+    public static void setNull(Object entity) throws Exception {
+        if (isNull(entity)) {
+            throw new IllegalArgumentException("Entity cannot be null");
+        }
+        // get Class and fields
+        Class<?> cls = entity.getClass();
+        Field[] fields = cls.getDeclaredFields();
+
+        for (Field field : fields) {
+            // access to private field
+            field.setAccessible(true);
+
+            // create getter method with field name
+            String capitalizedFieldName = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+            String getterMethodName = "get" + capitalizedFieldName;
+            Method getterMethod = cls.getDeclaredMethod(getterMethodName);
+
+            //  get value from getter
+            Object fieldValue = getterMethod.invoke(entity);
+
+            if (isNull(fieldValue)) {
+                String setterMethodName = "set" + capitalizedFieldName;
+                Method setterMethod = cls.getDeclaredMethod(setterMethodName, field.getType());
+                setterMethod.invoke(entity, (Object) null);
+            }
+        }
+    }
+
 }

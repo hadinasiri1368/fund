@@ -1,6 +1,7 @@
 package org.fund.config.dataBase;
 
 import lombok.extern.slf4j.Slf4j;
+import org.fund.common.FundUtils;
 import org.fund.filter.TenantFilter;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 import org.slf4j.Logger;
@@ -13,17 +14,22 @@ import java.util.Map;
 
 public class CustomMultiTenantConnectionProvider implements MultiTenantConnectionProvider {
     private static final Logger log = LoggerFactory.getLogger(CustomMultiTenantConnectionProvider.class);
-    private final DataSource dataSource;
 
-    public CustomMultiTenantConnectionProvider(DataSource dataSource) {
+    private TenantDataSourceManager tenantDataSourceManager;
+    private DataSource dataSource;
+
+    public CustomMultiTenantConnectionProvider(TenantDataSourceManager tenantDataSourceManager,DataSource dataSource) {
+        this.tenantDataSourceManager = tenantDataSourceManager;
         this.dataSource = dataSource;
     }
 
     @Override
     public Connection getConnection(Object object) throws SQLException {
-        Connection connection = dataSource.getConnection();
-        connection.setSchema(object.toString());
-        return connection;
+        if (!FundUtils.isNull(TenantContext.getCurrentTenant())) {
+            Connection connection = tenantDataSourceManager.getTenantDataSource(TenantContext.getCurrentTenant()).getConnection();
+            return connection;
+        }
+        return dataSource.getConnection();
     }
 
     @Override
