@@ -12,6 +12,7 @@ spring:
     hibernate.ddl-auto: none
     generate-ddl: false
     show-sql: false
+    show-manual-log: true
   tenant-datasource:
     minimum-idle: 2
     maximum-pool-size: 10

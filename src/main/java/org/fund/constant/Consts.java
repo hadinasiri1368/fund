@@ -9,4 +9,5 @@ public class Consts {
     public static final String HEADER_TENANT_PARAM_NAME = "X-TenantId";
     public static final String DATASOURCE_MAP_KEY = "app_no";
     public static final int JPA_BATCH_SIZE = 50;
+    public static final String GREGORIAN_DATE_FORMAT = "yyyy-MM-dd";
 }
