@@ -28,6 +28,7 @@ public class API {
         jpaRepository.save(tt, 123456L);
 
         tt.setName("222");
+        tt.setId(null);
         jpaRepository.update(tt, 123456L);
 
 //        jpaRepository.removeById(TestNasiri.class, tt.getId(), 123456L);
@@ -36,7 +37,6 @@ public class API {
         Map<String, Object> params = new HashMap<>();
         params.put("id", tt.getId());
         jpaRepository.executeUpdate(sql, params, 123456L);
-
         return 1L;
 //        String sql = "select count(*) from detailLedger";
 //        return jpaRepository.getLongValue(sql);

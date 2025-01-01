@@ -1,5 +1,7 @@
 package org.fund.common;
 
+import org.fund.exception.FundException;
+import org.fund.exception.GeneralExceptionType;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -50,7 +52,7 @@ public class CommonUtils {
 
     public static void setNull(Object entity) throws Exception {
         if (isNull(entity)) {
-            throw new IllegalArgumentException("Entity cannot be null");
+            throw new FundException(GeneralExceptionType.ENTITY_CANNOT_BE_NULL);
         }
         // get Class and fields
         Class<?> cls = entity.getClass();

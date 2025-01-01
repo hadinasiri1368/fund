@@ -10,6 +10,8 @@ import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
 import org.fund.constant.OperationType;
 import org.fund.constant.TimeFormat;
+import org.fund.exception.FundException;
+import org.fund.exception.GeneralExceptionType;
 import org.fund.model.BaseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +55,7 @@ public class JpaRepository {
         Method m = entity.getClass().getMethod("getId");
         Long id = (Long) m.invoke(entity);
         if (FundUtils.isNull(id))
-            throw new RuntimeException("id is null");
+            throw new FundException(GeneralExceptionType.ID_IS_NULL);
         ((BaseEntity) entity).setUpdatedUserId(userId);
         ((BaseEntity) entity).setUpdatedDateTime(new Date());
 
