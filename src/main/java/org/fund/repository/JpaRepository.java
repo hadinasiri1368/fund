@@ -39,7 +39,7 @@ public class JpaRepository {
     private EntityManager entityManager;
 
     @Transactional
-    public <ENTITY> void save(ENTITY entity, Long userId) throws Exception {
+    public <ENTITY> void save(ENTITY entity, Long userId, String uuid) throws Exception {
         Method m = entity.getClass().getMethod("setId", Long.class);
         m.invoke(entity, (Long) null);
         ((BaseEntity) entity).setInsertedUserId(userId);
@@ -47,11 +47,11 @@ public class JpaRepository {
 
         FundUtils.setNull(entity);
         entityManager.persist(entity);
-        logEntityFields(entity, OperationType.INSERT, userId);
+        logEntityFields(entity, OperationType.INSERT, userId, uuid);
     }
 
     @Transactional
-    public <ENTITY> void update(ENTITY entity, Long userId) throws Exception {
+    public <ENTITY> void update(ENTITY entity, Long userId, String uuid) throws Exception {
         Method m = entity.getClass().getMethod("getId");
         Long id = (Long) m.invoke(entity);
         if (FundUtils.isNull(id))
@@ -61,45 +61,45 @@ public class JpaRepository {
 
         FundUtils.setNull(entity);
         entityManager.merge(entity);
-        logEntityFields(entity, OperationType.UPDATE, userId);
+        logEntityFields(entity, OperationType.UPDATE, userId, uuid);
     }
 
     @Transactional
-    public <ENTITY> void remove(ENTITY entity, Long userId) throws Exception {
-        logEntityFields(entity, OperationType.DELETE, userId);
+    public <ENTITY> void remove(ENTITY entity, Long userId, String uuid) throws Exception {
+        logEntityFields(entity, OperationType.DELETE, userId, uuid);
         entityManager.remove(entityManager.merge(entity));
     }
 
     @Transactional
-    public <ENTITY, ID> void removeById(Class<ENTITY> entityClass, ID id, Long userId) throws Exception {
+    public <ENTITY, ID> void removeById(Class<ENTITY> entityClass, ID id, Long userId, String uuid) throws Exception {
         ENTITY entity = entityManager.merge(findOne(entityClass, id));
-        remove(entity, userId);
+        remove(entity, userId, uuid);
     }
 
     @Transactional
-    public int executeUpdate(String sql, Map<String, Object> param, Long userId) {
+    public int executeUpdate(String sql, Map<String, Object> param, Long userId, String uuid) {
         Query query = entityManager.createQuery(sql);
         if (!FundUtils.isNull(param) && !param.isEmpty()) {
             for (Map.Entry<String, Object> entry : param.entrySet()) {
                 query.setParameter(entry.getKey(), entry.getValue());
             }
         }
-        logQueryWithParameters(sql, param, userId);
+        logQueryWithParameters(sql, param, userId, uuid);
         return query.executeUpdate();
     }
 
     @Transactional
-    public int executeUpdate(String sql, Long userId) {
-        return executeUpdate(sql, null, userId);
+    public int executeUpdate(String sql, Long userId, String uuid) {
+        return executeUpdate(sql, null, userId, uuid);
     }
 
     @Transactional
-    public <ENTITY> void batchInsert(List<ENTITY> entities, Long userId) throws Exception {
+    public <ENTITY> void batchInsert(List<ENTITY> entities, Long userId, String uuid) throws Exception {
         if (FundUtils.isNull(entities) || entities.size() == 0)
             return;
         int batchSize = Consts.JPA_BATCH_SIZE;
         for (int i = 0; i < entities.size(); i++) {
-            save(entities.get(i), userId);
+            save(entities.get(i), userId, uuid);
 //            entityManager.persist(entities.get(i));
 
             if (i > 0 && i % batchSize == 0) {
@@ -113,13 +113,13 @@ public class JpaRepository {
     }
 
     @Transactional
-    public <ENTITY> void batchUpdate(List<ENTITY> entities, Long userId) throws Exception {
+    public <ENTITY> void batchUpdate(List<ENTITY> entities, Long userId, String uuid) throws Exception {
         if (FundUtils.isNull(entities) || entities.size() == 0)
             return;
         int batchSize = Consts.JPA_BATCH_SIZE;
         for (int i = 0; i < entities.size(); i++) {
 //            entityManager.merge(entities.get(i));
-            update(entities.get(i), userId);
+            update(entities.get(i), userId, uuid);
 
             if (i > 0 && i % batchSize == 0) {
                 entityManager.flush();
@@ -232,7 +232,7 @@ public class JpaRepository {
         return (long) countQuery.getSingleResult();
     }
 
-    private <ENTITY> void logEntityFields(ENTITY entity, OperationType operation, Long userId) {
+    private <ENTITY> void logEntityFields(ENTITY entity, OperationType operation, Long userId, String uuid) {
         if (!showManualLog)
             return;
 
@@ -240,7 +240,7 @@ public class JpaRepository {
                 .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
 
         if (entity == null) {
-            log.info("Entity is null. UserId: {}, Time: {}", userId, currentTime);
+            log.info("Entity is null. UserId: {}, Time: {}, uuid: {}", userId, currentTime, uuid);
             return;
         }
 
@@ -265,14 +265,14 @@ public class JpaRepository {
 
         logMessage.append("]");
 
-        String finalLogMessage = String.format("%s | UserId: %d | Time: %s",
-                logMessage, userId, currentTime);
+        String finalLogMessage = String.format("%s | UserId: %d | Time: %s | uuid: %s",
+                logMessage, userId, currentTime, uuid);
 
         log.info(finalLogMessage);
     }
 
 
-    private void logQueryWithParameters(String sql, Map<String, Object> param, Long userId) {
+    private void logQueryWithParameters(String sql, Map<String, Object> param, Long userId, String uuid) {
         if (!showManualLog)
             return;
 
@@ -292,7 +292,10 @@ public class JpaRepository {
                 .append(userId)
                 .append(" | ")
                 .append("Time: ")
-                .append(currentTime);
+                .append(currentTime)
+                .append(" | ")
+                .append("uuid: ")
+                .append(uuid);
 
         log.info(logMessage.toString());
     }

@@ -1,5 +1,8 @@
 package org.fund.api;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.fund.common.FundUtils;
+import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.TestNasiri;
 import org.fund.repository.JpaRepository;
@@ -22,23 +25,15 @@ public class API {
 
     @GetMapping("getCustomerCount")
     long customerCount() throws Exception {
+        String uuid = RequestContext.getUuid();
+        Long userId = RequestContext.getUserId();
         TestNasiri tt = new TestNasiri();
-        tt.setId(10L);
         tt.setName("1111");
-        jpaRepository.save(tt, 123456L);
+        jpaRepository.save(tt, userId, uuid);
 
-        tt.setName("222");
-        tt.setId(null);
-        jpaRepository.update(tt, 123456L);
-
-//        jpaRepository.removeById(TestNasiri.class, tt.getId(), 123456L);
-
-        String sql = "delete test t where t.id = :id";
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", tt.getId());
-        jpaRepository.executeUpdate(sql, params, 123456L);
+        tt = new TestNasiri();
+        tt.setName("1111");
+        jpaRepository.save(tt, userId, uuid);
         return 1L;
-//        String sql = "select count(*) from detailLedger";
-//        return jpaRepository.getLongValue(sql);
     }
 }

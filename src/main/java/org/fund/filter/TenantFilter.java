@@ -38,7 +38,6 @@ public class TenantFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String tenantId = request.getHeader(Consts.HEADER_TENANT_PARAM_NAME);
-
         try {
             if (FundUtils.isNull(tenantId)) {
                 throw new FundException(GeneralExceptionType.SCHEMAID_ID_IS_NULL);
@@ -48,7 +47,15 @@ public class TenantFilter extends OncePerRequestFilter {
             }
             request.getHeader(Consts.HEADER_UUID_PARAM_NAME);
             TenantContext.setCurrentTenant(tenantId);
+            String uuid = FundUtils.generateUUID().toString();
+            request.setAttribute(Consts.HEADER_UUID_PARAM_NAME, uuid);
+            String startTime = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
+            log.info(String.format("RequestURL: %s | Start Date : %s | uuid : %s", request.getRequestURL(), startTime, uuid));
             filterChain.doFilter(request, response);
+            String endTime = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
+            log.info(String.format("RequestURL: %s | Start Date : %s | End Date : %s | uuid : %s", request.getRequestURL(), startTime, endTime, uuid));
         } catch (FundException e) {
             String currentTime = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
@@ -59,7 +66,7 @@ public class TenantFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
             response.getWriter().write(convertObjectToJson(ExceptionDto.builder()
                     .code(e.getMessage())
-                    .message(FundUtils.getMessage(e.getMessage(),e.getParams()))
+                    .message(FundUtils.getMessage(e.getMessage(), e.getParams()))
                     .uuid(null)
                     .time(currentTime)
                     .build()));

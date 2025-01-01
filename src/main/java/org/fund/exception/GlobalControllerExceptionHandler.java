@@ -3,6 +3,7 @@ package org.fund.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.fund.common.FundUtils;
+import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.constant.TimeFormat;
 import org.fund.dto.ExceptionDto;
@@ -20,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 public class GlobalControllerExceptionHandler {
     @ExceptionHandler(value = FundException.class)
     public ResponseEntity<ExceptionDto> handleFundException(FundException e, HttpServletRequest request) {
-        String uuid = request.getHeader(Consts.HEADER_UUID_PARAM_NAME);
+        String uuid = RequestContext.getUuid();
         String currentTime = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
         log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}",
@@ -35,7 +36,7 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(value = DataAccessException.class)
     public ResponseEntity<ExceptionDto> handleDatabaseException(DataAccessException e, HttpServletRequest request) {
-        String uuid = request.getHeader(Consts.HEADER_UUID_PARAM_NAME);
+        String uuid = RequestContext.getUuid();
         String currentTime = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
 
@@ -52,7 +53,7 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ExceptionDto> handleGenralException(Exception e, HttpServletRequest request) {
-        String uuid = request.getHeader(Consts.HEADER_UUID_PARAM_NAME);
+        String uuid = RequestContext.getUuid();
         String currentTime = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
 
