@@ -25,8 +25,13 @@ import java.util.Map;
 
 @Component
 public class TenantDataSourceManager {
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
+    private final DataSource dataSource;
+
+    public TenantDataSourceManager(ProfileService profileService, DataSource dataSource) {
+        this.profileService = profileService;
+        this.dataSource = dataSource;
+    }
 
     @Value("${spring.tenant-datasource.minimum-idle}")
     private Integer minimumIdle;
@@ -42,9 +47,6 @@ public class TenantDataSourceManager {
 
     @Value("${spring.tenant-datasource.initialization-fail-timeout}")
     private Long initializationFailTimeout;
-
-    @Autowired
-    private DataSource dataSource;
 
     private static final Logger log = LoggerFactory.getLogger(TenantDataSourceManager.class);
 
@@ -84,7 +86,8 @@ public class TenantDataSourceManager {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonInput = FundUtils.loadSqlFromFile(Consts.DEFAULT_FOLDER_ADDRESS + Consts.SCHEMAS_LIST_FILE_NAME);
-            List<LinkedHashMap<String, Object>> list = objectMapper.readValue(jsonInput, new TypeReference<List<LinkedHashMap<String, Object>>>() {});
+            List<LinkedHashMap<String, Object>> list = objectMapper.readValue(jsonInput, new TypeReference<List<LinkedHashMap<String, Object>>>() {
+            });
             if (FundUtils.isNull(list))
                 throw new RuntimeException("there is no schema for connection");
             int count = 0;
@@ -95,7 +98,7 @@ public class TenantDataSourceManager {
                         , map.get("db_url").toString()
                         , map.get("schema_pass").toString());
                 if (!FundUtils.isNull(tenantDataSource)) {
-                    tenantDataSources.put( map.get(Consts.DATASOURCE_MAP_KEY).toString(), tenantDataSource);
+                    tenantDataSources.put(map.get(Consts.DATASOURCE_MAP_KEY).toString(), tenantDataSource);
                     log.info(String.format("connection to schema %s was established at %s", schemaName, TimeUtils.getNowTime()));
                 }
                 count++;

@@ -10,8 +10,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FilterConfig {
-    @Autowired
-    private TenantDataSourceManager tenantService;
+    private final TenantDataSourceManager tenantService;
+    public FilterConfig(final TenantDataSourceManager tenantService) {
+        this.tenantService = tenantService;
+    }
+
     @Bean
     public FilterRegistrationBean<TenantFilter> loggingFilter() {
         FilterRegistrationBean<TenantFilter> registrationBean = new FilterRegistrationBean<>();

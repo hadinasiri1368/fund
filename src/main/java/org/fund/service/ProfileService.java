@@ -8,8 +8,11 @@ import java.util.Arrays;
 
 @Service
 public class ProfileService {
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+
+    public ProfileService(Environment environment) {
+        this.environment = environment;
+    }
 
     public boolean isDebugMode() {
         return Arrays.asList(environment.getActiveProfiles()).contains("dev");

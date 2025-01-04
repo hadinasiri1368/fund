@@ -12,14 +12,12 @@ import java.util.Properties;
 
 @Configuration
 public class JpaConfig {
-    @Autowired
-    private TenantDataSourceManager tenantDataSourceManager;
-
-
+    private final TenantDataSourceManager tenantDataSourceManager;
     private final DataSource dataSource;
 
-    public JpaConfig(DataSource dataSource) {
+    public JpaConfig(DataSource dataSource,TenantDataSourceManager tenantDataSourceManager) {
         this.dataSource = dataSource;
+        this.tenantDataSourceManager = tenantDataSourceManager;
     }
 
     @Bean

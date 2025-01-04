@@ -72,7 +72,7 @@ public class JpaRepository {
 
     @Transactional
     public <ENTITY, ID> void removeById(Class<ENTITY> entityClass, ID id, Long userId, String uuid) throws Exception {
-        ENTITY entity = entityManager.merge(findOne(entityClass, id));
+        ENTITY entity = findOne(entityClass, id);
         remove(entity, userId, uuid);
     }
 

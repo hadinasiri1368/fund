@@ -20,3 +20,9 @@ spring:
     idle-timeout: 150000
     initialization-fail-timeout: 150000
 
+
+redis:
+#  port: 6379
+  port: 63799
+  size: 512mb
+  host: 127.0.0.1

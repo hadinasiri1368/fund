@@ -19,4 +19,10 @@ spring:
     connection-timeout: 150000
     idle-timeout: 150000
     initialization-fail-timeout: 150000
+  profiles:
+    active: dev
 
+redis:
+  port: 6379
+  size: 512mb
+  host: 127.0.0.1
