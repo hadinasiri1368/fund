@@ -13,9 +13,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class DetailLedger extends BaseEntity implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
     @Column(columnDefinition = "NVARCHAR2(12)", name = "NAME", nullable = false)
     private String name;
     @Column(columnDefinition = "NVARCHAR2(12)", name = "CODE", nullable = false)

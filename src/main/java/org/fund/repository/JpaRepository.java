@@ -40,8 +40,7 @@ public class JpaRepository {
 
     @Transactional
     public <ENTITY> void save(ENTITY entity, Long userId, String uuid) throws Exception {
-        Method m = entity.getClass().getMethod("setId", Long.class);
-        m.invoke(entity, (Long) null);
+        ((BaseEntity) entity).setId(null);
         ((BaseEntity) entity).setInsertedUserId(userId);
         ((BaseEntity) entity).setInsertedDateTime(new Date());
 
@@ -52,9 +51,7 @@ public class JpaRepository {
 
     @Transactional
     public <ENTITY> void update(ENTITY entity, Long userId, String uuid) throws Exception {
-        Method m = entity.getClass().getMethod("getId");
-        Long id = (Long) m.invoke(entity);
-        if (FundUtils.isNull(id))
+        if (FundUtils.isNull(((BaseEntity) entity).getId()))
             throw new FundException(GeneralExceptionType.ID_IS_NULL);
         ((BaseEntity) entity).setUpdatedUserId(userId);
         ((BaseEntity) entity).setUpdatedDateTime(new Date());

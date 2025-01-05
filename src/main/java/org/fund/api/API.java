@@ -123,8 +123,10 @@ public class API {
         System.out.println("==============================================================");
         List<TestNasiri> list = cacheService.findAll(TestNasiri.class);
         for (TestNasiri testNasiri : list) {
-            System.out.println(TenantContext.getCurrentTenant() +"->cacheService1 =" + testNasiri.getName());
+            System.out.println(TenantContext.getCurrentTenant() + "->cacheService1 =" + testNasiri.getName());
         }
+        System.out.println("==============================================================");
+        System.out.println(TenantContext.getCurrentTenant() + "->cacheService2 =" + cacheService.findOne(TestNasiri.class, 2L).getName());
 
         return "";
     }

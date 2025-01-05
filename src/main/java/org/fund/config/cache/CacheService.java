@@ -2,6 +2,7 @@ package org.fund.config.cache;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.fund.model.BaseEntity;
 import org.fund.repository.JpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -15,29 +16,19 @@ import java.util.List;
 @Service
 public class CacheService {
     private final JpaRepository jpaRepository;
+
     public CacheService(JpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 
     @Cacheable(value = "findAll", keyGenerator = "tenantKeyGenerator")
     public <ENTITY> List<ENTITY> findAll(Class<ENTITY> entityClass) {
-        System.out.println("Caching entity: " + entityClass.getName());
         return jpaRepository.findAll(entityClass);
     }
 
     public <ENTITY, ID> ENTITY findOne(Class<ENTITY> entityClass, ID id) {
         return findAll(entityClass).stream()
-                .filter(a -> {
-                    try {
-                        Field idField = a.getClass().getDeclaredField("id");
-                        idField.setAccessible(true);
-                        Object fieldValue = idField.get(a);
-                        return fieldValue != null && fieldValue.equals(id);
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        log.info("cacheService findOne error : {}", e.getMessage());
-                        return false;
-                    }
-                })
+                .filter(a -> ((BaseEntity) a).getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
