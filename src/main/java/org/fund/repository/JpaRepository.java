@@ -128,7 +128,26 @@ public class JpaRepository {
         entityManager.clear();
     }
 
+    @Transactional
+    public <ENTITY> void batchRemove(List<ENTITY> entities, Long userId, String uuid) throws Exception {
+        if (FundUtils.isNull(entities) || entities.size() == 0)
+            return;
+        int batchSize = Consts.JPA_BATCH_SIZE;
+        for (int i = 0; i < entities.size(); i++) {
+            remove(entities.get(i), userId, uuid);
+
+            if (i > 0 && i % batchSize == 0) {
+                entityManager.flush();
+                entityManager.clear();
+            }
+        }
+
+        entityManager.flush();
+        entityManager.clear();
+    }
+
     public <ENTITY, ID> ENTITY findOne(Class<ENTITY> entityClass, ID id) {
+        entityManager.clear();
         return entityManager.find(entityClass, id);
     }
 
@@ -144,6 +163,7 @@ public class JpaRepository {
 
     public <ENTITY> List<ENTITY> findAll(Class<ENTITY> entityClass) {
         Entity entity = entityClass.getAnnotation(Entity.class);
+        entityManager.clear();
         Query query = entityManager.createQuery("select entity from " + entity.name() + " entity");
         return query.getResultList();
     }
@@ -154,6 +174,7 @@ public class JpaRepository {
             for (String key : param.keySet()) {
                 query.setParameter(key, param.get(key));
             }
+        entityManager.clear();
         return query.getResultList();
     }
 
@@ -169,6 +190,7 @@ public class JpaRepository {
         long countResult = getTotalCount(query);
         query.setFirstResult(pageNumber * pageSize);
         query.setMaxResults(pageSize);
+        entityManager.clear();
         List<Object> resultList = query.getResultList();
         return new PageImpl<>(resultList, pageable, countResult);
     }
@@ -184,6 +206,7 @@ public class JpaRepository {
                 query.setParameter(entry.getKey(), entry.getValue());
             }
         }
+        entityManager.clear();
         return (Long) query.getSingleResult();
     }
 
@@ -198,6 +221,7 @@ public class JpaRepository {
                 query.setParameter(entry.getKey(), entry.getValue());
             }
         }
+        entityManager.clear();
         return (String) query.getSingleResult();
     }
 
@@ -206,7 +230,8 @@ public class JpaRepository {
     }
 
     private long getTotalCount(String entityName) {
-        Query countQuery = entityManager.createQuery("select count(entity) from " + entityName + " entity");
+        Query countQuery = entityManager.createQuery("select count(1) from " + entityName + " entity");
+        entityManager.clear();
         return (long) countQuery.getSingleResult();
     }
 
@@ -225,7 +250,7 @@ public class JpaRepository {
             Object value = query.getParameterValue(param);
             countQuery.setParameter(param.getName(), value);
         });
-
+        entityManager.clear();
         return (long) countQuery.getSingleResult();
     }
 
@@ -251,6 +276,7 @@ public class JpaRepository {
             field.setAccessible(true);
             try {
                 Object value = field.get(entity);
+                logMessage.append("id").append("=").append(((BaseEntity)entity).getId()).append(", ");
                 logMessage.append(field.getName()).append("=").append(value);
             } catch (IllegalAccessException e) {
                 logMessage.append(field.getName()).append("=ACCESS_ERROR");

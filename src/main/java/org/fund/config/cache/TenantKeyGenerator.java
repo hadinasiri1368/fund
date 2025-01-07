@@ -1,6 +1,7 @@
 package org.fund.config.cache;
 
 import lombok.extern.slf4j.Slf4j;
+import org.fund.common.FundUtils;
 import org.fund.config.dataBase.TenantContext;
 import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
@@ -17,14 +18,13 @@ public class TenantKeyGenerator implements KeyGenerator {
     @Override
     public Object generate(Object target, Method method, Object... params) {
         String tenantId = TenantContext.getCurrentTenant();
-        return tenantId + "::" + getKey(params);
+        String key = tenantId + "::" + getKey(params);
+        return key;
     }
 
     private String getKey(Object... params) {
         if (params != null && params.length > 0) {
-            if (params[0] instanceof Class)
-                return ((Class<?>) params[0]).getName();
-            return params[0].getClass().getName();
+            return FundUtils.getClassName(params[0]);
         }
         log.info("tenantKeyGenerator getKey exception : params is null or empty");
         return null;

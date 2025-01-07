@@ -4,6 +4,7 @@ import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.data.jpa.support.PageableUtils;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
@@ -100,5 +101,41 @@ public class CommonUtils {
         long most64SigBits = get64MostSignificantBitsForVersion1();
         long least64SigBits = get64LeastSignificantBitsForVersion1();
         return new UUID(most64SigBits, least64SigBits);
+    }
+
+    public static Long longValue(Object number) {
+        if (isNull(number))
+            return null;
+        else if (number instanceof Number)
+            return ((Number) number).longValue();
+        else
+            try {
+                return Long.valueOf(number.toString().trim());
+            } catch (NumberFormatException e) {
+                return null;
+            }
+    }
+
+    public static String getClassName(Object entity) {
+        if (entity instanceof List)
+            return ((List) entity).get(0).getClass().getName();
+        if (entity instanceof Class)
+            return ((Class<?>) entity).getName();
+        return entity.getClass().getName();
+    }
+
+    public static String extractTableNameFromSql(String sql) {
+        String lowerCaseSql = sql.toLowerCase().trim();
+        if (lowerCaseSql.startsWith("insert into")) {
+            return sql.split(" ")[2];
+        } else if (lowerCaseSql.startsWith("update")) {
+            return sql.split(" ")[1];
+        } else if (lowerCaseSql.startsWith("delete from")) {
+            return sql.split(" ")[2];
+        } else if (lowerCaseSql.startsWith("delete")) {
+            return sql.split(" ")[1];
+        } else {
+            throw new IllegalArgumentException("Unsupported SQL operation: " + sql);
+        }
     }
 }
