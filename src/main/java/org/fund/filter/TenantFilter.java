@@ -51,7 +51,7 @@ public class TenantFilter extends OncePerRequestFilter {
             request.setAttribute(Consts.HEADER_UUID_PARAM_NAME, uuid);
             String startTime = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
-            log.info(String.format("RequestURL: %s | Start Date : %s | uuid : %s", request.getRequestURL(), startTime, uuid));
+            log.info(String.format("RequestURL: %s | Start Date : %s | uuid : %s | schemaId : %s", request.getRequestURL(), startTime, uuid, tenantId));
             filterChain.doFilter(request, response);
             String endTime = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));

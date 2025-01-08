@@ -2,6 +2,7 @@ package org.fund.config.cache;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
 import org.fund.model.BaseEntity;
 import org.fund.repository.JpaRepository;
@@ -71,5 +72,15 @@ public class CacheService {
     @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
     public <ENTITY> int executeUpdate(Class<ENTITY> entityClass, String sql, Map<String, Object> params, Long userId, String uuid) throws Exception {
         return jpaRepository.executeUpdate(sql, params, userId, uuid);
+    }
+
+    @CacheEvict(value = Consts.CACHE_NAME, allEntries = true)
+    public void clearAllCache() {
+        log.info("All cache entries have been cleared");
+    }
+
+    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    public <ENTITY> void clearCache(Class<ENTITY> entityClass) {
+        log.info("entity {} has been cleared", FundUtils.getClassName(entityClass));
     }
 }
