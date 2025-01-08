@@ -1,51 +1,32 @@
 package org.fund.api;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.fund.common.FundUtils;
+import jakarta.validation.Valid;
 import org.fund.config.cache.CacheService;
 import org.fund.config.dataBase.TenantContext;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.TestNasiri;
-import org.fund.model.TestNasiri2;
 import org.fund.repository.JpaRepository;
+import org.fund.validator.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(Consts.PREFIX_API_URL)
+@Validated
 public class API {
     @Autowired
     private JpaRepository jpaRepository;
 
-//    @Autowired
-//    private CacheService cacheService;
-
-
-//    @GetMapping("getCustomerCount")
-//    long customerCount() throws Exception {
-//        String uuid = RequestContext.getUuid();
-//        Long userId = RequestContext.getUserId();
-//        TestNasiri tt = new TestNasiri();
-//        tt.setName("1111");
-//        jpaRepository.save(tt, userId, uuid);
-//
-//        tt = new TestNasiri();
-//        tt.setName("1111");
-//        jpaRepository.save(tt, userId, uuid);
-//        return 1L;
-//    }
+    @Autowired
+    private CacheService cacheService;
 
     @GetMapping("getCustomerCount")
-    String customerCount() throws Exception {
+    String customerCount(@NotEmpty(fieldName = "id") String id) throws Exception {
         String uuid = RequestContext.getUuid();
         Long userId = RequestContext.getUserId();
 //        System.out.println("==============================================================");
@@ -187,11 +168,11 @@ public class API {
 //        }
 
 
-        System.out.println("==============================================================");
-        List<TestNasiri> list = jpaRepository.findAll(TestNasiri.class);
-        for (TestNasiri testNasiri : list) {
-            System.out.println(TenantContext.getCurrentTenant() + "->cacheService1 =" + testNasiri.getName());
-        }
+//        System.out.println("==============================================================");
+//        List<TestNasiri> list = jpaRepository.findAll(TestNasiri.class);
+//        for (TestNasiri testNasiri : list) {
+//            System.out.println(TenantContext.getCurrentTenant() + "->cacheService1 =" + testNasiri.getName());
+//        }
 //        System.out.println("==============================================================");
 //        System.out.println(TenantContext.getCurrentTenant() + "->cacheService2 =" + jpaRepository.findOne(TestNasiri.class, 2L).getName());
 
@@ -209,15 +190,15 @@ public class API {
 //        nasiri.setName("2222");
 //        jpaRepository.update(nasiri, RequestContext.getUserId(), RequestContext.getUuid());
 
-        TestNasiri rr = new TestNasiri();
-        rr.setName("2222");
-        List<TestNasiri> list2 = new ArrayList<TestNasiri>();
-        list2.add(rr);
-        try {
-            jpaRepository.batchInsert(list2, RequestContext.getUserId(), RequestContext.getUuid());
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+//        TestNasiri rr = new TestNasiri();
+//        rr.setName("2222");
+//        List<TestNasiri> list2 = new ArrayList<TestNasiri>();
+//        list2.add(rr);
+//        try {
+//            jpaRepository.batchInsert(list2, RequestContext.getUserId(), RequestContext.getUuid());
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
 //        TestNasiri rr = jpaRepository.findOne(TestNasiri.class, 2L);
 //        rr.setName("333-444");
@@ -229,6 +210,38 @@ public class API {
 //        List<TestNasiri> list2 = new ArrayList<TestNasiri>();
 //        list2.add(rr);
 //        jpaRepository.batchRemove(list2, RequestContext.getUserId(), RequestContext.getUuid());
+
+//        System.out.println("==============================================================");
+//        list = jpaRepository.findAll(TestNasiri.class);
+//        for (TestNasiri testNasiri : list) {
+//            System.out.println(TenantContext.getCurrentTenant() + "->cacheService1 =" + testNasiri.getName());
+//        }
+
+        System.out.println("==============================================================");
+        List<TestNasiri> list = jpaRepository.findAll(TestNasiri.class);
+        for (TestNasiri testNasiri : list) {
+            System.out.println(TenantContext.getCurrentTenant() + "->cacheService1 =" + testNasiri.getName());
+        }
+        cacheService.clearAllCache();
+        System.out.println("==============================================================");
+        list = jpaRepository.findAll(TestNasiri.class);
+        for (TestNasiri testNasiri : list) {
+            System.out.println(TenantContext.getCurrentTenant() + "->cacheService1 =" + testNasiri.getName());
+        }
+
+        System.out.println("==============================================================");
+        list = jpaRepository.findAll(TestNasiri.class);
+        for (TestNasiri testNasiri : list) {
+            System.out.println(TenantContext.getCurrentTenant() + "->cacheService1 =" + testNasiri.getName());
+        }
+
+        cacheService.clearCache(TestNasiri.class);
+
+        System.out.println("==============================================================");
+        list = jpaRepository.findAll(TestNasiri.class);
+        for (TestNasiri testNasiri : list) {
+            System.out.println(TenantContext.getCurrentTenant() + "->cacheService1 =" + testNasiri.getName());
+        }
 
         System.out.println("==============================================================");
         list = jpaRepository.findAll(TestNasiri.class);
