@@ -12,11 +12,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 @Slf4j
@@ -26,8 +29,8 @@ public class GlobalControllerExceptionHandler {
         String uuid = RequestContext.getUuid();
         String currentTime = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
-        log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}",
-                e.getStatus(), e.getMessage(), currentTime, uuid);
+
+        printLog(e.getStatus(), e.getMessage(), currentTime, uuid);
         return new ResponseEntity<>(ExceptionDto.builder()
                 .code(e.getMessage())
                 .message(FundUtils.getMessage(e.getMessage(), e.getParams()))
@@ -42,8 +45,7 @@ public class GlobalControllerExceptionHandler {
         String currentTime = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
 
-        log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}",
-                HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), currentTime, uuid);
+        printLog(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), currentTime, uuid);
 
         return new ResponseEntity<>(ExceptionDto.builder()
                 .code("database_exception.error")
@@ -59,8 +61,7 @@ public class GlobalControllerExceptionHandler {
         String currentTime = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
 
-        log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}",
-                HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), currentTime, uuid);
+        printLog(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), currentTime, uuid);
 
         return new ResponseEntity<>(ExceptionDto.builder()
                 .code("unhandled_exception.error")
@@ -71,22 +72,55 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = ValidationException.class)
-    public ResponseEntity<ExceptionDto> handleGenralValidationException(Exception e, HttpServletRequest request) {
+    public ResponseEntity<ExceptionDto> handleGenralValidationException(ValidationException e, HttpServletRequest request) {
         String uuid = RequestContext.getUuid();
         String currentTime = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
 
-        log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}",
-                HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), currentTime, uuid);
+        printLog(HttpStatus.BAD_REQUEST, e.getMessage(), currentTime, uuid);
         String message = e.getMessage().split(": ")[1];
         String code = message.split("&")[0];
-        Object[] params = !FundUtils.isNull(message.split("&")[1]) ? message.split("&")[1].split(",") : null;
+        Object[] params = getParams(message);
         return new ResponseEntity<>(ExceptionDto.builder()
                 .code(code)
                 .message(FundUtils.getMessage(code, params))
                 .uuid(uuid)
                 .time(currentTime)
                 .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionDto> handleGenralMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
+
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getFieldErrors().forEach(error -> {
+            String fieldName = error.getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        String uuid = RequestContext.getUuid();
+        String currentTime = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
+
+        printLog(HttpStatus.BAD_REQUEST, e.getMessage(), currentTime, uuid);
+        String message = errors.entrySet().iterator().next().getValue();
+        String code = errors.entrySet().iterator().next().getValue().split("&")[0];
+        Object[] params = getParams(message);
+        return new ResponseEntity<>(ExceptionDto.builder()
+                .code(code)
+                .message(FundUtils.getMessage(code, params))
+                .uuid(uuid)
+                .time(currentTime)
+                .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    private void printLog(HttpStatus httpStatus, String message, String currentTime, String uuid) {
+        log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}", httpStatus, message, currentTime, uuid);
+    }
+
+    private Object[] getParams(String message) {
+        return !FundUtils.isNull(message.split("&")[1]) ? message.split("&")[1].split(",") : null;
     }
 
 }
