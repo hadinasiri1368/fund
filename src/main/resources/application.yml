@@ -26,3 +26,10 @@ redis:
   port: 6379
   size: 512mb
   host: 127.0.0.1
+
+springdoc:
+  swagger-ui:
+    server-url: http://localhost:8080
+    path: /swagger-ui/index.html
+    enabled: true
+    disable-swagger-default-url: true
