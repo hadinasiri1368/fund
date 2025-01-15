@@ -4,8 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import jakarta.transaction.Transactional;
-import org.fund.common.CommonUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
 import org.fund.constant.OperationType;
@@ -13,16 +12,14 @@ import org.fund.constant.TimeFormat;
 import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
 import org.fund.model.BaseEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -30,11 +27,11 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
+@Slf4j
 public class JpaRepository {
     @Value("${spring.jpa.show-manual-log}")
     private Boolean showManualLog;
 
-    private static final Logger log = LoggerFactory.getLogger(JpaRepository.class);
     @PersistenceContext()
     private EntityManager entityManager;
 
@@ -82,7 +79,9 @@ public class JpaRepository {
             }
         }
         logQueryWithParameters(sql, param, userId, uuid);
-        return query.executeUpdate();
+        int returnValue = query.executeUpdate();
+        clearCache();
+        return returnValue;
     }
 
     @Transactional
@@ -100,13 +99,11 @@ public class JpaRepository {
 //            entityManager.persist(entities.get(i));
 
             if (i > 0 && i % batchSize == 0) {
-                entityManager.flush();
-                entityManager.clear();
+                clearCache();
             }
         }
 
-        entityManager.flush();
-        entityManager.clear();
+        clearCache();
     }
 
     @Transactional
@@ -119,13 +116,11 @@ public class JpaRepository {
             update(entities.get(i), userId, uuid);
 
             if (i > 0 && i % batchSize == 0) {
-                entityManager.flush();
-                entityManager.clear();
+                clearCache();
             }
         }
 
-        entityManager.flush();
-        entityManager.clear();
+        clearCache();
     }
 
     @Transactional
@@ -137,18 +132,16 @@ public class JpaRepository {
             remove(entities.get(i), userId, uuid);
 
             if (i > 0 && i % batchSize == 0) {
-                entityManager.flush();
-                entityManager.clear();
+                clearCache();
             }
         }
-
-        entityManager.flush();
-        entityManager.clear();
+        clearCache();
+        ;
     }
 
     public <ENTITY, ID> ENTITY findOne(Class<ENTITY> entityClass, ID id) {
-        entityManager.clear();
-        return entityManager.find(entityClass, id);
+        ENTITY entity = entityManager.find(entityClass, id);
+        return entity;
     }
 
     public <ENTITY> Page<ENTITY> findAll(Class<ENTITY> entityClass, Pageable pageable) {
@@ -163,9 +156,9 @@ public class JpaRepository {
 
     public <ENTITY> List<ENTITY> findAll(Class<ENTITY> entityClass) {
         Entity entity = entityClass.getAnnotation(Entity.class);
-        entityManager.clear();
         Query query = entityManager.createQuery("select entity from " + entity.name() + " entity");
-        return query.getResultList();
+        List<ENTITY> resultList = query.getResultList();
+        return resultList;
     }
 
     public List listByQuery(String sql, Map<String, Object> param) {
@@ -174,7 +167,6 @@ public class JpaRepository {
             for (String key : param.keySet()) {
                 query.setParameter(key, param.get(key));
             }
-        entityManager.clear();
         return query.getResultList();
     }
 
@@ -190,7 +182,6 @@ public class JpaRepository {
         long countResult = getTotalCount(query);
         query.setFirstResult(pageNumber * pageSize);
         query.setMaxResults(pageSize);
-        entityManager.clear();
         List<Object> resultList = query.getResultList();
         return new PageImpl<>(resultList, pageable, countResult);
     }
@@ -206,7 +197,6 @@ public class JpaRepository {
                 query.setParameter(entry.getKey(), entry.getValue());
             }
         }
-        entityManager.clear();
         return (Long) query.getSingleResult();
     }
 
@@ -221,7 +211,6 @@ public class JpaRepository {
                 query.setParameter(entry.getKey(), entry.getValue());
             }
         }
-        entityManager.clear();
         return (String) query.getSingleResult();
     }
 
@@ -231,7 +220,6 @@ public class JpaRepository {
 
     private long getTotalCount(String entityName) {
         Query countQuery = entityManager.createQuery("select count(1) from " + entityName + " entity");
-        entityManager.clear();
         return (long) countQuery.getSingleResult();
     }
 
@@ -250,7 +238,6 @@ public class JpaRepository {
             Object value = query.getParameterValue(param);
             countQuery.setParameter(param.getName(), value);
         });
-        entityManager.clear();
         return (long) countQuery.getSingleResult();
     }
 
@@ -276,7 +263,7 @@ public class JpaRepository {
             field.setAccessible(true);
             try {
                 Object value = field.get(entity);
-                logMessage.append("id").append("=").append(((BaseEntity)entity).getId()).append(", ");
+                logMessage.append("id").append("=").append(((BaseEntity) entity).getId()).append(", ");
                 logMessage.append(field.getName()).append("=").append(value);
             } catch (IllegalAccessException e) {
                 logMessage.append(field.getName()).append("=ACCESS_ERROR");
@@ -323,4 +310,8 @@ public class JpaRepository {
         log.info(logMessage.toString());
     }
 
+    private void clearCache() {
+        entityManager.flush();
+        entityManager.clear();
+    }
 }

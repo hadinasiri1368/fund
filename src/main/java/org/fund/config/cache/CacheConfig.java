@@ -20,8 +20,8 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        return RedisCacheManager.builder(redisConnectionFactory)
-                .build();
+        RedisCacheManager redisCacheManager = RedisCacheManager.builder(redisConnectionFactory).build();
+        return new CacheManagerProxy(redisCacheManager);
     }
 
     @Bean

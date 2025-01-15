@@ -25,8 +25,39 @@ public class API {
     @Autowired
     private CacheService cacheService;
 
+    @Autowired
+    private TestService service;
+
+    @GetMapping("checkData")
+    public void checkData() throws Exception {
+        service.checkData();
+        List<TestNasiri> list = jpaRepository.findAll(TestNasiri.class);
+        for (TestNasiri testNasiri : list) {
+            System.out.println(TenantContext.getCurrentTenant() + "->after =" + testNasiri.getName());
+        }
+
+//        TestNasiri nasiri = new TestNasiri();
+//        nasiri.setName("new");
+//        jpaRepository.save(nasiri,10L,"10");
+//
+//        list = jpaRepository.findAll(TestNasiri.class);
+//        for (TestNasiri testNasiri : list) {
+//            System.out.println(TenantContext.getCurrentTenant() + "->after =" + testNasiri.getName());
+//        }
+//
+//
+//        nasiri = new TestNasiri();
+//        nasiri.setName("new");
+//        jpaRepository.save(nasiri,10L,"10");
+//
+//        list = jpaRepository.findAll(TestNasiri.class);
+//        for (TestNasiri testNasiri : list) {
+//            System.out.println(TenantContext.getCurrentTenant() + "->after =" + testNasiri.getName());
+//        }
+    }
+
     @GetMapping("getCustomerCount")
-    String customerCount(@NotEmpty(fieldName = "id") String id) throws Exception {
+    public String customerCount(@NotEmpty(fieldName = "id") String id) throws Exception {
         String uuid = RequestContext.getUuid();
         Long userId = RequestContext.getUserId();
 //        System.out.println("==============================================================");

@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Builder
 @CacheableEntity
 public class TestNasiri extends BaseEntity implements Serializable {
-    @Column(columnDefinition = "NVARCHAR2(12)", name = "NAME", nullable = false)
+    @Column(columnDefinition = "NVARCHAR2(12)", nullable = false)
     private String name;
 }
 
