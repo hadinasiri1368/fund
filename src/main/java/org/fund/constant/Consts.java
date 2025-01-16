@@ -12,4 +12,5 @@ public class Consts {
     public static final int JPA_BATCH_SIZE = 50;
     public static final String GREGORIAN_DATE_FORMAT = "yyyy-MM-dd";
     public static final String CACHE_NAME = "findAll";
+    public static final String PERSIAN_DATE_REGEX = "^(1[34]\\d{2})/(0[1-9]|1[0-2])/(0[1-9]|[12]\\d|3[01])$";
 }

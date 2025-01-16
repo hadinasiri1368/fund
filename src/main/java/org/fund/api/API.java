@@ -1,6 +1,7 @@
 package org.fund.api;
 
 import jakarta.validation.Valid;
+import org.fund.common.DateUtils;
 import org.fund.config.cache.CacheService;
 import org.fund.config.dataBase.TenantContext;
 import org.fund.config.request.RequestContext;
@@ -8,12 +9,15 @@ import org.fund.constant.Consts;
 import org.fund.model.TestNasiri;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
+import org.fund.validator.ValidPersianDate;
 import org.fund.validator.ValidateField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -30,7 +34,7 @@ public class API {
     private TestService service;
 
     @GetMapping("checkData")
-    public void checkData(@ValidateField(fieldName = "id" , entityClass = TestNasiri.class) Long id) throws Exception {
+    public void checkData(@ValidPersianDate(fieldName = "date") String id) throws Exception {
         service.checkData();
         List<TestNasiri> list = jpaRepository.findAll(TestNasiri.class);
         for (TestNasiri testNasiri : list) {
