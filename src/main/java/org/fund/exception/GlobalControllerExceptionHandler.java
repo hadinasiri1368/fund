@@ -120,6 +120,9 @@ public class GlobalControllerExceptionHandler {
     }
 
     private Object[] getParams(String message) {
+        if(message.split("&").length <= 1) {
+            return null;
+        }
         return !FundUtils.isNull(message.split("&")[1]) ? message.split("&")[1].split(",") : null;
     }
 

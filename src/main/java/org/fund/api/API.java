@@ -9,6 +9,7 @@ import org.fund.constant.Consts;
 import org.fund.model.TestNasiri;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
+import org.fund.validator.ValidNationalCode;
 import org.fund.validator.ValidPersianDate;
 import org.fund.validator.ValidateField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class API {
     private TestService service;
 
     @GetMapping("checkData")
-    public void checkData(@ValidPersianDate(fieldName = "date") String id) throws Exception {
+    public void checkData(@ValidNationalCode String id) throws Exception {
         service.checkData();
         List<TestNasiri> list = jpaRepository.findAll(TestNasiri.class);
         for (TestNasiri testNasiri : list) {
