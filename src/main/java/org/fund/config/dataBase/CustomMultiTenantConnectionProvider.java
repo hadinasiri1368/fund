@@ -11,12 +11,10 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
-
+@Slf4j
 public class CustomMultiTenantConnectionProvider implements MultiTenantConnectionProvider {
-    private static final Logger log = LoggerFactory.getLogger(CustomMultiTenantConnectionProvider.class);
-
-    private TenantDataSourceManager tenantDataSourceManager;
-    private DataSource dataSource;
+    private final TenantDataSourceManager tenantDataSourceManager;
+    private final DataSource dataSource;
 
     public CustomMultiTenantConnectionProvider(TenantDataSourceManager tenantDataSourceManager,DataSource dataSource) {
         this.tenantDataSourceManager = tenantDataSourceManager;

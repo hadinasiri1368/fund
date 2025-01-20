@@ -40,6 +40,6 @@ public class JpaConfig {
 
     @Bean
     public CustomTenantIdentifierResolver tenantIdentifierResolver() {
-        return new CustomTenantIdentifierResolver();
+        return new CustomTenantIdentifierResolver(tenantDataSourceManager);
     }
 }
