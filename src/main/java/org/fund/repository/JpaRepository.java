@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -37,7 +38,7 @@ public class JpaRepository {
 
     @Transactional
     public <ENTITY> void save(ENTITY entity, Long userId, String uuid) throws Exception {
-        ((BaseEntity) entity).setId(null);
+        setNullToId(entity);
         ((BaseEntity) entity).setInsertedUserId(userId);
         ((BaseEntity) entity).setInsertedDateTime(new Date());
 
@@ -48,7 +49,7 @@ public class JpaRepository {
 
     @Transactional
     public <ENTITY> void update(ENTITY entity, Long userId, String uuid) throws Exception {
-        if (FundUtils.isNull(((BaseEntity) entity).getId()))
+        if (FundUtils.isNull(getId(entity)))
             throw new FundException(GeneralExceptionType.ID_IS_NULL);
         ((BaseEntity) entity).setUpdatedUserId(userId);
         ((BaseEntity) entity).setUpdatedDateTime(new Date());
@@ -263,9 +264,9 @@ public class JpaRepository {
             field.setAccessible(true);
             try {
                 Object value = field.get(entity);
-                logMessage.append("id").append("=").append(((BaseEntity) entity).getId()).append(", ");
+                logMessage.append("id").append("=").append(getId(entity)).append(", ");
                 logMessage.append(field.getName()).append("=").append(value);
-            } catch (IllegalAccessException e) {
+            } catch (Exception e) {
                 logMessage.append(field.getName()).append("=ACCESS_ERROR");
             }
             if (i < fields.length - 1) {
@@ -313,5 +314,15 @@ public class JpaRepository {
     private void clearCache() {
         entityManager.flush();
         entityManager.clear();
+    }
+
+    private <ENTITY> void setNullToId(ENTITY entity) throws Exception {
+        Method m = entity.getClass().getMethod("setId", Long.class);
+        m.invoke(entity, (Long) null);
+    }
+
+    private <ENTITY> Long getId(ENTITY entity) throws Exception {
+        Method m = entity.getClass().getMethod("getId");
+        return (Long) m.invoke(entity);
     }
 }

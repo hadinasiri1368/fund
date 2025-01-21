@@ -7,6 +7,8 @@ import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.model.BaseEntity;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +57,7 @@ public class CacheAspect {
                     } else if ("findOne".equals(methodName)) {
                         Long id = FundUtils.longValue(joinPoint.getArgs()[1]);
                         return cacheService.findAll((Class<?>) entity).stream()
-                                .filter(a -> ((BaseEntity) a).getId().equals(id))
+                                .filter(a -> (getId(entity)).equals(id))
                                 .findFirst()
                                 .orElse(null);
                     } else if ("findAll".equals(methodName)) {
@@ -75,6 +77,15 @@ public class CacheAspect {
             return joinPoint.proceed();
         } finally {
             inCacheService.remove();
+        }
+    }
+
+    private <ENTITY> Long getId(ENTITY entity) {
+        try {
+            Method m = entity.getClass().getMethod("getId");
+            return (Long) m.invoke(entity);
+        } catch (Exception e) {
+            return null;
         }
     }
 }

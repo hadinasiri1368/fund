@@ -13,9 +13,6 @@ import java.util.Date;
 @Setter
 @MappedSuperclass
 public class BaseEntity implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "hibernate_sequence")
-    private Long id;
     @Column(name = "inserted_date_time", updatable = false)
     @JsonIgnore
     private Date insertedDateTime;
