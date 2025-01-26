@@ -2,15 +2,11 @@ package org.fund.config.dataBase;
 
 import lombok.extern.slf4j.Slf4j;
 import org.fund.common.FundUtils;
-import org.fund.filter.TenantFilter;
 import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Map;
+
 @Slf4j
 public class CustomMultiTenantConnectionProvider implements MultiTenantConnectionProvider {
     private final TenantDataSourceManager tenantDataSourceManager;

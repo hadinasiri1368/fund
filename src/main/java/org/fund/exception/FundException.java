@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 public class FundException extends RuntimeException {
     private final HttpStatus status;
-    private final Object[]  params;
+    private final Object[] params;
 
     public FundException(GeneralExceptionType generalExceptionType) {
         super(generalExceptionType.getMessageKey());
@@ -22,6 +22,18 @@ public class FundException extends RuntimeException {
     public FundException(GeneralExceptionType generalExceptionType, Object[] params) {
         super(generalExceptionType.getMessageKey());
         this.status = generalExceptionType.getHttpStatus();
+        this.params = params;
+    }
+
+    public FundException(AuthenticationExceptionType authenticationExceptionType) {
+        super(authenticationExceptionType.getMessageKey());
+        this.status = authenticationExceptionType.getHttpStatus();
+        this.params = null;
+    }
+
+    public FundException(AuthenticationExceptionType authenticationExceptionType, Object[] params) {
+        super(authenticationExceptionType.getMessageKey());
+        this.status = authenticationExceptionType.getHttpStatus();
         this.params = params;
     }
 }
