@@ -623,6 +623,21 @@ ALTER TABLE AHA_USER_ROLE ADD (
 )
 /
 -----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_COMPANY (
+                               ID                      NUMBER(18)              NOT NULL,
+                               SMS_INTO                NVARCHAR2(100)          NOT NULL,
+                               NAME                    NVARCHAR2(500)          NOT NULL,
+                               INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+                               INSERTED_USER_ID        NUMBER(18)              NULL,
+                               UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+                               UPDATED_USER_ID         NUMBER(18)              NULL
+)
+    /
+ALTER TABLE AHA_COMPANY ADD (
+    CONSTRAINT PK_AHA_COMPANY PRIMARY KEY (ID)
+)
+/
+-----------------------------------------------------------------------------------------------------
 ALTER TABLE AHA_FUND_FILE ADD CONSTRAINT FK_AHA_FUND_FILE_AHA_FILE_TYPE FOREIGN KEY (F_FILE_TYPE_ID)
 REFERENCES AHA_FILE_TYPE (ID)
 /

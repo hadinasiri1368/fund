@@ -2,6 +2,7 @@ package org.fund.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@CacheableEntity
 public class Params extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -28,19 +30,19 @@ public class Params extends BaseEntity implements Serializable {
     private Boolean isActive;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_EDITABLE", nullable = false)
     private Boolean isEditable;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_PARAMS_TYPE_ID")
     private ParamsType paramsType;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_FUND_ID")
     private Fund fund;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_DETAIL_LEDGER_ID")
     private DetailLedger detailLedger;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_SUBSIDIARY_LEDGER_ID")
     private SubsidiaryLedger subsidiaryLedger;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_PARAMS_VALUE_TYPE_ID")
     private ParamsValueType paramsValueType;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_GLOBAL", nullable = false)

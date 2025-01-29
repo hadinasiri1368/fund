@@ -6,13 +6,20 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.data.jpa.support.PageableUtils;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
@@ -137,5 +144,61 @@ public class CommonUtils {
         } else {
             throw new IllegalArgumentException("Unsupported SQL operation: " + sql);
         }
+    }
+
+    public static byte[] hexStr2Bytes(String hex) {
+        // Adding one byte to get the right conversion
+        // values starting with "0" can be converted
+        byte[] bArray = new BigInteger("10" + hex, 16).toByteArray();
+
+        // Copy all the REAL bytes, not the "first"
+        byte[] ret = new byte[bArray.length - 1];
+        System.arraycopy(bArray, 1, ret, 0, ret.length);
+        return ret;
+    }
+
+    public static byte[] hmac_sha(String crypto, byte[] keyBytes, byte[] text) {
+        try {
+            Mac hmac;
+            hmac = Mac.getInstance(crypto);
+            SecretKeySpec macKey =
+                    new SecretKeySpec(keyBytes, "RAW");
+            hmac.init(macKey);
+            return hmac.doFinal(text);
+        } catch (GeneralSecurityException gse) {
+            throw new UndeclaredThrowableException(gse);
+        }
+    }
+
+    public static String md5(String s) {
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+//            digest.update(s.getBytes());
+            return byteArrayToHexString(digest.digest(s.getBytes()));
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String byteArrayToHexString(byte[] b) {
+        String result = "";
+        for (int i = 0; i < b.length; i++) {
+            result +=
+                    Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return result;
+    }
+
+    public static String toSHA1(byte[] convertMe) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return byteArrayToHexString(md.digest(convertMe));
     }
 }

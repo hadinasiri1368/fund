@@ -86,6 +86,29 @@ public class JpaRepository {
     }
 
     @Transactional
+    public int nativeExecuteUpdate(String sql, Map<String, Object> param, Long userId, String uuid) {
+        Query query = entityManager.createNativeQuery(sql);
+        if (!FundUtils.isNull(param) && !param.isEmpty()) {
+            for (Map.Entry<String, Object> entry : param.entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        logQueryWithParameters(sql, param, userId, uuid);
+        int returnValue = query.executeUpdate();
+        clearCache();
+        return returnValue;
+    }
+
+    @Transactional
+    public int nativeExecuteUpdate(String sql, Long userId, String uuid) {
+        Query query = entityManager.createNativeQuery(sql);
+        logQueryWithParameters(sql, null, userId, uuid);
+        int returnValue = query.executeUpdate();
+        clearCache();
+        return returnValue;
+    }
+
+    @Transactional
     public int executeUpdate(String sql, Long userId, String uuid) {
         return executeUpdate(sql, null, userId, uuid);
     }

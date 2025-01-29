@@ -34,27 +34,22 @@ public class DateUtils {
 
 
     private static LocalDate toGregorian(int persianYear, int persianMonth, int persianDay) {
-        // ثابت‌های مورد نیاز برای محاسبات
         int[] persianMonthDays = {31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
-        int persianEpoch = 226894; // تعداد روزهای میلادی تا ابتدای تقویم شمسی
+        int persianEpoch = 226894;
         int[] gregorianMonthDays = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-        // محاسبه روز شمسی از ابتدای تقویم شمسی
         int persianDayOfYear = 0;
         for (int i = 0; i < persianMonth - 1; i++) {
             persianDayOfYear += persianMonthDays[i];
         }
         persianDayOfYear += persianDay;
 
-        // بررسی سال کبیسه در تقویم شمسی
         if (isPersianLeapYear(persianYear) && persianMonth == 12) {
             persianMonthDays[11] = 30;
         }
 
-        // تبدیل تاریخ شمسی به تعداد روزهای میلادی
         int totalPersianDays = (persianYear - 1) * 365 + (persianYear - 1) / 4 + persianDayOfYear + persianEpoch;
 
-        // تبدیل تعداد روزها به تاریخ میلادی
         int gregorianYear = 1;
         while (totalPersianDays > 365) {
             if (isGregorianLeapYear(gregorianYear)) {
@@ -70,7 +65,6 @@ public class DateUtils {
             }
         }
 
-        // محاسبه ماه و روز میلادی
         int gregorianMonth = 1;
         for (int i = 0; i < 12; i++) {
             int daysInMonth = gregorianMonthDays[i];
@@ -87,17 +81,14 @@ public class DateUtils {
 
         int gregorianDay = totalPersianDays;
 
-        // بازگشت تاریخ میلادی
         return LocalDate.of(gregorianYear, gregorianMonth, gregorianDay);
     }
 
-    // بررسی سال کبیسه در تقویم شمسی
     private static boolean isPersianLeapYear(int year) {
         int mod = year % 33;
         return mod == 1 || mod == 5 || mod == 9 || mod == 13 || mod == 17 || mod == 22 || mod == 26 || mod == 30;
     }
 
-    // بررسی سال کبیسه در تقویم میلادی
     private static boolean isGregorianLeapYear(int year) {
         return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
     }
@@ -109,5 +100,55 @@ public class DateUtils {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private static int[] toJalali(int gy, int gm, int gd) {
+        int[] g_d_m = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        int[] j_d_m = {0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29};
+
+        if (isGregorianLeapYear(gy)) {
+            g_d_m[2] = 29;
+        }
+
+        int gy2 = (gm > 2) ? (gy + 1) : gy;
+        int days = 355666 + (365 * gy) + ((gy2 + 3) / 4) - ((gy2 + 99) / 100) + ((gy2 + 399) / 400);
+
+        for (int i = 1; i < gm; ++i) {
+            days += g_d_m[i];
+        }
+        days += gd;
+
+        int jy = -1595 + (33 * (days / 12053));
+        days %= 12053;
+
+        jy += 4 * (days / 1461);
+        days %= 1461;
+
+        if (days > 365) {
+            jy += (days - 1) / 365;
+            days = (days - 1) % 365;
+        }
+
+        int jm = 0, jd = 0;
+        for (int i = 1; i <= 12; i++) {
+            if (days < j_d_m[i]) {
+                jm = i;
+                jd = days + 1;
+                break;
+            }
+            days -= j_d_m[i];
+        }
+
+        return new int[]{jy, jm, jd};
+    }
+
+    public static String getTodayJalali() {
+        LocalDate gregorianDate = LocalDate.now();
+        int[] jalaliDate = toJalali(
+                gregorianDate.getYear(),
+                gregorianDate.getMonthValue(),
+                gregorianDate.getDayOfMonth()
+        );
+        return String.format("%04d/%02d/%02d", jalaliDate[0], jalaliDate[1], jalaliDate[2]);
     }
 }

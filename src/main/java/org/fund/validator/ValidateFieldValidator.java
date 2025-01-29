@@ -39,7 +39,7 @@ public class ValidateFieldValidator implements ConstraintValidator<ValidateField
                 Field field = getFieldFromClassHierarchy(entity.getClass(), fieldName);
                 field.setAccessible(true);
                 Object fieldValue = field.get(entity);
-                if (fieldValue.equals(value)) {
+                if (!FundUtils.isNull(fieldValue) && fieldValue.toString().equals(value.toString())) {
                     return true;
                 }
             }

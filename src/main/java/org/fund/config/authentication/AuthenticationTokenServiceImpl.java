@@ -1,5 +1,6 @@
 package org.fund.config.authentication;
 
+import org.fund.common.FundUtils;
 import org.fund.common.JwtUtil;
 import org.fund.config.dataBase.TenantContext;
 import org.fund.exception.AuthenticationExceptionType;
@@ -18,12 +19,12 @@ public class AuthenticationTokenServiceImpl implements TokenService<String, Stri
     }
 
     @Override
-    public String generateToken(String id, Users user) throws Exception {
-        if (redisTemplate.hasKey(id))
-            return redisTemplate.opsForValue().get(id).toString();
+    public String generateToken(Users user) throws Exception {
+        if (redisTemplate.hasKey(getId(TenantContext.getCurrentTenant() + user.getId())))
+            return redisTemplate.opsForValue().get(getId(TenantContext.getCurrentTenant() + user.getId())).toString();
         String token = JwtUtil.createToken(user);
-        redisTemplate.opsForValue().set(id, token);
-        redisTemplate.opsForHash().put(TenantContext.getCurrentTenant() + key, token, id);
+        redisTemplate.opsForValue().set(getId(TenantContext.getCurrentTenant() + user.getId()), token);
+        redisTemplate.opsForHash().put(TenantContext.getCurrentTenant() + key, token, user.getId());
         return token;
     }
 
@@ -34,10 +35,10 @@ public class AuthenticationTokenServiceImpl implements TokenService<String, Stri
 
     @Override
     public void removeTokenById(String id) {
-        if (!redisTemplate.hasKey(id))
+        if (!redisTemplate.hasKey(getId(id)))
             throw new FundException(AuthenticationExceptionType.USER_HAS_NOT_TOKEN);
-        String token = redisTemplate.opsForValue().get(id).toString();
-        redisTemplate.delete(id);
+        String token = redisTemplate.opsForValue().get(getId(id)).toString();
+        redisTemplate.delete(getId(id));
         redisTemplate.opsForHash().delete(TenantContext.getCurrentTenant() + key, token);
     }
 
@@ -46,5 +47,9 @@ public class AuthenticationTokenServiceImpl implements TokenService<String, Stri
         if (!exists(value) || !JwtUtil.validateToken(value, id))
             throw new FundException(AuthenticationExceptionType.TOKEN_IS_NULL);
         return JwtUtil.getTokenData(value);
+    }
+
+    private String getId(String id) {
+        return id + key;
     }
 }

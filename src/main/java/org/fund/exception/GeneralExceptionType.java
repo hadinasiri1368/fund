@@ -10,7 +10,9 @@ public enum GeneralExceptionType {
     ID_IS_NULL(HttpStatus.UNPROCESSABLE_ENTITY, "general_exception.id_is_null"),
     ENTITY_CANNOT_BE_NULL(HttpStatus.UNPROCESSABLE_ENTITY, "general_exception.entity_cannot_be_null"),
     DATE_CANNOT_BE_NULL(HttpStatus.BAD_REQUEST, "general_exception.date_cannot_be_null"),
-    DATE_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "validation.PersianDateNotValid.message")
+    DATE_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "validation.PersianDateNotValid.message"),
+    PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE(HttpStatus.INTERNAL_SERVER_ERROR, "general_exception.param_type_is_not_equal_output_type"),
+    UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "general_exception.unknown_error")
     ;
     private final HttpStatus httpStatus;
     private final String messageKey;

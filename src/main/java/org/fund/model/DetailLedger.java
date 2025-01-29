@@ -2,6 +2,8 @@ package org.fund.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.fund.config.cache.CacheableEntity;
+
 import java.io.Serializable;
 
 @Table(name = "AHA_DETAIL_LEDGER")
@@ -11,6 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@CacheableEntity
 public class DetailLedger extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

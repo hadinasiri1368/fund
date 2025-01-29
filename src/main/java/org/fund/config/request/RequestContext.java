@@ -1,5 +1,6 @@
 package org.fund.config.request;
 
+import org.fund.common.FundUtils;
 import org.fund.config.dataBase.TenantContext;
 import org.fund.model.Users;
 
@@ -25,19 +26,19 @@ public class RequestContext {
     }
 
     public static Users getUser() {
-        return user.get();
+        return FundUtils.isNull(user.get()) ? null : user.get();
     }
 
     public static Long getUserId() {
-        return getUser().getId();
+        return FundUtils.isNull(getUser()) ? null : getUser().getId();
     }
 
     public static String getToken() {
-        return token.get();
+        return FundUtils.isNull(token.get()) ? null : token.get();
     }
 
     public static String getTokenId() {
-        return TenantContext.getCurrentTenant() + "_" + getUserId();
+        return FundUtils.isNull(getUserId()) ? null : TenantContext.getCurrentTenant() + "_" + getUserId();
     }
 
     public static void clear() {

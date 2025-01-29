@@ -236,6 +236,21 @@ INSERT INTO AHA_PARAMS_HISTORY
 select ROWNUM,TBL.* from  (select ID,VALUE,'0000/00/00' EFFECTIVE_DATE,NULL INSERTED_DATE_TIME,NULL INSERTED_USER_ID,NULL UPDATED_DATE_TIME,NULL UPDATED_USER_ID from   AHA_PARAMS ORDER BY ID) TBL
     /
 
+update aha_params set F_PARAMS_VALUE_TYPE_ID=2 where CODE='WEB_SERVICE_API_WSDL_NEWURL'
+    /
+update aha_params set VALUE=null where code='EFFECTIVE_DATE'
+    /
+update aha_params set F_PARAMS_VALUE_TYPE_ID=1 where code='MAX_CHARITY_PROFIT_PERCENT'
+    /
+update  aha_params set F_PARAMS_VALUE_TYPE_ID=6  where F_PARAMS_VALUE_TYPE_ID=5  and DATA_QUERY is null
+    /
+update  aha_params
+set F_PARAMS_VALUE_TYPE_ID=3
+where F_PARAMS_VALUE_TYPE_ID=2
+  and value is not null
+  and F_PARAMS_TYPE_ID in (4,6)
+  and (value='0' or value='1')
+/
 ----------------------------------------------------------------------------------------------------
 INSERT INTO  AHA_PARAMS
 select (select MAX(ID) from  AHA_PARAMS)+ROWNUM ID,TBL.* from  (
@@ -551,23 +566,33 @@ Insert into AHA_PERMISSION
 Values
     (36, 'نمایش فایل ها', '/basicData/file', 1)
     /
-UPDATE AHA_PERMISSION SET URL = '/v1' || URL
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (37, 'انواع ورود دوعاملی', '/basicData/getOtpStrategies', 0)
+    /
+UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (37, 'ورود', '/login/**', 0)
+    (38, 'ورود', '/login/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (38, 'swagger', '/v3/api-docs/**', 0)
+    (39, 'swagger', '/v3/api-docs/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (39, 'swagger', '/swagger-ui.html', 0)
+    (40, 'swagger', '/swagger-ui.html', 0)
     /
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (41, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
+/
 
 ----------------------------------------------------------------------------------------------------
 Insert into AHA_ROLE
@@ -620,6 +645,35 @@ select ROWNUM ID, TBL.* from  (
                                     AND USERNAME NOT IN ('vn','rh1','rayan')) TBL
     /
 
+INSERT INTO AHA_PERSON
+SELECT (select max(id) from  AHA_PERSON)+ROWNUM ID, TBL.*
+FROM (SELECT ao.username FIRST_NAME,
+             ao.username LAST_NAME,
+             NULL     PARENT,
+             NULL     BIRTH_DATE,
+             NULL     ISSUING_CITY,
+             NULL     BIRTH_CERTIFICATION_NUMBER,
+             NULL     BIRTH_CERTIFICATION_ID,
+             NULL     PHONE,
+             NULL     NATIONAL_CODE,
+             NULL     FAX,
+             ao.MOBILE_NUMBER,
+             NULL     POSTAL_CODE,
+             NULL     ADDRESS,
+             ao.EMAIL,
+             0        IS_COMPANY,
+             NULL     COMPANY_NAME,
+             NULL     REGISTERATION_NUMBER,
+             ao.APPUSER_OTP_ID,
+             NULL     INSERTED_DATE_TIME,
+             NULL     INSERTED_USER_ID,
+             NULL     UPDATED_DATE_TIME,
+             NULL     UPDATED_USER_ID
+      FROM appuser_otp  ao
+               INNER JOIN appuser a ON a.APPUSER_ID = ao.APPUSER_ID
+      WHERE ao.otp_id > 0) TBL
+    /
+
 ----------------------------------------------------------------------------------------------------
 Insert into AHA_USER_GROUP
 (ID, NAME)
@@ -648,15 +702,40 @@ Values
     /
 
 ----------------------------------------------------------------------------------------------------
+insert into AHA_VERIFICATION_CODE
+select OTP_ID,SERIAL,SEED,COUNTER,ENABLED,null,null,null,null from otp
+where OTP_ID>0
+    /
+----------------------------------------------------------------------------------------------------
 INSERT INTO aha_users
 select ROWNUM ID,TBL.* from  (
                                  select USERNAME,PASSWORD,IS_ACTIVE,0 IS_ADMIN
                                       ,(select MAX(ID) from  AHA_PERSON WHERE REF_ID=AU.APPUSER_ID) F_PERSON_ID
                                       ,OTP_ID
                                       ,NULL INSERTED_DATE_TIME,NULL INSERTED_USER_ID ,NULL UPDATED_DATE_TIME , NULL UPDATED_USER_ID
-                                 from  appuser AU) TBL WHERE F_PERSON_ID IS NOT NULL
+                                 from  appuser  AU where not exists(select 1 from  appuser_otp ao where AU.username = ao.username)) TBL WHERE F_PERSON_ID IS NOT NULL
     /
 
+INSERT INTO aha_users
+
+SELECT (select max(id) from  aha_users)+ROWNUM ID, TBL.*
+FROM (SELECT ao.USERNAME,
+             a.PASSWORD,
+             IS_ACTIVE,
+             0                                  IS_ADMIN,
+             (SELECT MAX (ID)
+              FROM AHA_PERSON
+              WHERE REF_ID = ao.APPUSER_OTP_ID)    F_PERSON_ID,
+             ao.OTP_ID,
+             NULL                               INSERTED_DATE_TIME,
+             NULL                               INSERTED_USER_ID,
+             NULL                               UPDATED_DATE_TIME,
+             NULL                               UPDATED_USER_ID
+      FROM appuser_otp  ao
+               INNER JOIN appuser a ON a.APPUSER_ID = ao.APPUSER_ID
+      WHERE ao.otp_id > 0) TBL
+WHERE F_PERSON_ID IS NOT NULL
+    /
 
 INSERT INTO AHA_USER_GROUP_DETAIL
 select ROWNUM ID,TBL.* from  (
@@ -695,4 +774,8 @@ Values
     (6, 1, 6)
     /
 
-----------------------------------------------------------------------------------------------------  
+----------------------------------------------------------------------------------------------------
+INSERT INTO AHA_COMPANY
+select 1 id ,tbl.*,null,null,null,null  from  (select SMS_NUMBER,company_name from  company where fund_id=1) tbl
+/
+----------------------------------------------------------------------------------------------------

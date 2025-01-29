@@ -2,6 +2,7 @@ package org.fund.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;
 import java.sql.Blob;
@@ -13,6 +14,7 @@ import java.sql.Blob;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@CacheableEntity
 public class Bank extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

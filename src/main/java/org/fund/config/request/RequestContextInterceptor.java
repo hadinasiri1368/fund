@@ -25,12 +25,12 @@ public class RequestContextInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String uuid = request.getAttribute(Consts.HEADER_UUID_PARAM_NAME).toString();
+        RequestContext.setUuid(uuid);
         if (!isSensitive(request))
             return true;
-        String uuid = request.getAttribute(Consts.HEADER_UUID_PARAM_NAME).toString();
         String token = FundUtils.getToken(request);
         Users user = JwtUtil.getTokenData(token);
-        RequestContext.setUuid(uuid);
         RequestContext.setUser(user);
         RequestContext.setToken(token);
         return true;
@@ -42,7 +42,6 @@ public class RequestContextInterceptor implements HandlerInterceptor {
     }
 
     private boolean isSensitive(HttpServletRequest request) {
-        List<String> excludePathPatterns = new ArrayList<>();
         List<Permission> permissionList = repository.findAll(Permission.class)
                 .stream().filter(a -> !a.getIsSensitive()).toList();
         for (Permission permission : permissionList) {

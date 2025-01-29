@@ -22,7 +22,7 @@ public class Users extends BaseEntity implements Serializable {
     private Boolean isActive;
     @Column(name = "IS_ADMIN", columnDefinition = "NUMBER(1)", nullable = false)
     private Boolean isAdmin;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_PERSON_ID")
     private Person person;
     @Column(name = "F_VERIFICATION_CODE_ID", columnDefinition = "NUMBER(18)")

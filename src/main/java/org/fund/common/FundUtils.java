@@ -1,17 +1,26 @@
 package org.fund.common;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.fund.constant.Consts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @Component
 public class FundUtils extends CommonUtils {
     private static MessageSource messageSource;
+    private static final Pattern mobile_pattern = Pattern.compile(Consts.MOBILE_REGEX);
+    private static final Pattern email_pattern = Pattern.compile(Consts.EMAIL_REGEX);
 
     @Autowired
     public void setMessageSource(MessageSource messageSource) {
@@ -30,10 +39,6 @@ public class FundUtils extends CommonUtils {
         if (isNull(request.getHeader("Authorization")))
             return null;
         return request.getHeader("Authorization").replaceAll("Bearer ", "");
-    }
-
-    public static Long getUserId(String token) {
-        return 123456L;
     }
 
     public static boolean checkNationalCode(String nationalCode) {
@@ -60,6 +65,49 @@ public class FundUtils extends CommonUtils {
         } catch (Exception e) {
             return false;
         }
+    }
 
+    public static Double doubleValue(Object number) {
+        if (number instanceof Number)
+            return ((Number) number).doubleValue();
+        else
+            try {
+                return Double.valueOf(number.toString().trim());
+            } catch (NumberFormatException e) {
+                return null;
+            }
+    }
+
+    public static Float floatValue(Object number) {
+        if (number instanceof Number)
+            return ((Number) number).floatValue();
+        else
+            try {
+                return Float.valueOf(number.toString().trim());
+            } catch (NumberFormatException e) {
+                return null;
+            }
+    }
+
+    public static boolean booleanValue(Object input) {
+        if (isNull(input))
+            return false;
+        String value = input.toString().trim();
+        return value.equalsIgnoreCase("true") ||
+                value.equals("1") ||
+                value.equalsIgnoreCase("yes") ||
+                value.equalsIgnoreCase("on");
+    }
+
+    public static boolean isMobileValid(String mobile) {
+        return mobile_pattern.matcher(mobile).matches();
+    }
+
+    public static boolean isEmailValid(String email) {
+        return email_pattern.matcher(email).matches();
+    }
+
+    public static String encodePassword(String password) {
+        return toSHA1(md5(password).getBytes());
     }
 }
