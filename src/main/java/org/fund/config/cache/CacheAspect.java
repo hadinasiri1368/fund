@@ -57,7 +57,7 @@ public class CacheAspect {
                     } else if ("findOne".equals(methodName)) {
                         Long id = FundUtils.longValue(joinPoint.getArgs()[1]);
                         return cacheService.findAll((Class<?>) entity).stream()
-                                .filter(a -> (getId(entity)).equals(id))
+                                .filter(a -> (getId(a)).equals(id))
                                 .findFirst()
                                 .orElse(null);
                     } else if ("findAll".equals(methodName)) {

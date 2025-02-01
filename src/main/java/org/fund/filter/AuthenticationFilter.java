@@ -60,6 +60,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         try {
+            if (request.getHeader(Consts.HEADER_TENANT_PARAM_NAME) == null) {
+                throw new FundException(GeneralExceptionType.SCHEMAID_ID_IS_NULL);
+            }
             String token = FundUtils.getToken(request);
             if (FundUtils.isNull(token))
                 throw new FundException(AuthenticationExceptionType.TOKEN_IS_NULL);
@@ -98,6 +101,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         try {
             if (request.getMethod().equals("OPTIONS"))
                 return true;
+            if (request.getHeader(Consts.HEADER_TENANT_PARAM_NAME) == null)
+                return false;
             checkTenant(request);
             List<Permission> permissionList = repository.findAll(Permission.class)
                     .stream().filter(a -> !a.getIsSensitive()).toList();

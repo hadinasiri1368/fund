@@ -45,7 +45,7 @@ public class OtpPhysicalImpl extends OtpAbstract {
             repository.update(verificationCode, RequestContext.getUserId(), RequestContext.getUuid());
         } catch (Exception e) {
             log.info("OtpPhysicalImpl verifyAppuserOtp error : {}", e.getMessage());
-            throw new FundException(GeneralExceptionType.UNKNOWN_ERROR);
+            throw new FundException(AuthenticationExceptionType.VERIFY_CODE_IS_NOT_VALID);
         }
 
 

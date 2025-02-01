@@ -11,6 +11,7 @@ import org.fund.common.FundUtils;
 import org.fund.common.TimeUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.constant.TimeFormat;
 import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
@@ -65,7 +66,7 @@ public class OtpSmsImpl extends OtpAbstract {
     public void send(String identityCode, String message, String from, String to) {
         Users user = getUser(identityCode);
         try {
-            String requestTime = TimeUtils.getNowTime();
+            String requestTime = TimeUtils.getNowTime(TimeFormat.HOUR_MINUTE);
             String requestDate = DateUtils.getTodayJalali();
             String sql = "INSERT INTO sms" +
                     "        (sms_id, from_number, TO_NUMBER, content, request_date, request_time, send_status,sms_type)" +

@@ -89,7 +89,6 @@ public class AuthenticationService {
             throw new FundException(AuthenticationExceptionType.USERNAME_PASSWORD_INVALID);
         }
         if (!profileService.isDebugMode()) {
-            //            DigestUtils.shaHex(DigestUtils.md5Hex(password))
             boolean validated = FundUtils.encodePassword(password)
                     .equalsIgnoreCase(user.get().getPassword());
             if (!validated) {
