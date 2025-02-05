@@ -46,11 +46,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final TenantDataSourceManager tenantService;
+    private final String pathsToBypass;
 
-    public AuthenticationFilter(JpaRepository repository, TokenService tokenService, TenantDataSourceManager tenantService) {
+    public AuthenticationFilter(JpaRepository repository, TokenService tokenService, TenantDataSourceManager tenantService,String pathsToBypass) {
         this.repository = repository;
         this.tokenService = tokenService;
         this.tenantService = tenantService;
+        this.pathsToBypass = pathsToBypass;
     }
 
     @Override
@@ -101,6 +103,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         try {
             if (request.getMethod().equals("OPTIONS"))
                 return true;
+            String[] paths = pathsToBypass.split(",");
+            for (String path : paths) {
+                if (pathMatcher.match(path.trim(), request.getRequestURI())) {
+                    return true;
+                }
+            }
             if (request.getHeader(Consts.HEADER_TENANT_PARAM_NAME) == null)
                 return false;
             checkTenant(request);

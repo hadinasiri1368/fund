@@ -45,3 +45,6 @@ verificationCode:
   customer:
     expiration-time: 120
     attempts-number: 3
+
+authentication:
+  paths-to-bypass: /v3/api-docs/**,/swagger-ui/**,/swagger-ui.html/**,/favicon.ico

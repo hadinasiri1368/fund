@@ -4,6 +4,7 @@ import org.fund.config.dataBase.TenantDataSourceManager;
 import org.fund.filter.AuthenticationFilter;
 import org.fund.repository.JpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Value("${authentication.paths-to-bypass}")
+    private String pathsToBypass;
     private final Logout logoutHandler;
     private final JpaRepository repository;
     private final TokenService tokenService;
@@ -37,7 +40,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .addFilterBefore(new AuthenticationFilter(repository, tokenService, tenantService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new AuthenticationFilter(repository, tokenService, tenantService, pathsToBypass), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e -> e.accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpStatus.FORBIDDEN.value())).authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf().disable()
