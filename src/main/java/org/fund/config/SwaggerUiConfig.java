@@ -5,6 +5,8 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.apache.tomcat.util.bcel.classfile.Constant;
+import org.fund.constant.Consts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,11 +32,11 @@ public class SwaggerUiConfig implements WebMvcConfigurer {
                         .title("Financial API")
                         .version("1.0")
                         .description("API documentation with global tenant header"))
-                .addSecurityItem(new SecurityRequirement().addList("X-TenantId"))
+                .addSecurityItem(new SecurityRequirement().addList(Consts.HEADER_TENANT_PARAM_NAME))
                 .components(new io.swagger.v3.oas.models.Components()
-                        .addSecuritySchemes("X-TenantId",
+                        .addSecuritySchemes(Consts.HEADER_TENANT_PARAM_NAME,
                                 new SecurityScheme()
-                                        .name("X-TenantId")
+                                        .name(Consts.HEADER_TENANT_PARAM_NAME)
                                         .type(SecurityScheme.Type.APIKEY)
                                         .in(SecurityScheme.In.HEADER)));
     }
