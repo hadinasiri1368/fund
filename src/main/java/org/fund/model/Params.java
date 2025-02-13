@@ -15,6 +15,21 @@ import java.io.Serializable;
 @Builder
 @CacheableEntity
 public class Params extends BaseEntity implements Serializable {
+    public Params(Params params){
+        this.setId(params.getId());
+        this.setName(params.getName());
+        this.setValue(params.getValue());
+        this.setDataQuery(params.getDataQuery());
+        this.setIsActive(params.getIsActive());
+        this.setIsEditable(params.getIsEditable());
+        this.setParamsType(params.getParamsType());
+        this.setFund(params.getFund());
+        this.setDetailLedger(params.getDetailLedger());
+        this.setSubsidiaryLedger(params.getSubsidiaryLedger());
+        this.setParamsValueType(params.getParamsValueType());
+        this.setIsGlobal(params.getIsGlobal());
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -25,7 +40,7 @@ public class Params extends BaseEntity implements Serializable {
     @Column(columnDefinition = "VARCHAR2(400)", name = "VALUE", nullable = false)
     private String value;
     @Column(columnDefinition = "VARCHAR2(400)", name = "DATA_QUERY", nullable = false)
-    private String DATA_QUERY;
+    private String dataQuery;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_ACTIVE", nullable = false)
     private Boolean isActive;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_EDITABLE", nullable = false)

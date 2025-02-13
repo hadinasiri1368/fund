@@ -1,16 +1,15 @@
 package org.fund.authentication;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.fund.authentication.otp.constant.OtpStrategyType;
 import org.fund.authentication.otp.OtpVisitor;
 import org.fund.authentication.otp.dto.OtpRequestDto;
 import org.fund.common.FundUtils;
 import org.fund.config.authentication.TokenService;
-import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
 import org.fund.model.Users;
+import org.fund.params.ParamAbstract;
 import org.fund.params.ParamService;
 import org.fund.repository.JpaRepository;
 import org.fund.service.ProfileService;

@@ -26,4 +26,9 @@ public class Fund extends BaseEntity implements Serializable {
     private Boolean isActive;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_ETF", nullable = false)
     private Boolean isETF;
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.id.equals(((Fund) obj).id);
+    }
 }

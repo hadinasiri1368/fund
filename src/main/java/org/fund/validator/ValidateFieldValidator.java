@@ -29,9 +29,7 @@ public class ValidateFieldValidator implements ConstraintValidator<ValidateField
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         boolean valid = true;
         if (FundUtils.isNull(value)) {
-            context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(annotation.message() + "&" + annotation.fieldName()).addConstraintViolation();
-            return false;
+            return true;
         }
         List<?> list = jpaRepository.findAll(annotation.entityClass());
         try {

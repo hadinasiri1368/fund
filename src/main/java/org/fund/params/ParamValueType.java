@@ -3,7 +3,7 @@ package org.fund.params;
 import java.util.Arrays;
 import java.util.Objects;
 
-public enum ParamsValueType {
+public enum ParamValueType {
     NUMBER(1, "NUMBER"),
     STRING(2, "STRING"),
     BOOLEAN(3, "BOOLEAN"),
@@ -22,12 +22,12 @@ public enum ParamsValueType {
         return title;
     }
 
-    ParamsValueType(Integer id, String title) {
+    ParamValueType(Integer id, String title) {
         this.id = id;
         this.title = title;
     }
 
-    public static ParamsValueType getItemById(Integer id) {
+    public static ParamValueType getItemById(Integer id) {
         return Arrays.stream(values())
                 .filter(item -> Objects.equals(item.getId(), id))
                 .findFirst()

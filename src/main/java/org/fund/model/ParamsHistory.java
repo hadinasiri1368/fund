@@ -18,7 +18,7 @@ public class ParamsHistory extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_PARAMS_ID")
     private Params params;
     @Column(columnDefinition = "VARCHAR2(400)", name = "VALUE", nullable = false)

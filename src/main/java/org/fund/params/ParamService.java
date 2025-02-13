@@ -1,64 +1,117 @@
 package org.fund.params;
 
 import org.fund.common.FundUtils;
-import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
+import org.fund.model.Fund;
 import org.fund.model.Params;
-import org.fund.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ParamService {
-    private final JpaRepository repository;
+    private final ParamVisitor paramVisitor;
 
-    public ParamService(JpaRepository repository) {
-        this.repository = repository;
+    public ParamService(ParamVisitor paramVisitor) {
+        this.paramVisitor = paramVisitor;
     }
 
-    public String getStringValue(String paramCode) {
-        Params param = getParams(paramCode, ParamsValueType.STRING);
+    public void insert(ParamDto param, Long userId, String uuid) throws Exception {
+        paramVisitor.insert(param.toParams(), userId, uuid);
+    }
+
+    public void delete(Long paramId, Long userId, String uuid) throws Exception {
+        paramVisitor.delete(paramId, userId, uuid);
+    }
+
+    public void setValue(Fund fund, String code, String value, Long userId, String uuid) throws Exception {
+        Params param = paramVisitor.getParam(fund, code);
         if (FundUtils.isNull(param))
-            return null;
-        return param.getValue();
+            throw new FundException(GeneralExceptionType.PARAM_NOT_FOUND, new Object[]{code});
+        param.setValue(value);
+        paramVisitor.update(param, userId, uuid);
+    }
+
+    public String getStringValue(Fund fund, String paramCode) {
+        return paramVisitor.getStringValue(fund, paramCode);
+    }
+
+    public Long getLongValue(Fund fund, String paramCode) {
+        return paramVisitor.getLongValue(fund, paramCode);
+    }
+
+    public Double getDoubleValue(Fund fund, String paramCode) {
+        return paramVisitor.getDoubleValue(fund, paramCode);
+    }
+
+    public Float getFloatValue(Fund fund, String paramCode) {
+        return paramVisitor.getFloatValue(fund, paramCode);
+    }
+
+    public Boolean getBooleanValue(Fund fund, String paramCode) {
+        return paramVisitor.getBooleanValue(fund, paramCode);
+    }
+
+
+    public String getStringValue(String paramCode) {
+        return paramVisitor.getStringValue(paramCode);
     }
 
     public Long getLongValue(String paramCode) {
-        Params param = getParams(paramCode, ParamsValueType.NUMBER);
-        if (FundUtils.isNull(param))
-            return null;
-        return FundUtils.longValue(param.getValue());
+        return paramVisitor.getLongValue(paramCode);
     }
 
     public Double getDoubleValue(String paramCode) {
-        Params param = getParams(paramCode, ParamsValueType.NUMBER);
-        if (FundUtils.isNull(param))
-            return null;
-        return FundUtils.doubleValue(param.getValue());
+        return paramVisitor.getDoubleValue(paramCode);
     }
 
     public Float getFloatValue(String paramCode) {
-        Params param = getParams(paramCode, ParamsValueType.NUMBER);
-        if (FundUtils.isNull(param))
-            return null;
-        return FundUtils.floatValue(param.getValue());
+        return paramVisitor.getFloatValue(paramCode);
     }
 
     public Boolean getBooleanValue(String paramCode) {
-        Params param = getParams(paramCode, ParamsValueType.BOOLEAN);
-        if (FundUtils.isNull(param))
-            return null;
-        return FundUtils.booleanValue(param.getValue());
+        return paramVisitor.getBooleanValue(paramCode);
     }
 
-    private Params getParams(String paramCode, ParamsValueType paramsValueType) {
-        Params param = repository.findAll(Params.class).stream()
-                .filter(p -> p.getCode().equals(paramCode))
-                .findFirst()
-                .orElse(null);
-        if (!FundUtils.isNull(param) && !param.getParamsValueType().getName().equals(paramsValueType.getTitle()))
-            throw new FundException(GeneralExceptionType.PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE, new Object[]{param.getParamsValueType().getName()});
-        return param;
+
+    public String getStringValue(String paramCode, String effectiveDate) {
+        return paramVisitor.getStringValue(paramCode, effectiveDate);
+    }
+
+    public Long getLongValue(String paramCode, String effectiveDate) {
+        return paramVisitor.getLongValue(paramCode, effectiveDate);
+    }
+
+    public Double getDoubleValue(String paramCode, String effectiveDate) {
+        return paramVisitor.getDoubleValue(paramCode, effectiveDate);
+    }
+
+    public Float getFloatValue(String paramCode, String effectiveDate) {
+        return paramVisitor.getFloatValue(paramCode, effectiveDate);
+    }
+
+    public Boolean getBooleanValue(String paramCode, String effectiveDate) {
+        return paramVisitor.getBooleanValue(paramCode, effectiveDate);
+    }
+
+
+    public String getStringValue(Fund fund, String paramCode, String effectiveDate) {
+        return paramVisitor.getStringValue(fund, paramCode, effectiveDate);
+    }
+
+    public Long getLongValue(Fund fund, String paramCode, String effectiveDate) {
+        return paramVisitor.getLongValue(fund, paramCode, effectiveDate);
+    }
+
+    public Double getDoubleValue(Fund fund, String paramCode, String effectiveDate) {
+        return paramVisitor.getDoubleValue(fund, paramCode, effectiveDate);
+    }
+
+    public Float getFloatValue(Fund fund, String paramCode, String effectiveDate) {
+        return paramVisitor.getFloatValue(fund, paramCode, effectiveDate);
+    }
+
+    public Boolean getBooleanValue(Fund fund, String paramCode, String effectiveDate) {
+        return paramVisitor.getBooleanValue(fund, paramCode, effectiveDate);
     }
 
 
