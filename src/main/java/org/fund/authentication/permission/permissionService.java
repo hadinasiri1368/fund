@@ -1,20 +1,24 @@
 package org.fund.authentication.permission;
 
-import jakarta.persistence.Query;
-import org.apache.catalina.User;
+import org.fund.authentication.permission.role.RolePermissionDto;
+import org.fund.authentication.permission.user.UserPermissionDto;
 import org.fund.common.FundUtils;
+import org.fund.config.dataBase.TenantContext;
 import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
-import org.fund.exception.GeneralExceptionType;
-import org.fund.model.*;
+import org.fund.model.Permission;
+import org.fund.model.RolePermission;
+import org.fund.model.UserPermission;
+import org.fund.model.Users;
 import org.fund.repository.JpaRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
 
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,7 +28,7 @@ public class PermissionService {
     private String pathsToBypass;
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final JpaRepository repository;
-    private List<Object[]> ListAllPermissions = null;
+    private Map<String, List<Object[]>> ListAllPermissions = null;
 
     public PermissionService(final JpaRepository repository) {
         this.repository = repository;
@@ -89,8 +93,9 @@ public class PermissionService {
     }
 
     private List<Object[]> getAllPermission() {
-        if (!FundUtils.isNull(this.ListAllPermissions))
-            return this.ListAllPermissions;
+        List<Object[]> list = this.ListAllPermissions.get(TenantContext.getCurrentTenant());
+        if (!FundUtils.isNull(list))
+            return list;
         String hql = "select p,up.user.id userId from userPermission up \n" +
                 "    inner join permission p on p.id=up.permission.id \n" +
                 "union\n" +
@@ -103,11 +108,44 @@ public class PermissionService {
                 "    inner join userGroupRole ugr on ugr.userGroup.id=ugd.userGroup.id\n" +
                 "    inner join rolePermission rp on rp.role.id=ugr.role.id\n" +
                 "    inner join permission p on p.id=rp.permission.id\n";
-        this.ListAllPermissions = repository.listByQuery(hql, null);
-        return this.ListAllPermissions;
+        list = repository.listByQuery(hql, null);
+        this.ListAllPermissions.put(TenantContext.getCurrentTenant(), list);
+        return list;
     }
 
     public void resetPermissionCache() {
-        this.ListAllPermissions = null;
+        this.ListAllPermissions.remove(TenantContext.getCurrentTenant());
+    }
+
+    @Transactional
+    public void assignPermissionToRole(List<RolePermissionDto> rolePermissionDtos, Long userId, String uuid) throws Exception {
+        List<RolePermission> list;
+        for (RolePermissionDto rolePermissionDto : rolePermissionDtos) {
+            list = repository.findAll(RolePermission.class).stream()
+                    .filter(a -> a.getRole().getId().equals(rolePermissionDto.getRoleId()))
+                    .toList();
+            repository.batchRemove(list, userId, uuid);
+            list = new ArrayList<>();
+            for (Permission permission : rolePermissionDto.toPermissions()) {
+                list.add(new RolePermission(null, rolePermissionDto.toRole(), permission));
+            }
+            repository.batchInsert(list, userId, uuid);
+        }
+    }
+
+    @Transactional
+    public void assignPermissionToUser(List<UserPermissionDto> userPermissionDtos, Long userId, String uuid) throws Exception {
+        List<UserPermission> list;
+        for (UserPermissionDto userPermission : userPermissionDtos) {
+            list = repository.findAll(UserPermission.class).stream()
+                    .filter(a -> a.getUsers().getId().equals(userPermission.getUserId()))
+                    .toList();
+            repository.batchRemove(list, userId, uuid);
+            list = new ArrayList<>();
+            for (Permission permission : userPermission.toPermissions()) {
+                list.add(new UserPermission(null, userPermission.toUser(), permission));
+            }
+            repository.batchInsert(list, userId, uuid);
+        }
     }
 }
