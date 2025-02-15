@@ -12,6 +12,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.math.BigInteger;
+import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -110,4 +111,5 @@ public class FundUtils extends CommonUtils {
     public static String encodePassword(String password) {
         return toSHA1(md5(password).getBytes());
     }
+
 }

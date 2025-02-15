@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.math.BigInteger;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -200,5 +201,10 @@ public class CommonUtils {
             e.printStackTrace();
         }
         return byteArrayToHexString(md.digest(convertMe));
+    }
+
+    public static String extractBasePath(String requestUrl) {
+        URI uri = URI.create(requestUrl);
+        return uri.getPath();
     }
 }

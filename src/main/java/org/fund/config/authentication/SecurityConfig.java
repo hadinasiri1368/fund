@@ -1,5 +1,6 @@
 package org.fund.config.authentication;
 
+import org.fund.authentication.permission.PermissionService;
 import org.fund.config.dataBase.TenantDataSourceManager;
 import org.fund.filter.AuthenticationFilter;
 import org.fund.repository.JpaRepository;
@@ -23,24 +24,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Value("${authentication.paths-to-bypass}")
-    private String pathsToBypass;
     private final Logout logoutHandler;
-    private final JpaRepository repository;
     private final TokenService tokenService;
     private final TenantDataSourceManager tenantService;
+    private final PermissionService permissionService;
 
-    public SecurityConfig(Logout logoutHandler, JpaRepository repository, TokenService tokenService, TenantDataSourceManager tenantService) {
+    public SecurityConfig(Logout logoutHandler
+            , TokenService tokenService, TenantDataSourceManager tenantService
+            , PermissionService permissionService) {
         this.logoutHandler = logoutHandler;
         this.tokenService = tokenService;
-        this.repository = repository;
         this.tenantService = tenantService;
+        this.permissionService = permissionService;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .addFilterBefore(new AuthenticationFilter(repository, tokenService, tenantService, pathsToBypass), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new AuthenticationFilter(tokenService, tenantService, permissionService), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e -> e.accessDeniedHandler((request, response, accessDeniedException) -> response.setStatus(HttpStatus.FORBIDDEN.value())).authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf().disable()

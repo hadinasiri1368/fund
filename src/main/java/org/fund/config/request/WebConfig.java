@@ -1,5 +1,6 @@
 package org.fund.config.request;
 
+import org.fund.authentication.permission.PermissionService;
 import org.fund.constant.Consts;
 import org.fund.repository.JpaRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,16 +10,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Value("${authentication.paths-to-bypass}")
-    private String pathsToBypass;
-    private final JpaRepository repository;
-    public WebConfig(final JpaRepository repository) {
-        this.repository = repository;
+    private final PermissionService permissionService;
+
+    public WebConfig(PermissionService permissionService) {
+        this.permissionService = permissionService;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RequestContextInterceptor(repository, pathsToBypass))
+        registry.addInterceptor(new RequestContextInterceptor(permissionService))
                 .addPathPatterns("/**");
     }
 }

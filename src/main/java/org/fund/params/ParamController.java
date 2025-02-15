@@ -31,7 +31,7 @@ public class ParamController {
         service.insert(param, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @PostMapping(path = "/basicData/param/edit")
+    @PutMapping(path = "/basicData/param/edit")
     public void edit(@ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId
             , @NotEmpty(fieldName = "code") String code
             , @NotEmpty(fieldName = "value") String value) throws Exception {

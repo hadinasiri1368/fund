@@ -185,8 +185,8 @@ public class JpaRepository {
         return resultList;
     }
 
-    public List listByQuery(String sql, Map<String, Object> param) {
-        Query query = entityManager.createQuery(sql);
+    public List listByQuery(String hql, Map<String, Object> param) {
+        Query query = entityManager.createQuery(hql);
         if (!FundUtils.isNull(param) && param.size() > 0)
             for (String key : param.keySet()) {
                 query.setParameter(key, param.get(key));
@@ -194,8 +194,8 @@ public class JpaRepository {
         return query.getResultList();
     }
 
-    public Page<Object> listByQuery(String sql, Map<String, Object> param, Pageable pageable) {
-        Query query = entityManager.createQuery(sql);
+    public Page<Object> listByQuery(String hql, Map<String, Object> param, Pageable pageable) {
+        Query query = entityManager.createQuery(hql);
         if (!FundUtils.isNull(param) && !param.isEmpty()) {
             for (Map.Entry<String, Object> entry : param.entrySet()) {
                 query.setParameter(entry.getKey(), entry.getValue());
@@ -208,10 +208,6 @@ public class JpaRepository {
         query.setMaxResults(pageSize);
         List<Object> resultList = query.getResultList();
         return new PageImpl<>(resultList, pageable, countResult);
-    }
-
-    public Page<Object> listByQuery(String sql, Pageable pageable) {
-        return listByQuery(sql, null, pageable);
     }
 
     public Long getLongValue(String sql, Map<String, Object> param) {

@@ -571,27 +571,60 @@ Insert into AHA_PERMISSION
 Values
     (37, 'انواع ورود دوعاملی', '/basicData/getOtpStrategies', 0)
     /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (38, 'دریافت مقدار عددی پارامترها', '/basicData/param/getLongValue', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (39, 'دریافت مقدار رشته ای پارامترها', '/basicData/param/getStringValue', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (40, 'دریافت مقدار اعشاری با دقت بالا پارامترها', '/basicData/param/getDoubleValue', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (41, 'دریافت مقدار اعشاری با دقت پایین پارامترها', '/basicData/param/getFloatValue', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (42, 'دریافت مقدار منطقی پارامترها', '/basicData/param/getBooleanValue', 1)
+/
+
+
+
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (38, 'ورود', '/login/**', 0)
+    (43, 'ورود', '/login/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (39, 'swagger', '/v3/api-docs/**', 0)
+    (44, 'swagger', '/v3/api-docs/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (40, 'swagger', '/swagger-ui.html', 0)
+    (45, 'swagger', '/swagger-ui.html', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (41, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
+    (46, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
 /
 
 ----------------------------------------------------------------------------------------------------

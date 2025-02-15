@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.fund.authentication.permission.PermissionService;
 import org.fund.common.FundUtils;
 import org.fund.config.authentication.AuthenticationTokenServiceImpl;
 import org.fund.config.authentication.TokenService;
@@ -42,17 +43,16 @@ import java.util.List;
 
 @Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
-    private final JpaRepository repository;
     private final TokenService tokenService;
-    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final TenantDataSourceManager tenantService;
-    private final String pathsToBypass;
+    private final PermissionService permissionService;
 
-    public AuthenticationFilter(JpaRepository repository, TokenService tokenService, TenantDataSourceManager tenantService,String pathsToBypass) {
-        this.repository = repository;
+    public AuthenticationFilter(TokenService tokenService
+            , TenantDataSourceManager tenantService
+            , PermissionService permissionService) {
         this.tokenService = tokenService;
         this.tenantService = tenantService;
-        this.pathsToBypass = pathsToBypass;
+        this.permissionService = permissionService;
     }
 
     @Override
@@ -69,7 +69,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             if (FundUtils.isNull(token))
                 throw new FundException(AuthenticationExceptionType.TOKEN_IS_NULL);
             if (FundUtils.isNull(SecurityContextHolder.getContext().getAuthentication())) {
-                UserDetails userDetails = getUserDetails(tokenService.getTokenData(RequestContext.getTokenId(), token));
+                Users user = tokenService.getTokenData(RequestContext.getTokenId(), token);
+                permissionService.validateUserAccess(user, request.getRequestURI());
+                UserDetails userDetails = getUserDetails(user);
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()
                 );
@@ -103,23 +105,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         try {
             if (request.getMethod().equals("OPTIONS"))
                 return true;
-            String[] paths = pathsToBypass.split(",");
-            for (String path : paths) {
-                if (pathMatcher.match(path.trim(), request.getRequestURI())) {
-                    return true;
-                }
-            }
+            if (permissionService.isBypassedUrl(request.getRequestURI()))
+                return true;
             if (request.getHeader(Consts.HEADER_TENANT_PARAM_NAME) == null)
                 return false;
             checkTenant(request);
-            List<Permission> permissionList = repository.findAll(Permission.class)
-                    .stream().filter(a -> !a.getIsSensitive()).toList();
-            for (Permission permission : permissionList) {
-                if (pathMatcher.match(permission.getUrl(), request.getRequestURI())) {
-                    return true;
-                }
-            }
-            return false;
+            return permissionService.isSensitiveUrl(request.getRequestURI());
         } catch (Exception e) {
             HttpStatus httpStatus = e instanceof FundException ? ((FundException) e).getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
             String currentTime = LocalDateTime.now()

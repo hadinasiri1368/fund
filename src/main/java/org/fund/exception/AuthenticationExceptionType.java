@@ -20,6 +20,7 @@ public enum AuthenticationExceptionType {
     OTP_STRATEGY_IS_DISABLED(HttpStatus.INTERNAL_SERVER_ERROR, "authorization.otp_strategy_is_disabled"),
     USER_MOBILE_IS_NOT_VALID(HttpStatus.INTERNAL_SERVER_ERROR, "authorization.user_mobile_is_not_valid"),
     OTP_SEND_NOTALLOWED(HttpStatus.FORBIDDEN, "authorization.otp_send_notAllowed"),
+    DO_NOT_HAVE_ACCESS_TO_ADDRESS(HttpStatus.FORBIDDEN, "authorization.do_not_have_access_to_address"),
     EMAIL_IS_NOT_VALID(HttpStatus.INTERNAL_SERVER_ERROR, "authorization.email_is_not_valid")
     ;
     private final HttpStatus httpStatus;
