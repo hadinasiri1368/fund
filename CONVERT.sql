@@ -602,29 +602,39 @@ Values
     (42, 'دریافت مقدار منطقی پارامترها', '/basicData/param/getBooleanValue', 1)
 /
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (43, 'دریافت معین تنظیم حساب', '/basicData/param/getSubsidiaryLedger', 1)
+    /
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (44, 'دریافت تفصیل تنظیم حساب', '/basicData/param/getDetailLedger', 1)
+    /
 
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (43, 'ورود', '/login/**', 0)
+    (45, 'ورود', '/login/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (44, 'swagger', '/v3/api-docs/**', 0)
+    (46, 'swagger', '/v3/api-docs/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (45, 'swagger', '/swagger-ui.html', 0)
+    (47, 'swagger', '/swagger-ui.html', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (46, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
+    (48, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
 /
 
 ----------------------------------------------------------------------------------------------------

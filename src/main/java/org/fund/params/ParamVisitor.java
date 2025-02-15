@@ -2,8 +2,10 @@ package org.fund.params;
 
 import org.fund.authentication.otp.Otp;
 import org.fund.authentication.otp.constant.OtpStrategyType;
+import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.model.Params;
+import org.fund.model.SubsidiaryLedger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,6 +125,27 @@ public class ParamVisitor {
     public Float getFloatValue(String paramCode, String effectiveDate) {
         return getParam().getFloatValue(paramCode, effectiveDate);
     }
+
+    // ------------------------------------------------------------------
+
+    public SubsidiaryLedger getSubsidiaryLedger(String paramCode) {
+        return getParam().getSubsidiaryLedger(paramCode);
+    }
+
+    public SubsidiaryLedger getSubsidiaryLedger(Fund fund, String paramCode) {
+        return getParam().getSubsidiaryLedger(fund, paramCode);
+    }
+
+    // ------------------------------------------------------------------
+
+    public DetailLedger getDetailLedger(String paramCode) {
+        return getParam().getDetailLedger(paramCode);
+    }
+
+    DetailLedger getDetailLedger(Fund fund, String paramCode) {
+        return getParam().getDetailLedger(fund, paramCode);
+    }
+
 
     private Param getParam() {
         for (Param p : params) {

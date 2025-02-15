@@ -4,8 +4,10 @@ import org.fund.authentication.otp.constant.OtpStrategyType;
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
+import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.model.Params;
+import org.fund.model.SubsidiaryLedger;
 import org.fund.repository.JpaRepository;
 
 public interface Param {
@@ -66,5 +68,17 @@ public interface Param {
     Double getDoubleValue(String paramCode, String effectiveDate);
 
     Float getFloatValue(String paramCode, String effectiveDate);
+
+    // ------------------------------------------------------------------
+
+    SubsidiaryLedger getSubsidiaryLedger(String paramCode);
+
+    SubsidiaryLedger getSubsidiaryLedger(Fund fund, String paramCode);
+
+    // ------------------------------------------------------------------
+
+    DetailLedger getDetailLedger(String paramCode);
+
+    DetailLedger getDetailLedger(Fund fund, String paramCode);
 
 }

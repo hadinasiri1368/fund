@@ -2,11 +2,12 @@ package org.fund.params.Impl;
 
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
-import org.fund.exception.GeneralExceptionType;
+import org.fund.exception.ParamExceptionType;
 import org.fund.model.Fund;
 import org.fund.model.Params;
 import org.fund.params.ParamAbstract;
-import org.fund.params.ParamValueType;
+import org.fund.params.constant.ParamType;
+import org.fund.params.constant.ParamValueType;
 import org.fund.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,34 @@ public class ParamFixFundImpl extends ParamAbstract {
     }
 
     @Override
-    public void setIsGlobal(Params param) {
-        param.setIsGlobal(true);
+    public void validateBeforInsert(Params param) {
+        validateType(param.getValue()
+                , ParamValueType.getItemById(param.getParamsValueType().getId().intValue())
+                , ParamType.getItemById(param.getParamsType().getId()));
+        Params item = getParams(param.getCode()
+                , ParamValueType.getItemById(param.getParamsValueType().getId().intValue()));
+        if (!FundUtils.isNull(item))
+            throw new FundException(ParamExceptionType.PARAM_CODE_EXISTS, new Object[]{param.getCode()});
+        if (!param.getIsGlobal() || !FundUtils.isNull(param.getFund()))
+            throw new FundException(ParamExceptionType.PARAM_HAVE_TO_GLOBAL, new Object[]{param.getCode()});
+    }
+
+    @Override
+    public void validateBeforUpdate(Params param, Params oldParam) {
+        if (!oldParam.getValue().equals(param.getValue())) {
+            validateType(param.getValue()
+                    , ParamValueType.getItemById(param.getParamsValueType().getId().intValue())
+                    , ParamType.getItemById(param.getParamsType().getId()));
+        }
+        if (!param.getIsGlobal() || !FundUtils.isNull(param.getFund()))
+            throw new FundException(ParamExceptionType.PARAM_HAVE_TO_GLOBAL, new Object[]{param.getCode()});
+
+        if (!oldParam.getCode().equals(param.getCode())) {
+            Params item = getParams(param.getCode()
+                    , ParamValueType.getItemById(param.getParamsValueType().getId().intValue()));
+
+            if (item.getId().equals(param.getId()))
+                throw new FundException(ParamExceptionType.PARAM_CODE_EXISTS, new Object[]{param.getCode()});
+        }
     }
 }

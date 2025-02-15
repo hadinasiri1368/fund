@@ -6,7 +6,7 @@ public class Consts {
     public static final String DEFAULT_FOLDER_ADDRESS = "classpath:";
     public static final String DEFAULT_VERSION_API_URL = "/v1";
     public static final String PREFIX_API_URL = "/api";
-    public static final String DEFAULT_PREFIX_API_URL = PREFIX_API_URL + DEFAULT_VERSION_API_URL;
+    public static final String DEFAULT_PREFIX_API_URL = PREFIX_API_URL;
     public static final String JDBC_URL_PREFIX = "jdbc:oracle:thin:@";
     public static final String HEADER_TENANT_PARAM_NAME = "X-TenantId";
     public static final String HEADER_UUID_PARAM_NAME = "X-UUID";

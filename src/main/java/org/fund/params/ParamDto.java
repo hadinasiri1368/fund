@@ -25,7 +25,6 @@ public class ParamDto {
     private String name;
     @NotEmpty(fieldName = "code")
     private String code;
-    @NotEmpty(fieldName = "value")
     private String value;
     private String dataQuery;
     @NotEmpty(fieldName = "isActive")

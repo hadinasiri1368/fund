@@ -1,4 +1,4 @@
-package org.fund.params;
+package org.fund.params.constant;
 
 import java.util.Arrays;
 import java.util.Objects;

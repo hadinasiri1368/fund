@@ -5,13 +5,12 @@ import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
 import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
-import org.fund.model.Fund;
-import org.fund.model.Params;
-import org.fund.model.ParamsHistory;
+import org.fund.exception.ParamExceptionType;
+import org.fund.model.*;
+import org.fund.params.constant.ParamType;
+import org.fund.params.constant.ParamValueType;
 import org.fund.repository.JpaRepository;
-import org.springframework.data.redis.connection.ReactiveListCommands;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +24,9 @@ public abstract class ParamAbstract implements Param {
         this.repository = repository;
     }
 
-    public abstract void setIsGlobal(Params param);
+    public abstract void validateBeforInsert(Params param);
+
+    public abstract void validateBeforUpdate(Params param, Params oldParam);
 
     @Override
     public String getStringValue(String paramCode) {
@@ -192,33 +193,38 @@ public abstract class ParamAbstract implements Param {
 
     protected Params getParams(Fund fund, String paramCode, ParamValueType paramsValueType) {
         Params param = repository.findAll(Params.class).stream()
-                .filter(p -> (fund == null || p.getFund().equals(fund)) && p.getCode().equals(paramCode))
+                .filter(p -> (fund == null || p.getFund().equals(fund)) &&
+                        !p.getParamsType().getId().equals(ParamType.ACCOUNT_SETUP.getId()) &&
+                        p.getCode().equals(paramCode))
                 .findFirst()
-                .orElseThrow(() -> new FundException(GeneralExceptionType.PARAM_NOT_FOUND, new Object[]{paramCode}));
+                .orElseThrow(() -> new FundException(ParamExceptionType.PARAM_NOT_FOUND, new Object[]{paramCode}));
         if (!FundUtils.isNull(param) && !param.getParamsValueType().getName().equals(paramsValueType.getTitle()))
-            throw new FundException(GeneralExceptionType.PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE, new Object[]{param.getParamsValueType().getName()});
+            throw new FundException(ParamExceptionType.PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE, new Object[]{param.getParamsValueType().getName()});
         return param;
     }
 
     protected Params getParams(String paramCode, ParamValueType paramsValueType) {
         Params param = repository.findAll(Params.class).stream()
-                .filter(p -> p.getIsGlobal() && p.getCode().equals(paramCode))
+                .filter(p -> p.getIsGlobal() &&
+                        !p.getParamsType().getId().equals(ParamType.ACCOUNT_SETUP.getId()) &&
+                        p.getCode().equals(paramCode))
                 .findFirst()
-                .orElseThrow(() -> new FundException(GeneralExceptionType.PARAM_NOT_FOUND, new Object[]{paramCode}));
+                .orElseThrow(() -> new FundException(ParamExceptionType.PARAM_NOT_FOUND, new Object[]{paramCode}));
         if (!FundUtils.isNull(param) && !param.getParamsValueType().getName().equals(paramsValueType.getTitle()))
-            throw new FundException(GeneralExceptionType.PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE, new Object[]{param.getParamsValueType().getName()});
+            throw new FundException(ParamExceptionType.PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE, new Object[]{param.getParamsValueType().getName()});
         return param;
     }
 
     protected Params getParams(Fund fund, String paramCode, ParamValueType paramsValueType, String effectiveDate) {
         ParamsHistory paramsHistory = repository.findAll(ParamsHistory.class).stream()
                 .filter(a -> a.getParams().getFund().equals(fund) &&
+                        !a.getParams().getId().equals(ParamType.ACCOUNT_SETUP.getId()) &&
                         a.getParams().getCode().equals(paramCode) &&
                         a.getEffectiveDate().compareTo(effectiveDate) <= 0)
                 .min(Comparator.comparing(ParamsHistory::getEffectiveDate))
-                .orElseThrow(() -> new FundException(GeneralExceptionType.PARAM_NOT_FOUND, new Object[]{paramCode}));
+                .orElseThrow(() -> new FundException(ParamExceptionType.PARAM_NOT_FOUND, new Object[]{paramCode}));
         if (!FundUtils.isNull(paramsHistory) && !paramsHistory.getParams().getParamsValueType().getName().equals(paramsValueType.getTitle()))
-            throw new FundException(GeneralExceptionType.PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE, new Object[]{paramsHistory.getParams().getParamsValueType().getName()});
+            throw new FundException(ParamExceptionType.PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE, new Object[]{paramsHistory.getParams().getParamsValueType().getName()});
         Params params = new Params(paramsHistory.getParams());
         params.setValue(paramsHistory.getValue());
         return params;
@@ -227,12 +233,13 @@ public abstract class ParamAbstract implements Param {
     protected Params getParams(String paramCode, ParamValueType paramsValueType, String effectiveDate) {
         ParamsHistory paramsHistory = repository.findAll(ParamsHistory.class).stream()
                 .filter(a -> a.getParams().getIsGlobal() &&
+                        !a.getParams().getId().equals(ParamType.ACCOUNT_SETUP.getId()) &&
                         a.getParams().getCode().equals(paramCode) &&
                         a.getEffectiveDate().compareTo(effectiveDate) <= 0)
                 .min(Comparator.comparing(ParamsHistory::getEffectiveDate))
-                .orElseThrow(() -> new FundException(GeneralExceptionType.PARAM_NOT_FOUND, new Object[]{paramCode}));
+                .orElseThrow(() -> new FundException(ParamExceptionType.PARAM_NOT_FOUND, new Object[]{paramCode}));
         if (!FundUtils.isNull(paramsHistory) && !paramsHistory.getParams().getParamsValueType().getName().equals(paramsValueType.getTitle()))
-            throw new FundException(GeneralExceptionType.PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE, new Object[]{paramsHistory.getParams().getParamsValueType().getName()});
+            throw new FundException(ParamExceptionType.PARAM_TYPE_IS_NOT_EQUAL_OUTPUT_TYPE, new Object[]{paramsHistory.getParams().getParamsValueType().getName()});
         Params params = new Params(paramsHistory.getParams());
         params.setValue(paramsHistory.getValue());
         return params;
@@ -251,18 +258,18 @@ public abstract class ParamAbstract implements Param {
     }
 
     public void insert(Params params, Long userId, String uuid) throws Exception {
-        setIsGlobal(params);
-        validateType(params.getValue(), ParamValueType.getItemById(params.getParamsValueType().getId().intValue()));
+        validateBeforInsert(params);
         repository.save(params, userId, uuid);
         insertParamsHistory(params.getValue(), userId, uuid);
 
     }
 
     public void update(Params params, Long userId, String uuid) throws Exception {
-        setIsGlobal(params);
-        validateType(params.getValue(), ParamValueType.getItemById(params.getParamsValueType().getId().intValue()));
+        Params oldParam = repository.findOne(Params.class, params.getId());
+        validateBeforUpdate(params, oldParam);
         repository.update(params, userId, uuid);
-        insertParamsHistory(params.getValue(), userId, uuid);
+        if (!oldParam.getValue().equals(params.getValue()))
+            insertParamsHistory(params.getValue(), userId, uuid);
     }
 
     public void delete(Long paramId, Long userId, String uuid) throws Exception {
@@ -280,8 +287,8 @@ public abstract class ParamAbstract implements Param {
                 .orElse(null);
     }
 
-    private void validateType(String value, ParamValueType paramValueType) {
-        if (FundUtils.isNull(value))
+    protected void validateType(String value, ParamValueType paramValueType, ParamType paramType) {
+        if (FundUtils.isNull(value) || paramType.getId().equals(ParamType.ACCOUNT_SETUP.getId()))
             return;
         boolean flag = true;
         try {
@@ -305,10 +312,56 @@ public abstract class ParamAbstract implements Param {
                     break;
             }
         } catch (Exception e) {
-            throw new FundException(GeneralExceptionType.PARAM_VALUE_TYPE_IS_NOT_EQUAL_PARAMS_VALUE_TYPE, new Object[]{paramValueType.getTitle()});
+            throw new FundException(ParamExceptionType.PARAM_VALUE_TYPE_IS_NOT_EQUAL_PARAMS_VALUE_TYPE, new Object[]{paramValueType.getTitle()});
         }
         if (!flag)
-            throw new FundException(GeneralExceptionType.PARAM_VALUE_TYPE_IS_NOT_EQUAL_PARAMS_VALUE_TYPE, new Object[]{paramValueType.getTitle()});
+            throw new FundException(ParamExceptionType.PARAM_VALUE_TYPE_IS_NOT_EQUAL_PARAMS_VALUE_TYPE, new Object[]{paramValueType.getTitle()});
     }
 
+    protected SubsidiaryLedger getSubsidiaryLedgerValue(Fund fund, String paramCode) {
+        Params param = repository.findAll(Params.class).stream()
+                .filter(a -> a.getCode().equals(paramCode) &&
+                        (FundUtils.isNull(fund) || fund.equals(a.getFund())) &&
+                        a.getIsGlobal() &&
+                        a.getParamsType().getId().equals(ParamType.ACCOUNT_SETUP.getId()))
+                .findFirst()
+                .orElse(null);
+        if (!FundUtils.isNull(param) && FundUtils.isNull(param.getSubsidiaryLedger()))
+            throw new FundException(ParamExceptionType.PARAM_SUBSIDIARY_LEDGER_IS_NULL, new Object[]{paramCode});
+        return param.getSubsidiaryLedger();
+    }
+
+    protected DetailLedger getDetailLedgerValue(Fund fund, String paramCode) {
+        Params param = repository.findAll(Params.class).stream()
+                .filter(a -> a.getCode().equals(paramCode) &&
+                        (FundUtils.isNull(fund) || fund.equals(a.getFund())) &&
+                        a.getIsGlobal() &&
+                        a.getParamsType().getId().equals(ParamType.ACCOUNT_SETUP.getId()))
+                .findFirst()
+                .orElse(null);
+        if (!FundUtils.isNull(param) && FundUtils.isNull(param.getDetailLedger()))
+            throw new FundException(ParamExceptionType.PARAM_DETAIL_LEDGER_IS_NULL, new Object[]{paramCode});
+        return param.getDetailLedger();
+    }
+
+    @Override
+    public SubsidiaryLedger getSubsidiaryLedger(String paramCode) {
+        return getSubsidiaryLedgerValue(null, paramCode);
+    }
+
+    @Override
+    public SubsidiaryLedger getSubsidiaryLedger(Fund fund, String paramCode) {
+        return getSubsidiaryLedgerValue(fund, paramCode);
+    }
+
+
+    @Override
+    public DetailLedger getDetailLedger(String paramCode) {
+        return getDetailLedgerValue(null, paramCode);
+    }
+
+    @Override
+    public DetailLedger getDetailLedger(Fund fund, String paramCode) {
+        return getDetailLedgerValue(fund, paramCode);
+    }
 }

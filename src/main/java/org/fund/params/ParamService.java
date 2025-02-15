@@ -3,8 +3,11 @@ package org.fund.params;
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
+import org.fund.exception.ParamExceptionType;
+import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.model.Params;
+import org.fund.model.SubsidiaryLedger;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,7 +29,7 @@ public class ParamService {
     public void setValue(Fund fund, String code, String value, Long userId, String uuid) throws Exception {
         Params param = paramVisitor.getParam(fund, code);
         if (FundUtils.isNull(param))
-            throw new FundException(GeneralExceptionType.PARAM_NOT_FOUND, new Object[]{code});
+            throw new FundException(ParamExceptionType.PARAM_NOT_FOUND, new Object[]{code});
         param.setValue(value);
         paramVisitor.update(param, userId, uuid);
     }
@@ -112,6 +115,24 @@ public class ParamService {
 
     public Boolean getBooleanValue(Fund fund, String paramCode, String effectiveDate) {
         return paramVisitor.getBooleanValue(fund, paramCode, effectiveDate);
+    }
+
+
+    public SubsidiaryLedger getSubsidiaryLedger(String paramCode) {
+        return paramVisitor.getSubsidiaryLedger(paramCode);
+    }
+
+    public SubsidiaryLedger getSubsidiaryLedger(Fund fund, String paramCode) {
+        return paramVisitor.getSubsidiaryLedger(fund, paramCode);
+    }
+
+
+    public DetailLedger getDetailLedger(String paramCode) {
+        return paramVisitor.getDetailLedger(paramCode);
+    }
+
+    public DetailLedger getDetailLedger(Fund fund, String paramCode) {
+        return paramVisitor.getDetailLedger(fund, paramCode);
     }
 
 
