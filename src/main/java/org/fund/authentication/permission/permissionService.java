@@ -1,15 +1,14 @@
 package org.fund.authentication.permission;
 
 import org.fund.authentication.permission.role.RolePermissionDto;
-import org.fund.authentication.permission.user.UserPermissionDto;
+import org.fund.authentication.permission.role.RoleUserGroupDto;
+import org.fund.authentication.user.UserService;
+import org.fund.authentication.user.dto.UserPermissionDto;
 import org.fund.common.FundUtils;
 import org.fund.config.dataBase.TenantContext;
 import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
-import org.fund.model.Permission;
-import org.fund.model.RolePermission;
-import org.fund.model.UserPermission;
-import org.fund.model.Users;
+import org.fund.model.*;
 import org.fund.repository.JpaRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,9 +28,11 @@ public class PermissionService {
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final JpaRepository repository;
     private Map<String, List<Object[]>> ListAllPermissions = null;
+    private final UserService userService;
 
-    public PermissionService(final JpaRepository repository) {
+    public PermissionService(JpaRepository repository, UserService userService) {
         this.repository = repository;
+        this.userService = userService;
     }
 
     public void insert(Permission permission, Long userId, String uuid) throws Exception {
@@ -135,15 +136,32 @@ public class PermissionService {
 
     @Transactional
     public void assignPermissionToUser(List<UserPermissionDto> userPermissionDtos, Long userId, String uuid) throws Exception {
-        List<UserPermission> list;
-        for (UserPermissionDto userPermission : userPermissionDtos) {
-            list = repository.findAll(UserPermission.class).stream()
-                    .filter(a -> a.getUsers().getId().equals(userPermission.getUserId()))
+        userService.assignPermissionToUser(userPermissionDtos, userId, uuid);
+    }
+
+    public void insertRole(Role role, Long userId, String uuid) throws Exception {
+        repository.save(role, userId, uuid);
+    }
+
+    public void updateRole(Role role, Long userId, String uuid) throws Exception {
+        repository.update(role, userId, uuid);
+    }
+
+    public void deleteRole(Long roleId, Long userId, String uuid) throws Exception {
+        repository.removeById(Role.class, roleId, userId, uuid);
+    }
+
+    @Transactional
+    public void assignRoleToUserGroup(List<RoleUserGroupDto> rolePermissionDtos, Long userId, String uuid) throws Exception {
+        List<UserGroupRole> list;
+        for (RoleUserGroupDto roleUserGroupDto : rolePermissionDtos) {
+            list = repository.findAll(UserGroupRole.class).stream()
+                    .filter(a -> a.getUserGroup().getId().equals(roleUserGroupDto.getUserGroupId()))
                     .toList();
             repository.batchRemove(list, userId, uuid);
             list = new ArrayList<>();
-            for (Permission permission : userPermission.toPermissions()) {
-                list.add(new UserPermission(null, userPermission.toUser(), permission));
+            for (Role role : roleUserGroupDto.toRoles()) {
+                list.add(new UserGroupRole(null, role, roleUserGroupDto.toUserGroup()));
             }
             repository.batchInsert(list, userId, uuid);
         }

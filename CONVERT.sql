@@ -614,27 +614,93 @@ Values
     (44, 'دریافت تفصیل تنظیم حساب', '/basicData/param/getDetailLedger', 1)
     /
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (45, 'ثبت مجوز', '/basicData/permission/add', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (46, 'ویرایش مجوز', '/basicData/permission/edit', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (47, 'حذف مجوز', '/basicData/permission/remove', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (48, 'ثبت گروه کاربری', '/basicData/userGroup/add', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (49, 'ویرایش گروه کاربری', '/basicData/userGroup/edit', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (50, 'حذف گروه کاربری', '/basicData/userGroup/remove', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (51, 'تخصیص مجوزها به نقش', '/basicData/permission/assignPermissionToRole', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (52, 'تخصیص مجوزها به نقش', '/basicData/permission/assignRoleToUserGroup', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (53, 'تخصیص کاربرها به گروه کاربری', '/basicData/user/assignUserToGroup', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (54, 'تخصیص نقش ها به کاربر', '/basicData/user/assignRoleToUser', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (55, 'تخصیص مجوزها به کاربر', '/basicData/user/assignPermissionToUser', 1)
+    /
+
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (45, 'ورود', '/login/**', 0)
+    (56, 'ورود', '/login/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (46, 'swagger', '/v3/api-docs/**', 0)
+    (57, 'swagger', '/v3/api-docs/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (47, 'swagger', '/swagger-ui.html', 0)
+    (58, 'swagger', '/swagger-ui.html', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (48, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
+    (59, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
 /
 
 ----------------------------------------------------------------------------------------------------

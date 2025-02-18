@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
-@Getter
 @Service
 public class RolePermissionDto {
     private final JpaRepository repository;
@@ -20,9 +18,13 @@ public class RolePermissionDto {
         this.repository = repository;
     }
 
+    @Setter
+    @Getter
     @NotEmpty(fieldName = "roleId")
     @ValidateField(fieldName = "roleId", entityClass = Role.class)
     private Long roleId;
+    @Setter
+    @Getter
     @NotEmpty(fieldName = "permissionIds")
     private List<Long> permissionIds;
 
