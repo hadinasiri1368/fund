@@ -627,6 +627,8 @@ CREATE TABLE AHA_COMPANY (
                                ID                      NUMBER(18)              NOT NULL,
                                SMS_INTO                NVARCHAR2(100)          NOT NULL,
                                NAME                    NVARCHAR2(500)          NOT NULL,
+                               BOURSE_ACCOUNT_NUMBER   NUMBER(8)               NOT NULL,
+                               BOURSE_ACCOUNT_NAME     NVARCHAR2(50)           NOT NULL,
                                INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
                                INSERTED_USER_ID        NUMBER(18)              NULL,
                                UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
@@ -638,6 +640,35 @@ ALTER TABLE AHA_COMPANY ADD (
 )
 /
 -----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_MMTP_CONFIG
+(
+  ID                       NUMBER(18)           NOT NULL,
+  BROKERAGE_CODE           CHAR(3 BYTE)         NOT NULL,
+  APP_ID                   CHAR(1 BYTE)         NOT NULL,
+  TRADER_ID                CHAR(5 BYTE)         NOT NULL,
+  INS_MAX_LCODE_FUND2      CHAR(12 BYTE)                ,
+  FUND_ACCOUNT_NUMBER      CHAR(16 BYTE)                ,
+  INS_MAX_LCODE_FUND       CHAR(12 BYTE)                ,
+  INS_MNEMONIC_CODE_FUND   CHAR(5 BYTE)                 ,
+  RESERVE_ORDER_ORIGIN     NUMBER(1)                    ,
+  F_FUND_ID                NUMBER               NOT NULL,
+  INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+  INSERTED_USER_ID        NUMBER(18)              NULL,
+  UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+  UPDATED_USER_ID         NUMBER(18)              NULL
+)
+    /
+
+ALTER TABLE AHA_MMTP_CONFIG ADD (
+    CONSTRAINT PK_MMTP_CONFIG PRIMARY KEY (ID)
+)
+/
+
+ALTER TABLE AHA_MMTP_CONFIG ADD CONSTRAINT FK_MMTP_CONFIG FOREIGN KEY (F_FUND_ID)
+    REFERENCES AHA_FUND (ID)
+/
+-----------------------------------------------------------------------------------------------------
+
 ALTER TABLE AHA_FUND_FILE ADD CONSTRAINT FK_AHA_FUND_FILE_AHA_FILE_TYPE FOREIGN KEY (F_FILE_TYPE_ID)
 REFERENCES AHA_FILE_TYPE (ID)
 /

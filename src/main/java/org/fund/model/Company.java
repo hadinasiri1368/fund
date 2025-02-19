@@ -22,4 +22,8 @@ public class Company extends BaseEntity implements Serializable {
     private String name;
     @Column(columnDefinition = "NVARCHAR2(100)", name = "SMS_INTO", nullable = false)
     private String smsInto;
+    @Column(columnDefinition = "NUMBER(8)", name = "BOURSE_ACCOUNT_NUMBER", nullable = false)
+    private Long bourseAccountNumber;
+    @Column(columnDefinition = "NVARCHAR2(50)", name = "BOURSE_ACCOUNT_NAME", nullable = false)
+    private Long bourseAccountName;
 }

@@ -885,6 +885,10 @@ Values
 
 ----------------------------------------------------------------------------------------------------
 INSERT INTO AHA_COMPANY
-select 1 id ,tbl.*,null,null,null,null  from  (select SMS_NUMBER,company_name from  company where fund_id=1) tbl
+select 1 id ,tbl.*,tbl2.BOURSE_ACCOUNT_NUMBER,tbl2.BOURSE_ACCOUNT_NAME,null,null,null,null  from  (select SMS_NUMBER,company_name from  company where fund_id=1) tbl,(select MAX(BOURSE_ACCOUNT_NAME) BOURSE_ACCOUNT_NAME,MAX(BOURSE_ACCOUNT_NUMBER) BOURSE_ACCOUNT_NUMBER from  bourse_account)tbl2
+/
+----------------------------------------------------------------------------------------------------
+INSERT INTO AHA_MMTP_CONFIG
+select ROWNUM,TBL.*,NULL,NULL,NULL,NULL from  (select MMTP_BROKER_ID,MMTP_APP_ID,MMTP_TRADER_ID,INS_MAX_LCODE_FUND2,FUND_ACCOUNT_NUMBER,INS_MAX_LCODE_FUND,INS_MNEMONIC_CODE_FUND,RESERVE_ORDER_ORIGIN,FUND_ID from  MMTP_CONFIG) TBL
 /
 ----------------------------------------------------------------------------------------------------
