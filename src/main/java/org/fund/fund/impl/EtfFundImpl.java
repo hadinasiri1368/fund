@@ -50,7 +50,7 @@ public class EtfFundImpl extends FundAbstract {
     @Override
     public void insertMmtpConfig(Fund fund, long userId, String uuid) throws Exception {
         MmtpConfig mmtpConfig = repository.findAll(MmtpConfig.class).stream()
-                .filter(a -> a.getFund().equals(fund))
+                .filter(a -> a.getFund().equals(getDefaultFund()))
                 .findFirst()
                 .orElse(null);
 
@@ -61,5 +61,10 @@ public class EtfFundImpl extends FundAbstract {
         mmtpConfig.setUpdatedDateTime(null);
         mmtpConfig.setId(null);
         repository.save(mmtpConfig, userId, uuid);
+    }
+
+    @Override
+    public Fund getDefaultFund() {
+        return repository.findAll(Fund.class).stream().findFirst().get();
     }
 }

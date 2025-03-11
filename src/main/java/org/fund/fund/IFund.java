@@ -10,5 +10,6 @@ public interface IFund {
 
     Long getBourseAccount();
     MmtpConfig getMmtpConfig(Fund fund);
+    Fund getDefaultFund();
     boolean accept();
 }

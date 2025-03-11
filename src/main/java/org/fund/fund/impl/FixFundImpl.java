@@ -40,4 +40,9 @@ public class FixFundImpl extends FundAbstract {
     public void insertMmtpConfig(Fund fund, long userId, String uuid) throws Exception {
 
     }
+
+    @Override
+    public Fund getDefaultFund() {
+        return repository.findAll(Fund.class).stream().findFirst().get();
+    }
 }

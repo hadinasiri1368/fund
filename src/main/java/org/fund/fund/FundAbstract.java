@@ -1,9 +1,7 @@
 package org.fund.fund;
 
 import org.fund.common.FundUtils;
-import org.fund.model.Company;
-import org.fund.model.Fund;
-import org.fund.model.Params;
+import org.fund.model.*;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
 import org.springframework.stereotype.Service;
@@ -20,6 +18,8 @@ public abstract class FundAbstract implements IFund {
         this.repository = repository;
         this.commonFundService = commonFundService;
     }
+
+    public abstract Fund getDefaultFund();
 
     public abstract void insertMmtpConfig(Fund fund, long userId, String uuid) throws Exception;
 
@@ -52,7 +52,7 @@ public abstract class FundAbstract implements IFund {
 
     protected void insertParam(Fund fund, Long userId, String uuid) throws Exception {
         List<Params> list = repository.findAll(Params.class).stream()
-                .filter(a -> a.getFund().equals(fund))
+                .filter(a -> a.getFund().equals(getDefaultFund()))
                 .toList();
         if (!FundUtils.isNull(list) && !list.isEmpty()) {
             list = list.stream()
@@ -71,7 +71,34 @@ public abstract class FundAbstract implements IFund {
     }
 
     protected void insertWage(Fund fund, Long userId, String uuid) throws Exception {
-
+        List<WageRate> list = repository.findAll(WageRate.class).stream()
+                .filter(a -> a.getFund().equals(getDefaultFund()))
+                .toList();
+        for (WageRate wageRate : list) {
+            wageRate.setFund(fund);
+            wageRate.setInsertedUserId(null);
+            wageRate.setUpdatedUserId(null);
+            wageRate.setInsertedDateTime(null);
+            wageRate.setUpdatedDateTime(null);
+            wageRate.setId(null);
+            repository.save(wageRate, userId, uuid);
+            List<WageRateDetail> listDtail = repository.findAll(WageRateDetail.class).stream()
+                    .filter(a -> a.getWageRate().getId().equals(wageRate.getId()))
+                    .toList();
+            listDtail = listDtail.stream()
+                    .map(param -> {
+                        param.setWageRate(wageRate);
+                        param.setInsertedUserId(null);
+                        param.setUpdatedUserId(null);
+                        param.setInsertedDateTime(null);
+                        param.setUpdatedDateTime(null);
+                        param.setId(null);
+                        return param;
+                    })
+                    .collect(Collectors.toList());
+            repository.batchInsert(listDtail, userId, uuid);
+        }
+        repository.batchInsert(list, userId, uuid);
     }
 
 
@@ -85,7 +112,16 @@ public abstract class FundAbstract implements IFund {
     }
 
     protected void deleteWage(Fund fund, Long userId, String uuid) throws Exception {
-
+        List<WageRate> list = repository.findAll(WageRate.class).stream()
+                .filter(a -> a.getFund().equals(fund))
+                .toList();
+        for (WageRate wageRate : list) {
+            List<WageRateDetail> wageRateDetails = repository.findAll(WageRateDetail.class).stream()
+                    .filter(a -> a.getWageRate().getId().equals(wageRate.getId()))
+                    .toList();
+            repository.batchRemove(wageRateDetails, userId, uuid);
+        }
+        repository.batchRemove(list, userId, uuid);
     }
 
     private Fund getFund(Long fundId) {

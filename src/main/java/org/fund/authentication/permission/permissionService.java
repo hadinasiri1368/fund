@@ -27,7 +27,7 @@ public class PermissionService {
     private String pathsToBypass;
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final JpaRepository repository;
-    private Map<String, List<Object[]>> ListAllPermissions = null;
+    private Map<String, List<Object[]>> listAllPermissions = null;
     private final UserService userService;
 
     public PermissionService(JpaRepository repository, UserService userService) {
@@ -94,7 +94,7 @@ public class PermissionService {
     }
 
     private List<Object[]> getAllPermission() {
-        List<Object[]> list = this.ListAllPermissions.get(TenantContext.getCurrentTenant());
+        List<Object[]> list = this.listAllPermissions.get(TenantContext.getCurrentTenant());
         if (!FundUtils.isNull(list))
             return list;
         String hql = "select p,up.user.id userId from userPermission up \n" +
@@ -110,12 +110,12 @@ public class PermissionService {
                 "    inner join rolePermission rp on rp.role.id=ugr.role.id\n" +
                 "    inner join permission p on p.id=rp.permission.id\n";
         list = repository.listByQuery(hql, null);
-        this.ListAllPermissions.put(TenantContext.getCurrentTenant(), list);
+        this.listAllPermissions.put(TenantContext.getCurrentTenant(), list);
         return list;
     }
 
     public void resetPermissionCache() {
-        this.ListAllPermissions.remove(TenantContext.getCurrentTenant());
+        this.listAllPermissions.remove(TenantContext.getCurrentTenant());
     }
 
     @Transactional

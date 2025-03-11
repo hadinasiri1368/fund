@@ -26,7 +26,7 @@ select 2,'IMAGE',null,null,null,null from  dual
 -----------------------------------------------------------------------------------------------------
 
 INSERT INTO AHA_FUND
-select nf.FUND_ID,nf.FUND_NAME,IS_BASE_FUND,IS_ACTIVE,f.is_etf IS_ETF,NULL INSERTED_DATE_TIME,NULL INSERTED_USER_ID,NULL UPDATED_DATE_TIME,NULL UPDATED_USER_ID from  N_FUND nf,fund f where nf.fund_id=f.fund_id
+select nf.FUND_ID,nf.FUND_NAME,IS_BASE_FUND,f.is_etf IS_ETF,NULL INSERTED_DATE_TIME,NULL INSERTED_USER_ID,NULL UPDATED_DATE_TIME,NULL UPDATED_USER_ID from  N_FUND nf,fund f where nf.fund_id=f.fund_id
     /
 
 -----------------------------------------------------------------------------------------------------
@@ -890,5 +890,25 @@ select 1 id ,tbl.*,tbl2.BOURSE_ACCOUNT_NUMBER,tbl2.BOURSE_ACCOUNT_NAME,null,null
 ----------------------------------------------------------------------------------------------------
 INSERT INTO AHA_MMTP_CONFIG
 select ROWNUM,TBL.*,NULL,NULL,NULL,NULL from  (select MMTP_BROKER_ID,MMTP_APP_ID,MMTP_TRADER_ID,INS_MAX_LCODE_FUND2,FUND_ACCOUNT_NUMBER,INS_MAX_LCODE_FUND,INS_MNEMONIC_CODE_FUND,RESERVE_ORDER_ORIGIN,FUND_ID from  MMTP_CONFIG) TBL
+/
+----------------------------------------------------------------------------------------------------
+insert into aha_wage_rate
+select rownum id, tbl.*,null,null,null,null from  (
+                                                      select FUND_ID,INSTRUMENT_TYPE_ID,INST_TYPE_DERIVATIVES_ID,IS_OTC,IS_PURCHASE
+                                                      from  fund_wage_rate
+                                                      group by FUND_ID,INSTRUMENT_TYPE_ID,INST_TYPE_DERIVATIVES_ID,IS_OTC,IS_PURCHASE
+                                                  ) tbl
+/
+----------------------------------------------------------------------------------------------------
+insert into aha_wage_rate_detail
+select rownum id,tbl.*,null,null,null,null from  (
+                                                     select awr.id,INDUSTRY_ID,INSTRUMENT_ID,BROKERAGE_ID,fwr.change_date
+                                                          ,fwr.BOURSE_CO,fwr.DEPOSIT_CO,fwr.BOURSE_ORG,fwr.IT_MANAGEMENT,fwr.INTEREST,fwr.TAX,fwr.MAX_BOURSE_CO,fwr.MAX_DEPOSIT_CO,fwr.MAX_BOURSE_ORG,fwr.MAX_IT_MANAGEMENT,fwr.MAX_INTEREST,fwr.RAYAN_BOURSE,fwr.MAX_RAYAN_BOURSE
+                                                     from  aha_wage_rate awr
+                                                               inner join  fund_wage_rate fwr on fwr.fund_id= awr.f_FUND_ID
+                                                         and (fwr.INSTRUMENT_TYPE_ID= awr.f_INSTRUMENT_TYPE_ID or (fwr.INSTRUMENT_TYPE_ID is null and awr.f_INSTRUMENT_TYPE_ID is null))
+                                                         and fwr.INST_TYPE_DERIVATIVES_ID= awr.f_INST_TYPE_DERIVATIVES_ID
+                                                         and fwr.IS_OTC= awr.IS_OTC
+                                                         and fwr.IS_PURCHASE= awr.IS_PURCHASE) tbl order by change_date
 /
 ----------------------------------------------------------------------------------------------------

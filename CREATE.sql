@@ -125,7 +125,6 @@ CREATE TABLE AHA_FUND (
     ID                  NUMBER(18)              NOT NULL,
     NAME                VARCHAR2(100)           NOT NULL,
     IS_BASE_FUND        NUMBER(1)               NOT NULL,
-    IS_ACTIVE           NUMBER(1)               NOT NULL,
     IS_ETF              NUMBER(1)               NOT NULL,
     INSERTED_DATE_TIME  TIMESTAMP(6)            NULL,
     INSERTED_USER_ID    NUMBER(18)              NULL,
@@ -660,7 +659,7 @@ CREATE TABLE AHA_MMTP_CONFIG
     /
 
 ALTER TABLE AHA_MMTP_CONFIG ADD (
-    CONSTRAINT PK_MMTP_CONFIG PRIMARY KEY (ID)
+    CONSTRAINT PK_AHA_MMTP_CONFIG PRIMARY KEY (ID)
 )
 /
 
@@ -736,4 +735,79 @@ ALTER TABLE AHA_USER_ROLE ADD CONSTRAINT FK_AHA_USER_AHA_ROLE_USERS FOREIGN KEY 
 REFERENCES AHA_USERS (ID)
 /
 
+-----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_WAGE_RATE
+(
+    ID                      NUMBER(18)            NOT NULL,
+    F_FUND_ID               NUMBER(18)            NOT NULL,
+    F_INSTRUMENT_TYPE_ID    NUMBER(18)            NOT NULL,
+    F_INST_TYPE_DERIVATIVES_ID NUMBER(18)         NOT NULL,
+    IS_OTC                  NUMBER(1)             NOT NULL,
+    IS_PURCHASE             NUMBER(1)             NOT NULL,
+    INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+    INSERTED_USER_ID        NUMBER(18)              NULL,
+    UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+    UPDATED_USER_ID         NUMBER(18)              NULL
+)
+/
 
+ALTER TABLE AHA_WAGE_RATE ADD (
+    CONSTRAINT PK_AHA_WAGE_RATE PRIMARY KEY (ID)
+)
+/
+
+ALTER TABLE AHA_WAGE_RATE ADD CONSTRAINT FK_AHA_FUND FOREIGN KEY (F_FUND_ID)
+    REFERENCES AHA_FUND (ID)
+/
+
+ALTER TABLE AHA_WAGE_RATE
+    ADD CONSTRAINT UNQ_AHA_WAGE_RATE
+        UNIQUE (F_FUND_ID, F_INSTRUMENT_TYPE_ID,F_INST_TYPE_DERIVATIVES_ID,IS_OTC,IS_PURCHASE)
+    ENABLE VALIDATE
+/
+
+-----------------------------------------------------------------------------------------------------
+
+ALTER TABLE AHA_WAGE_RATE_DETAIL ADD (
+    CONSTRAINT PK_AHA_WAGE_RATE_DETAIL PRIMARY KEY (ID)
+)
+/
+
+CREATE TABLE AHA_WAGE_RATE_DETAIL
+(
+    ID                        NUMBER(18)          NOT NULL,
+    F_WAGE_RATE_ID            NUMBER(18)          NOT NULL,
+    F_INDUSTRY_ID             NUMBER(18)                  ,
+    F_INSTRUMENT_ID           NUMBER(18)                  ,
+    F_BROKERAGE_ID            NUMBER(18)                  ,
+    ISSUE_DATE                VARCHAR2(10 BYTE)   NOT NULL,
+    BOURSE_CO                 NUMBER              DEFAULT 0                     NOT NULL,
+    DEPOSIT_CO                NUMBER              DEFAULT 0                     NOT NULL,
+    BOURSE_ORG                NUMBER              DEFAULT 0                     NOT NULL,
+    IT_MANAGEMENT             NUMBER              DEFAULT 0                     NOT NULL,
+    INTEREST                  NUMBER              DEFAULT 0                     NOT NULL,
+    TAX                       NUMBER              DEFAULT 0                     NOT NULL,
+    MAX_BOURSE_CO             NUMBER              DEFAULT 0                     NOT NULL,
+    MAX_DEPOSIT_CO            NUMBER              DEFAULT 0                     NOT NULL,
+    MAX_BOURSE_ORG            NUMBER              DEFAULT 0                     NOT NULL,
+    MAX_IT_MANAGEMENT         NUMBER              DEFAULT 0                     NOT NULL,
+    MAX_INTEREST              NUMBER              DEFAULT 0                     NOT NULL,
+    RAYAN_BOURSE              NUMBER              DEFAULT 0                     NOT NULL,
+    MAX_RAYAN_BOURSE          NUMBER              DEFAULT 0                     NOT NULL,
+    INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+    INSERTED_USER_ID        NUMBER(18)              NULL,
+    UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+    UPDATED_USER_ID         NUMBER(18)              NULL
+)
+/
+
+ALTER TABLE AHA_WAGE_RATE_DETAIL ADD CONSTRAINT FK_WAGE_RATE FOREIGN KEY (F_WAGE_RATE_ID)
+    REFERENCES AHA_WAGE_RATE (ID)
+/
+
+ALTER TABLE AHA_WAGE_RATE_DETAIL
+    ADD CONSTRAINT UNQ_AHA_WAGE_RATE_DETAIL
+        UNIQUE (F_WAGE_RATE_ID, ISSUE_DATE,F_INDUSTRY_ID,F_INSTRUMENT_ID,F_BROKERAGE_ID)
+    ENABLE VALIDATE
+/
+-----------------------------------------------------------------------------------------------------

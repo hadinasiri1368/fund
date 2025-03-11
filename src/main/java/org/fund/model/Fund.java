@@ -22,8 +22,6 @@ public class Fund extends BaseEntity implements Serializable {
     private String name;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_BASE_FUND", nullable = false)
     private Boolean isBaseFund;
-    @Column(columnDefinition = "NUMBER(1)", name = "IS_ACTIVE", nullable = false)
-    private Boolean isActive;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_ETF", nullable = false)
     private Boolean isETF;
 
