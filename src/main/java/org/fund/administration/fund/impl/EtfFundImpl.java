@@ -1,17 +1,13 @@
-package org.fund.fund.impl;
+package org.fund.administration.fund.impl;
 
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
 import org.fund.exception.FundExceptionType;
-import org.fund.fund.FundAbstract;
+import org.fund.administration.fund.FundAbstract;
 import org.fund.model.Fund;
 import org.fund.model.MmtpConfig;
-import org.fund.model.Params;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class EtfFundImpl extends FundAbstract {
     public EtfFundImpl(JpaRepository repository, CommonFundService commonFundService) {

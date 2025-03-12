@@ -1,14 +1,13 @@
-package org.fund.params;
+package org.fund.administration.params;
 
 import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
 import org.fund.exception.FundException;
-import org.fund.exception.GeneralExceptionType;
 import org.fund.exception.ParamExceptionType;
 import org.fund.model.*;
-import org.fund.params.constant.ParamType;
-import org.fund.params.constant.ParamValueType;
+import org.fund.administration.params.constant.ParamType;
+import org.fund.administration.params.constant.ParamValueType;
 import org.fund.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 

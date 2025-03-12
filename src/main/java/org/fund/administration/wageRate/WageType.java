@@ -1,4 +1,4 @@
-package org.fund.wageRate;
+package org.fund.administration.wageRate;
 
 public enum WageType {
     BOURSE_CO,

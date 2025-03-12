@@ -1,4 +1,4 @@
-package org.fund.params;
+package org.fund.administration.params;
 
 import org.fund.authentication.otp.constant.OtpStrategyType;
 import org.fund.common.FundUtils;

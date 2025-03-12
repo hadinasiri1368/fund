@@ -1,4 +1,4 @@
-package org.fund.wageRate.dto;
+package org.fund.administration.wageRate.dto;
 
 import lombok.*;
 

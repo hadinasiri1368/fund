@@ -1,7 +1,5 @@
-package org.fund.params;
+package org.fund.administration.params;
 
-import org.fund.authentication.otp.Otp;
-import org.fund.authentication.otp.constant.OtpStrategyType;
 import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.model.Params;

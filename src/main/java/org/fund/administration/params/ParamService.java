@@ -1,8 +1,7 @@
-package org.fund.params;
+package org.fund.administration.params;
 
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
-import org.fund.exception.GeneralExceptionType;
 import org.fund.exception.ParamExceptionType;
 import org.fund.model.DetailLedger;
 import org.fund.model.Fund;

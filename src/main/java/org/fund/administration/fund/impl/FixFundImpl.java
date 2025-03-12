@@ -1,10 +1,9 @@
-package org.fund.fund.impl;
+package org.fund.administration.fund.impl;
 
 
 import org.fund.exception.FundException;
 import org.fund.exception.FundExceptionType;
-import org.fund.exception.GeneralExceptionType;
-import org.fund.fund.FundAbstract;
+import org.fund.administration.fund.FundAbstract;
 import org.fund.model.Fund;
 import org.fund.model.MmtpConfig;
 import org.fund.repository.JpaRepository;

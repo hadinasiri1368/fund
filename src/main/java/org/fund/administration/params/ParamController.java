@@ -1,4 +1,4 @@
-package org.fund.params;
+package org.fund.administration.params;
 
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;

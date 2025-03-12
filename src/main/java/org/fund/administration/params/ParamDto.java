@@ -1,4 +1,4 @@
-package org.fund.params;
+package org.fund.administration.params;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;

@@ -1,12 +1,11 @@
-package org.fund.fund.impl;
+package org.fund.administration.fund.impl;
 
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
-import org.fund.fund.FundAbstract;
+import org.fund.administration.fund.FundAbstract;
 import org.fund.model.Fund;
 import org.fund.model.MmtpConfig;
-import org.fund.params.Param;
-import org.fund.params.ParamService;
+import org.fund.administration.params.ParamService;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
 

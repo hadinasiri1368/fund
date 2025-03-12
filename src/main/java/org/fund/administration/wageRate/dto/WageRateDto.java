@@ -1,14 +1,10 @@
-package org.fund.wageRate.dto;
+package org.fund.administration.wageRate.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.fund.model.Fund;
-import org.fund.model.Params;
 import org.fund.model.WageRate;
-import org.fund.model.view.external.Industry;
-import org.fund.model.view.external.Instrument;
 import org.fund.model.view.external.InstrumentType;
 import org.fund.model.view.external.InstrumentTypeDerivatives;
 import org.fund.repository.JpaRepository;

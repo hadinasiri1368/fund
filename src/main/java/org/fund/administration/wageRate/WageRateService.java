@@ -1,4 +1,4 @@
-package org.fund.wageRate;
+package org.fund.administration.wageRate;
 
 import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
@@ -9,7 +9,7 @@ import org.fund.model.WageRateDetail;
 import org.fund.model.view.external.Instrument;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
-import org.fund.wageRate.dto.WageRateInstrumentDto;
+import org.fund.administration.wageRate.dto.WageRateInstrumentDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class WageRateService {
