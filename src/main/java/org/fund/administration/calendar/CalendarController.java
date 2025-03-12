@@ -29,14 +29,14 @@ public class CalendarController {
         service.update(calendarDto.toCalendar(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/calendar/remove")
-    public void remove(@NotEmpty(fieldName = "calendarId")
-                       @ValidateField(fieldName = "calendarId", entityClass = Calendar.class) Long calendarId) throws Exception {
+    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/calendar/remove/{id}")
+    public void remove(@PathVariable @NotEmpty(fieldName = "id")
+                       @ValidateField(fieldName = "id", entityClass = Calendar.class) Long calendarId) throws Exception {
         service.delete(calendarId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/calendar")
-    public List<Calendar> getFundList(@ValidateField(fieldName = "calendarId", entityClass = Calendar.class) Long calendarId) {
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/calendar/{id}")
+    public List<Calendar> getFundList(@PathVariable @ValidateField(fieldName = "id", entityClass = Calendar.class) Long calendarId) {
         return service.list(calendarId);
     }
 }

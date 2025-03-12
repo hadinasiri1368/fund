@@ -31,14 +31,14 @@ public class FundBranchController {
         service.update(fundBranchDto.toFundBranch(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/branch/remove")
-    public void remove(@NotEmpty(fieldName = "branchId")
-                       @ValidateField(fieldName = "branchId", entityClass = Fund.class) Long branchId) throws Exception {
+    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/branch/remove/{id}")
+    public void remove(@PathVariable @NotEmpty(fieldName = "id")
+                       @ValidateField(fieldName = "id", entityClass = Fund.class) Long branchId) throws Exception {
         service.delete(branchId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/branch")
-    public List<FundBranch> getFundList(@ValidateField(fieldName = "branchId", entityClass = Fund.class) Long branchId) {
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/branch/{id}")
+    public List<FundBranch> getFundList(@PathVariable @ValidateField(fieldName = "id", entityClass = Fund.class) Long branchId) {
         return service.list(branchId);
     }
 }

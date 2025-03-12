@@ -33,14 +33,14 @@ public class VerificationCodeController {
         service.update(verificationCodeDto.toVerificationCode(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/verificationCode/remove")
-    public void remove(@NotEmpty(fieldName = "verificationCodeId")
-                       @ValidateField(fieldName = "verificationCodeId", entityClass = VerificationCode.class) Long verificationCodeId) throws Exception {
+    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/verificationCode/remove/{id}")
+    public void remove(@PathVariable @NotEmpty(fieldName = "id")
+                       @ValidateField(fieldName = "id", entityClass = VerificationCode.class) Long verificationCodeId) throws Exception {
         service.delete(verificationCodeId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/verificationCode")
-    public List<VerificationCode> getFundList(@ValidateField(fieldName = "verificationCodeId", entityClass = VerificationCode.class) Long verificationCodeId) {
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/verificationCode/{id}")
+    public List<VerificationCode> getFundList(@PathVariable @ValidateField(fieldName = "id", entityClass = VerificationCode.class) Long verificationCodeId) {
         return service.list(verificationCodeId);
     }
 }

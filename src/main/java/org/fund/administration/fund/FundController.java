@@ -34,14 +34,14 @@ public class FundController {
         service.update(fundDto.toFund(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund/remove")
-    public void remove(@NotEmpty(fieldName = "fundId")
-                       @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId) throws Exception {
+    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund/remove/{id}")
+    public void remove(@PathVariable @NotEmpty(fieldName = "id")
+                       @ValidateField(fieldName = "id", entityClass = Fund.class) Long fundId) throws Exception {
         service.delete(fundId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund")
-    public List<Fund> getFundList(@ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId) {
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund/{id}")
+    public List<Fund> getFundList(@PathVariable @ValidateField(fieldName = "id", entityClass = Fund.class) Long fundId) {
         return service.list(getFund(fundId));
     }
 
