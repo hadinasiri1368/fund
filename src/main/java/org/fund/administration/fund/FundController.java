@@ -9,6 +9,7 @@ import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -34,7 +35,8 @@ public class FundController {
     }
 
     @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/fund/remove")
-    public void remove(@NotEmpty(fieldName = "fundId") Long fundId) throws Exception {
+    public void remove(@NotEmpty(fieldName = "fundId")
+                       @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId) throws Exception {
         service.delete(fundId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
