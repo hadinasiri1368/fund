@@ -377,7 +377,6 @@ ALTER TABLE AHA_PAYMENT_REASON ADD (
 -----------------------------------------------------------------------------------------------------
 CREATE TABLE AHA_VERIFICATION_CODE (
     ID                      NUMBER(18)              NOT NULL,
-    SERIAL                  NUMBER(18)              NOT NULL,
     SEED                    NVARCHAR2(300)          NOT NULL,
     COUNTER                 NUMBER(18)              NOT NULL,
     IS_ACTIVE               NUMBER(1)               NOT NULL,

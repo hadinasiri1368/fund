@@ -419,7 +419,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (7, 'ثبت مدیریت OTP', '/basicData/OTP/add', 1)
+    (7, 'ثبت مدیریت OTP', '/administration/verificationCode/add', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -464,7 +464,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (16, 'ویرایش مدیریت OTP', '/basicData/OTP/edit', 1)
+    (16, 'ویرایش مدیریت OTP', '/administration/verificationCode/edit', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -509,7 +509,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (25, 'حذف مدیریت OTP', '/basicData/OTP/remove', 1)
+    (25, 'حذف مدیریت OTP', '/administration/verificationCode/remove', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -554,7 +554,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (34, 'نمایش مدیریت OTP', '/basicData/OTP', 1)
+    (34, 'نمایش مدیریت OTP', '/administration/verificationCode', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -812,7 +812,7 @@ Values
 
 ----------------------------------------------------------------------------------------------------
 insert into AHA_VERIFICATION_CODE
-select OTP_ID,SERIAL,SEED,COUNTER,ENABLED,null,null,null,null from otp
+select OTP_ID,SEED,COUNTER,ENABLED,null,null,null,null from otp
 where OTP_ID>0
     /
 ----------------------------------------------------------------------------------------------------
