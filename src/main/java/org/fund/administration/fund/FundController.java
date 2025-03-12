@@ -24,23 +24,23 @@ public class FundController {
         this.repository = repository;
     }
 
-    @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/fund/add")
+    @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund/add")
     public void insert(@RequestBody FundDto fundDto) throws Exception {
         service.insert(fundDto.toFund(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/fund/edit")
+    @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund/edit")
     public void edit(@RequestBody FundDto fundDto) throws Exception {
         service.update(fundDto.toFund(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/fund/remove")
+    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund/remove")
     public void remove(@NotEmpty(fieldName = "fundId")
                        @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId) throws Exception {
         service.delete(fundId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/fund")
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund")
     public List<Fund> getFundList(@ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId) {
         return service.list(getFund(fundId));
     }

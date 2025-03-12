@@ -389,12 +389,12 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (1, 'ثبت صندوق ها', '/basicData/fund/add', 1)
+    (1, 'ثبت صندوق ها', '/administration/fund/add', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (2, 'ثبت شعب', '/basicData/branch/add', 1)
+    (2, 'ثبت شعب', '/administration/branch/add', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -414,7 +414,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (6, 'ثبت پارامترها', '/basicData/param/add', 1)
+    (6, 'ثبت پارامترها', '/administration/param/add', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -434,12 +434,12 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (10, 'ویرایش صندوق ها', '/basicData/fund/edit', 1)
+    (10, 'ویرایش صندوق ها', '/administration/fund/edit', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (11, 'ویرایش شعب', '/basicData/branch/edit', 1)
+    (11, 'ویرایش شعب', '/administration/branch/edit', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -459,7 +459,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (15, 'ویرایش پارامترها', '/basicData/param/edit', 1)
+    (15, 'ویرایش پارامترها', '/administration/param/edit', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -479,12 +479,12 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (19, 'حذف صندوق ها', '/basicData/fund/remove', 1)
+    (19, 'حذف صندوق ها', '/administration/fund/remove', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (20, 'حذف شعب', '/basicData/branch/remove', 1)
+    (20, 'حذف شعب', '/administration/branch/remove', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -504,7 +504,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (24, 'حذف پارامترها', '/basicData/param/remove', 1)
+    (24, 'حذف پارامترها', '/administration/param/remove', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -524,12 +524,12 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (28, 'نمایش صندوق ها', '/basicData/fund', 1)
+    (28, 'نمایش صندوق ها', '/administration/fund', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (29, 'نمایش شعب', '/basicData/branch', 1)
+    (29, 'نمایش شعب', '/administration/branch', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -549,7 +549,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (33, 'نمایش پارامترها', '/basicData/param', 1)
+    (33, 'نمایش پارامترها', '/administration/param', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -575,43 +575,43 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (38, 'دریافت مقدار عددی پارامترها', '/basicData/param/getLongValue', 1)
+    (38, 'دریافت مقدار عددی پارامترها', '/administration/param/getLongValue', 1)
 /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (39, 'دریافت مقدار رشته ای پارامترها', '/basicData/param/getStringValue', 1)
+    (39, 'دریافت مقدار رشته ای پارامترها', '/administration/param/getStringValue', 1)
 /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (40, 'دریافت مقدار اعشاری با دقت بالا پارامترها', '/basicData/param/getDoubleValue', 1)
+    (40, 'دریافت مقدار اعشاری با دقت بالا پارامترها', '/administration/param/getDoubleValue', 1)
 /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (41, 'دریافت مقدار اعشاری با دقت پایین پارامترها', '/basicData/param/getFloatValue', 1)
+    (41, 'دریافت مقدار اعشاری با دقت پایین پارامترها', '/administration/param/getFloatValue', 1)
 /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (42, 'دریافت مقدار منطقی پارامترها', '/basicData/param/getBooleanValue', 1)
+    (42, 'دریافت مقدار منطقی پارامترها', '/administration/param/getBooleanValue', 1)
 /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (43, 'دریافت معین تنظیم حساب', '/basicData/param/getSubsidiaryLedger', 1)
+    (43, 'دریافت معین تنظیم حساب', '/administration/param/getSubsidiaryLedger', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (44, 'دریافت تفصیل تنظیم حساب', '/basicData/param/getDetailLedger', 1)
+    (44, 'دریافت تفصیل تنظیم حساب', '/administration/param/getDetailLedger', 1)
     /
 
 Insert into AHA_PERMISSION

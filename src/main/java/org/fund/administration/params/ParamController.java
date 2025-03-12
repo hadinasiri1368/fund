@@ -28,26 +28,26 @@ public class ParamController {
         this.repository = repository;
     }
 
-    @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/add")
+    @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/add")
     public void insert(@RequestBody ParamDto param) throws Exception {
         service.insert(param, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/edit")
+    @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/edit")
     public void edit(@ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId
             , @NotEmpty(fieldName = "code") String code
             , @NotEmpty(fieldName = "value") String value) throws Exception {
         service.setValue(getFund(fundId), code, value, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/remove")
+    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/remove")
     public void remove(@NotEmpty(fieldName = "paramId")
                        @ValidateField(fieldName = "paramId", entityClass = Params.class) Long paramId) throws Exception {
         service.delete(paramId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/getStringValue")
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/getStringValue")
     public String getStringValue(@NotEmpty(fieldName = "code") String code
             , @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId
             , @ValidPersianDate(fieldName = "effectiveDate") String effectiveDate) {
@@ -62,7 +62,7 @@ public class ParamController {
                         .orElseGet(() -> service.getStringValue(code)));
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/getLongValue")
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/getLongValue")
     public Long getLongValue(@NotEmpty(fieldName = "code") String code
             , @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId
             , @ValidPersianDate(fieldName = "effectiveDate") String effectiveDate) {
@@ -77,7 +77,7 @@ public class ParamController {
                         .orElseGet(() -> service.getLongValue(code)));
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/getDoubleValue")
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/getDoubleValue")
     public Double getDoubleValue(@NotEmpty(fieldName = "code") String code
             , @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId
             , @ValidPersianDate(fieldName = "effectiveDate") String effectiveDate) {
@@ -92,7 +92,7 @@ public class ParamController {
                         .orElseGet(() -> service.getDoubleValue(code)));
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/getFloatValue")
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/getFloatValue")
     public Float getFloatValue(@NotEmpty(fieldName = "code") String code
             , @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId
             , @ValidPersianDate(fieldName = "effectiveDate") String effectiveDate) {
@@ -107,7 +107,7 @@ public class ParamController {
                         .orElseGet(() -> service.getFloatValue(code)));
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/getBooleanValue")
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/getBooleanValue")
     public Boolean getBooleanValue(@NotEmpty(fieldName = "code") String code
             , @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId
             , @ValidPersianDate(fieldName = "effectiveDate") String effectiveDate) {
@@ -122,7 +122,7 @@ public class ParamController {
                         .orElseGet(() -> service.getBooleanValue(code)));
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/getSubsidiaryLedger")
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/getSubsidiaryLedger")
     public SubsidiaryLedger getSubsidiaryLedger(@NotEmpty(fieldName = "code") String code
             , @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId) {
         if (FundUtils.isNull(fundId))
@@ -131,7 +131,7 @@ public class ParamController {
             return service.getSubsidiaryLedger(getFund(fundId), code);
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/basicData/param/getDetailLedger")
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/getDetailLedger")
     public DetailLedger getDetailLedger(@NotEmpty(fieldName = "code") String code
             , @ValidateField(fieldName = "fundId", entityClass = Fund.class) Long fundId) {
         if (FundUtils.isNull(fundId))
