@@ -680,27 +680,52 @@ Values
     (55, 'تخصیص مجوزها به کاربر', '/basicData/user/assignPermissionToUser', 1)
     /
 
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (56, 'ثبت تقویم کاری', '/administration/calendar/add', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (57, 'ویرایش تقویم کاری', '/administration/calendar/edit', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (58, 'حذف تقویم کاری', '/administration/calendar/remove', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (59, 'لیست تقویم کاری', '/administration/calendar', 1)
+    /
+
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (56, 'ورود', '/login/**', 0)
+    (60, 'ورود', '/login/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (57, 'swagger', '/v3/api-docs/**', 0)
+    (61, 'swagger', '/v3/api-docs/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (58, 'swagger', '/swagger-ui.html', 0)
+    (62, 'swagger', '/swagger-ui.html', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (59, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
+    (63, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
 /
 
 ----------------------------------------------------------------------------------------------------
