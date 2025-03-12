@@ -128,6 +128,14 @@ public abstract class FundAbstract implements IFund {
         return repository.findOne(Fund.class, fundId);
     }
 
+    public List<Fund> list(Fund fund) {
+        if (FundUtils.isNull(fund)) {
+            return repository.findAll(Fund.class);
+        }
+        return repository.findAll(Fund.class).stream()
+                .filter(a -> a.equals(fund)).toList();
+    }
+
     @Override
     public Long getBourseAccount() {
         return repository.findAll(Company.class).stream()

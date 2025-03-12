@@ -26,7 +26,7 @@ select 2,'IMAGE',null,null,null,null from  dual
 -----------------------------------------------------------------------------------------------------
 
 INSERT INTO AHA_FUND
-select nf.FUND_ID,nf.FUND_NAME,IS_BASE_FUND,f.is_etf IS_ETF,NULL INSERTED_DATE_TIME,NULL INSERTED_USER_ID,NULL UPDATED_DATE_TIME,NULL UPDATED_USER_ID from  N_FUND nf,fund f where nf.fund_id=f.fund_id
+select nf.FUND_ID,nf.FUND_NAME,f.is_etf IS_ETF,NULL INSERTED_DATE_TIME,NULL INSERTED_USER_ID,NULL UPDATED_DATE_TIME,NULL UPDATED_USER_ID from  N_FUND nf,fund f where nf.fund_id=f.fund_id
     /
 
 -----------------------------------------------------------------------------------------------------

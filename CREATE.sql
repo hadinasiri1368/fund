@@ -124,7 +124,6 @@ ALTER TABLE AHA_FILE_TYPE ADD (
 CREATE TABLE AHA_FUND (
     ID                  NUMBER(18)              NOT NULL,
     NAME                VARCHAR2(100)           NOT NULL,
-    IS_BASE_FUND        NUMBER(1)               NOT NULL,
     IS_ETF              NUMBER(1)               NOT NULL,
     INSERTED_DATE_TIME  TIMESTAMP(6)            NULL,
     INSERTED_USER_ID    NUMBER(18)              NULL,

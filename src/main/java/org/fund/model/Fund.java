@@ -20,8 +20,6 @@ public class Fund extends BaseEntity implements Serializable {
     private Long id;
     @Column(columnDefinition = "NVARCHAR2(12)", name = "NAME", nullable = false)
     private String name;
-    @Column(columnDefinition = "NUMBER(1)", name = "IS_BASE_FUND", nullable = false)
-    private Boolean isBaseFund;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_ETF", nullable = false)
     private Boolean isETF;
 
