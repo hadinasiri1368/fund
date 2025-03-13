@@ -251,6 +251,10 @@ where F_PARAMS_VALUE_TYPE_ID=2
   and F_PARAMS_TYPE_ID in (4,6)
   and (value='0' or value='1')
 /
+
+update  aha_params set f_fund_id=null,IS_GLOBAL=1
+where code in ('TWO_FACTOR_LOGIN_WITH_SMS_APPUSERS','TWO_FACTOR_LOGIN_WITH_PHYSICAL_APPUSERS','TWO_FACTOR_LOGIN_WITH_EMAIL_APPUSERS')
+/
 ----------------------------------------------------------------------------------------------------
 INSERT INTO  AHA_PARAMS
 select (select MAX(ID) from  AHA_PARAMS)+ROWNUM ID,TBL.* from  (
