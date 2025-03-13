@@ -41,7 +41,7 @@ public class AuthenticationController {
         return service.login(loginDto);
     }
 
-    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/basicData/getOtpStrategies")
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/getOtpStrategies")
     public Map<Integer, String> getOtpStrategies() {
         return service.getOtpStrategyTypeList().stream()
                 .collect(Collectors.toMap(
