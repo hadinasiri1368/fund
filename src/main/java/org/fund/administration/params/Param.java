@@ -9,6 +9,8 @@ import org.fund.model.Fund;
 import org.fund.model.Params;
 import org.fund.model.SubsidiaryLedger;
 import org.fund.repository.JpaRepository;
+import org.springframework.stereotype.Service;
+
 
 public interface Param {
     boolean accept();

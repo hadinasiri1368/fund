@@ -11,13 +11,16 @@ import java.io.Serializable;
 @Entity(name = "industry")
 @Getter
 @Setter
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @CacheableEntity
 public class Industry {
+    @Id
     @Column(columnDefinition = "NUMBER", name = "INDUSTRY_ID", nullable = false)
     private Long id;
     @Column(columnDefinition = "VARCHAR2(20)", name = "INDUSTRY_CODE", nullable = false)
     private String code;
     @Column(columnDefinition = "VARCHAR2(200)", name = "FARSI_NAME", nullable = false)
     private String name;
+
 }

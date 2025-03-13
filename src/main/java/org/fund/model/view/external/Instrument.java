@@ -1,9 +1,7 @@
 package org.fund.model.view.external;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.fund.config.cache.CacheableEntity;
 import org.fund.model.DetailLedgerType;
 
@@ -11,9 +9,11 @@ import org.fund.model.DetailLedgerType;
 @Entity(name = "instrument")
 @Getter
 @Setter
-@Builder
 @CacheableEntity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Instrument {
+    @Id
     @Column(columnDefinition = "NUMBER", name = "INSTRUMENT_ID", nullable = false)
     private Long id;
     @ManyToOne(fetch = FetchType.EAGER)

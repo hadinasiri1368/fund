@@ -12,10 +12,11 @@ import java.util.List;
 
 @Service
 public class ParamVisitor {
+
     private final List<Param> params;
 
-    public ParamVisitor() {
-        params = new ArrayList<Param>();
+    public ParamVisitor(List<Param> params) {
+        this.params = params;
     }
 
     @Transactional

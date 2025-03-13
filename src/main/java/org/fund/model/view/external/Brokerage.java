@@ -2,19 +2,20 @@ package org.fund.model.view.external;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.fund.config.cache.CacheableEntity;
 
 @Table(name = "BROKERAGE")
 @Entity(name = "brokerage")
 @Getter
 @Setter
-@Builder
 @CacheableEntity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Brokerage {
+    @Id
     @Column(columnDefinition = "NUMBER", name = "BROKERAGE_ID", nullable = false)
     private Long id;
     @Column(columnDefinition = "VARCHAR2(50)", name = "BROKERAGE_CODE", nullable = false)
@@ -23,4 +24,7 @@ public class Brokerage {
     private String name;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_ACTIVE", nullable = false)
     private Boolean isActive;
+
+
+
 }

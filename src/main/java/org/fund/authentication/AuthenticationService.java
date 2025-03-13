@@ -69,8 +69,8 @@ public class AuthenticationService {
     }
 
     public void sendOtpForLogin(OtpRequestDto otpRequestDto) {
-        if (profileService.isDebugMode())
-            return;
+//        if (profileService.isDebugMode())
+//            return;
         if (getOtpStrategyTypeList().isEmpty())
             throw new FundException(AuthenticationExceptionType.ALL_OTP_STRATEGY_ARE_DISABLED);
         Users user = getUser(otpRequestDto.getUsername(), otpRequestDto.getPassword());
@@ -86,7 +86,7 @@ public class AuthenticationService {
         if (!user.isPresent()) {
             throw new FundException(AuthenticationExceptionType.USERNAME_PASSWORD_INVALID);
         }
-        if (!profileService.isDebugMode()) {
+        if (true) {
             boolean validated = FundUtils.encodePassword(password)
                     .equalsIgnoreCase(user.get().getPassword());
             if (!validated) {

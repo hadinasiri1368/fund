@@ -2,19 +2,20 @@ package org.fund.model.view.external;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.fund.config.cache.CacheableEntity;
 
 @Table(name = "INSTRUMENT_INFO")
 @Entity(name = "instrumentInfo")
 @Getter
 @Setter
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @CacheableEntity
 public class InstrumentInfo {
+    @Id
     @Column(columnDefinition = "NUMBER", name = "INSTRUMENT_ID", nullable = false)
     private Long instrumentId;
     @Column(columnDefinition = "VARCHAR2(12)", name = "INS_MAX_LCODE", nullable = false)
@@ -31,4 +32,5 @@ public class InstrumentInfo {
     private Boolean isForFundXml;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_VALID", nullable = false)
     private Boolean isValid;
+
 }
