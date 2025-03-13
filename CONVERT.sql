@@ -399,7 +399,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (3, 'ثبت کاربران', '/basicData/user/add', 1)
+    (3, 'ثبت کاربران', '/authentication/user/add', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -409,7 +409,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (5, 'ثبت نقش ها', '/basicData/role/add', 1)
+    (5, 'ثبت نقش ها', '/authentication/role/add', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -444,7 +444,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (12, 'ویرایش کاربران', '/basicData/user/edit', 1)
+    (12, 'ویرایش کاربران', '/authentication/user/edit', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -454,7 +454,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (14, 'ویرایش نقش ها', '/basicData/role/edit', 1)
+    (14, 'ویرایش نقش ها', '/authentication/role/edit', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -489,7 +489,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (21, 'حذف کاربران', '/basicData/user/remove', 1)
+    (21, 'حذف کاربران', '/authentication/user/remove', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -499,7 +499,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (23, 'حذف نقش ها', '/basicData/role/remove', 1)
+    (23, 'حذف نقش ها', '/authentication/role/remove', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -544,7 +544,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (32, 'نمایش نقش ها', '/basicData/role', 1)
+    (32, 'نمایش نقش ها', '/authentication/role', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -569,7 +569,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (37, 'انواع ورود دوعاملی', '/basicData/getOtpStrategies', 0)
+    (37, 'انواع ورود دوعاملی', '/getOtpStrategies', 0)
     /
 
 Insert into AHA_PERMISSION
@@ -617,67 +617,67 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (45, 'ثبت مجوز', '/basicData/permission/add', 1)
+    (45, 'ثبت مجوز', '/authentication/permission/add', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (46, 'ویرایش مجوز', '/basicData/permission/edit', 1)
+    (46, 'ویرایش مجوز', '/authentication/permission/edit', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (47, 'حذف مجوز', '/basicData/permission/remove', 1)
+    (47, 'حذف مجوز', '/authentication/permission/remove', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (48, 'ثبت گروه کاربری', '/basicData/userGroup/add', 1)
+    (48, 'ثبت گروه کاربری', '/authentication/userGroup/add', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (49, 'ویرایش گروه کاربری', '/basicData/userGroup/edit', 1)
+    (49, 'ویرایش گروه کاربری', '/authentication/userGroup/edit', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (50, 'حذف گروه کاربری', '/basicData/userGroup/remove', 1)
+    (50, 'حذف گروه کاربری', '/authentication/userGroup/remove', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (51, 'تخصیص مجوزها به نقش', '/basicData/permission/assignPermissionToRole', 1)
+    (51, 'تخصیص مجوزها به نقش', '/authentication/permission/assignPermissionToRole', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (52, 'تخصیص مجوزها به نقش', '/basicData/permission/assignRoleToUserGroup', 1)
+    (52, 'تخصیص مجوزها به نقش', '/authentication/permission/assignRoleToUserGroup', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (53, 'تخصیص کاربرها به گروه کاربری', '/basicData/user/assignUserToGroup', 1)
+    (53, 'تخصیص کاربرها به گروه کاربری', '/authentication/user/assignUserToGroup', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (54, 'تخصیص نقش ها به کاربر', '/basicData/user/assignRoleToUser', 1)
+    (54, 'تخصیص نقش ها به کاربر', '/authentication/user/assignRoleToUser', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (55, 'تخصیص مجوزها به کاربر', '/basicData/user/assignPermissionToUser', 1)
+    (55, 'تخصیص مجوزها به کاربر', '/authentication/user/assignPermissionToUser', 1)
     /
 
 
