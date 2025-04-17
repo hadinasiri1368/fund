@@ -53,6 +53,12 @@ public class Person extends BaseEntity implements Serializable {
     private String companyName;
     @Column(name = "ADDRESS", columnDefinition = "VARCHAR2(1000)")
     private String address;
+    @Column(name = "LATIN_FIRST_NAME", columnDefinition = "VARCHAR2(200)")
+    private String latinFirstName;
+    @Column(name = "LATIN_LAST_NAME", columnDefinition = "VARCHAR2(200)")
+    private String latinLastName;
+    @Column(name = "IS_IRANIAN", columnDefinition = "NUMBER(1)")
+    private Boolean isIranian;
     @Column(name = "REF_ID", columnDefinition = "NUMBER(18)")
     private Long refId;
 }

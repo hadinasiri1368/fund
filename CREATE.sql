@@ -416,7 +416,7 @@ REFERENCES AHA_MENU (ID)
 
 CREATE TABLE AHA_PERMISSION (
     ID                      NUMBER(18)              NOT NULL,
-    NAME                    VARCHAR2(50)            NOT NULL,
+    NAME                    VARCHAR2(300)           NOT NULL,
     URL                     VARCHAR2(300)           NOT NULL,
     IS_SENSITIVE            NUMBER(1)               NOT NULL,
     INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
@@ -511,6 +511,9 @@ CREATE TABLE AHA_PERSON (
     IS_COMPANY                      NUMBER(1)     DEFAULT 0 NOT NULL,
     COMPANY_NAME                    VARCHAR2(200 BYTE),
     REGISTERATION_NUMBER            VARCHAR2(50 BYTE),
+    LATIN_FIRST_NAME                VARCHAR2(200 BYTE),
+    LATIN_LAST_NAME                 VARCHAR2(200 BYTE),
+    IS_IRANIAN                      NUMBER(1),
     REF_ID                          NUMBER(18),  
     INSERTED_DATE_TIME              TIMESTAMP(6)            NULL,
     INSERTED_USER_ID                NUMBER(18)              NULL,
@@ -766,11 +769,6 @@ ALTER TABLE AHA_WAGE_RATE
 
 -----------------------------------------------------------------------------------------------------
 
-ALTER TABLE AHA_WAGE_RATE_DETAIL ADD (
-    CONSTRAINT PK_AHA_WAGE_RATE_DETAIL PRIMARY KEY (ID)
-)
-/
-
 CREATE TABLE AHA_WAGE_RATE_DETAIL
 (
     ID                        NUMBER(18)          NOT NULL,
@@ -807,5 +805,63 @@ ALTER TABLE AHA_WAGE_RATE_DETAIL
     ADD CONSTRAINT UNQ_AHA_WAGE_RATE_DETAIL
         UNIQUE (F_WAGE_RATE_ID, ISSUE_DATE,F_INDUSTRY_ID,F_INSTRUMENT_ID,F_BROKERAGE_ID)
     ENABLE VALIDATE
+/
+
+ALTER TABLE AHA_WAGE_RATE_DETAIL ADD (
+    CONSTRAINT PK_AHA_WAGE_RATE_DETAIL PRIMARY KEY (ID)
+)
+/
+-----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_CUSTOMER_STATUS
+(
+  ID                      NUMBER(18)              NOT NULL,
+  NAME                    VARCHAR2(100)           NOT NULL,
+  INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+  INSERTED_USER_ID        NUMBER(18)              NULL,
+  UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+  UPDATED_USER_ID         NUMBER(18)              NULL
+)
+/
+
+ALTER TABLE AHA_CUSTOMER_STATUS ADD (
+    CONSTRAINT PK_AHA_CUSTOMER_STATUS PRIMARY KEY (ID)
+)
+/
+-----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_CUSTOMER
+(
+    ID                      NUMBER(18)          NOT NULL,
+    F_DETAIL_LEDGER_ID      NUMBER(18)          NOT NULL,
+    F_CUSTOMER_STATUS_ID    NUMBER(18)          NOT NULL,
+    F_PERSON_ID             NUMBER(18)          NOT NULL,
+    COMMENTS                VARCHAR2(1000)          NULL,
+    IS_SMS_SEND             NUMBER(1) DEFAULT 0 NOT NULL,
+    IS_SEJAM                NUMBER(1) DEFAULT 0 NOT NULL,
+    PROFIT_RATE             NUMBER  DEFAULT 100 NOT NULL,
+    IS_PROFIT_ISSUE         NUMBER(1) DEFAULT 0 NOT NULL,
+    IS_VAT                  NUMBER(1) DEFAULT 1 NOT NULL,
+    IS_EPAYMENT_CUSTOMER    NUMBER(1) DEFAULT 0 NOT NULL,
+    INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+    INSERTED_USER_ID        NUMBER(18)              NULL,
+    UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+    UPDATED_USER_ID         NUMBER(18)              NULL
+)
+/
+
+ALTER TABLE AHA_CUSTOMER ADD (
+    CONSTRAINT PK_AHA_CUSTOMER PRIMARY KEY (ID)
+)
+/
+
+ALTER TABLE AHA_CUSTOMER ADD CONSTRAINT FK_AHA_CUSTOMER_STATUS FOREIGN KEY (F_CUSTOMER_STATUS_ID)
+    REFERENCES AHA_CUSTOMER_STATUS (ID)
+/
+
+ALTER TABLE AHA_CUSTOMER ADD CONSTRAINT FK_AHA_DETAIL_LEDGER FOREIGN KEY (F_DETAIL_LEDGER_ID)
+    REFERENCES AHA_DETAIL_LEDGER (ID)
+/
+
+ALTER TABLE AHA_CUSTOMER ADD CONSTRAINT FK_AHA_PERSON FOREIGN KEY (F_PERSON_ID)
+    REFERENCES AHA_PERSON (ID)
 /
 -----------------------------------------------------------------------------------------------------

@@ -127,7 +127,7 @@ public class WageRateService {
         String hql = "select i " +
                 " from instrument i" +
                 " left join instrumentInfo ii on ii.instrument.id=i.id and ii.insMaxLcode like '%1'";
-        list = repository.listByQuery(hql, null);
+        list = repository.listObjectByQuery(hql, null);
         this.listAllInstrument.put(TenantContext.getCurrentTenant(), list);
         return list;
     }

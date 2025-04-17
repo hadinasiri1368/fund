@@ -1,9 +1,6 @@
 package org.fund.repository;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+import jakarta.persistence.*;
 import lombok.extern.slf4j.Slf4j;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
@@ -24,8 +21,10 @@ import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -185,7 +184,7 @@ public class JpaRepository {
         return resultList;
     }
 
-    public List listByQuery(String hql, Map<String, Object> param) {
+    public List listObjectByQuery(String hql, Map<String, Object> param) {
         Query query = entityManager.createQuery(hql);
         if (!FundUtils.isNull(param) && param.size() > 0)
             for (String key : param.keySet()) {
@@ -194,7 +193,48 @@ public class JpaRepository {
         return query.getResultList();
     }
 
-    public Page<Object> listByQuery(String hql, Map<String, Object> param, Pageable pageable) {
+    public List<Map<String, Object>> listMapByQuery(String hql, Map<String, Object> param) {
+        TypedQuery<Tuple> query = entityManager.createQuery(hql, Tuple.class);
+        if (!FundUtils.isNull(param) && param.size() > 0)
+            for (String key : param.keySet()) {
+                query.setParameter(key, param.get(key));
+            }
+        return query.getResultList().stream()
+                .map(tuple -> {
+                    Map<String, Object> rowMap = new HashMap<>();
+                    for (TupleElement<?> element : tuple.getElements()) {
+                        rowMap.put(element.getAlias(), tuple.get(element.getAlias()));
+                    }
+                    return rowMap;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public Page<Map<String, Object>> listMapByQuery(String hql, Map<String, Object> param, Pageable pageable) {
+        TypedQuery<Tuple> query = entityManager.createQuery(hql, Tuple.class);
+        if (!FundUtils.isNull(param) && !param.isEmpty()) {
+            for (Map.Entry<String, Object> entry : param.entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+        long countResult = getTotalCount(query);
+        query.setFirstResult(pageNumber * pageSize);
+        query.setMaxResults(pageSize);
+        List<Map<String, Object>> resultList = query.getResultList().stream()
+                .map(tuple -> {
+                    Map<String, Object> rowMap = new HashMap<>();
+                    for (TupleElement<?> element : tuple.getElements()) {
+                        rowMap.put(element.getAlias(), tuple.get(element.getAlias()));
+                    }
+                    return rowMap;
+                })
+                .collect(Collectors.toList());
+        return new PageImpl<>(resultList, pageable, countResult);
+    }
+
+    public Page<Object> listObjectByQuery(String hql, Map<String, Object> param, Pageable pageable) {
         Query query = entityManager.createQuery(hql);
         if (!FundUtils.isNull(param) && !param.isEmpty()) {
             for (Map.Entry<String, Object> entry : param.entrySet()) {

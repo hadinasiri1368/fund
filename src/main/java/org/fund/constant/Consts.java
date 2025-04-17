@@ -27,10 +27,13 @@ public class Consts {
     public static final String PARAMS_TWO_FACTOR_LOGIN_WITH_EMAIL_APPUSERS = "TWO_FACTOR_LOGIN_WITH_EMAIL_APPUSERS";
     public static final String PARAMS_TWO_FACTOR_LOGIN_WITH_PHYSICAL_APPUSERS = "TWO_FACTOR_LOGIN_WITH_PHYSICAL_APPUSERS";
     public static final String PARAMS_FUND_TERMINATION_DATE = "FUND_TERMINATION_DATE";
+    public static final String PARAMS_BO_CUST_REGISTER_MANUAL = "BO_CUST_REGISTER_MANUAL";
+    public static final String PARAMS_IS_NEW_FOREIGN_CUSTOMER_VALID = "IS_NEW_FOREIGN_CUSTOMER_VALID";
     //////////////////////////////////////////////////////SMS_Type/////////////////////////////////////////////////////////
     public static final String SMS_TYPE_HIGH_PRIORITY_SENDING = "99";
     public static final String SMS_TYPE_COMMON = "2";
     //////////////////////////////////////////////////////EMAIL_Message/////////////////////////////////////////////////////////
     public static final String EMAIL_FROM_ADDRESS_NO_REPLY = "noreply@rhbroker.com";
     public static final String ALERT_EMAIL_SUBJECT_VERIFICATION_CODE = "کد اعتبار سنجی مشتری در صتدوق ";
+
 }

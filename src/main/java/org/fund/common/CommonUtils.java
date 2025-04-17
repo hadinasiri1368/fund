@@ -26,8 +26,10 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class CommonUtils {
+
     public static boolean isNull(Object o) {
         if (o instanceof String) {
             if (o == null ||

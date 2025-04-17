@@ -324,6 +324,11 @@ FROM (SELECT FUND_COLOUMN_NAME,
      ) TBL
     /
 
+update  aha_params
+set code='IS_NEW_FOREIGN_CUSTOMER_VALID'
+where code='ّIS_NEW_FOREIGN_CUSTOMER_VALID'
+/
+
 insert into AHA_PARAMS_HISTORY
 select * from  (
                    select NVL((select MAX(ID) from  AHA_PARAMS_HISTORY),0)+rownum ID,TBL.* from  (
@@ -777,7 +782,7 @@ select ROWNUM ID, TBL.* from  (
                                          NULL BIRTH_CERTIFICATION_NUMBER,
                                          NULL BIRTH_CERTIFICATION_ID,PHONE,
                                          NULL NATIONAL_CODE,FAX,CELL_PHONE,POSTAL_CODE,ADDRESS,E_MAIL,
-                                         0 IS_COMPANY,NULL COMPANY_NAME,NULL REGISTERATION_NUMBER,APPUSER_ID,
+                                         0 IS_COMPANY,NULL COMPANY_NAME,NULL REGISTERATION_NUMBER,NULL LATIN_FIRST_NAME,NULL LATIN_LAST_NAME,0 IS_IRANIAN,APPUSER_ID,
                                          NULL INSERTED_DATE_TIME,NULL INSERTED_USER_ID,NULL UPDATED_DATE_TIME,NULL UPDATED_USER_ID from  APPUSER
                                   WHERE APPUSER_ID>0
                                     AND USERNAME NOT IN ('vn','rh1','rayan')) TBL
@@ -802,6 +807,9 @@ FROM (SELECT ao.username FIRST_NAME,
              0        IS_COMPANY,
              NULL     COMPANY_NAME,
              NULL     REGISTERATION_NUMBER,
+             NULL LATIN_FIRST_NAME,
+             NULL LATIN_LAST_NAME,
+             0    IS_IRANIAN,
              ao.APPUSER_OTP_ID,
              NULL     INSERTED_DATE_TIME,
              NULL     INSERTED_USER_ID,
@@ -812,6 +820,18 @@ FROM (SELECT ao.username FIRST_NAME,
       WHERE ao.otp_id > 0) TBL
     /
 
+insert into aha_person
+select (select max(id) from  aha_person)+ROWNUM ID, TBL.* from  (
+                                                                    select FIRST_NAME,LAST_NAME,PARENT,
+                                                                           BIRTH_DATE,NULL ISSUING_CITY,
+                                                                           BIRTH_CERTIFICATION_NUMBER,
+                                                                           BIRTH_CERTIFICATION_ID,PHONE,
+                                                                           NATIONAL_CODE,FAX,CELL_PHONE,POSTAL_CODE,ADDRESS,E_MAIL,
+                                                                           IS_COMPANY,COMPANY_NAME,REGISTERATION_NUMBER,LATIN_FIRST_NAME,LATIN_LAST_NAME,IS_IRANIAN,CUSTOMER_ID,
+                                                                           NULL INSERTED_DATE_TIME,NULL INSERTED_USER_ID,NULL UPDATED_DATE_TIME,NULL UPDATED_USER_ID
+                                                                    from  t_customer
+                                                                    WHERE CUSTOMER_ID>0) TBL
+/
 ----------------------------------------------------------------------------------------------------
 Insert into AHA_USER_GROUP
 (ID, NAME)
@@ -939,5 +959,24 @@ select rownum id,tbl.*,null,null,null,null from  (
                                                          and fwr.INST_TYPE_DERIVATIVES_ID= awr.f_INST_TYPE_DERIVATIVES_ID
                                                          and fwr.IS_OTC= awr.IS_OTC
                                                          and fwr.IS_PURCHASE= awr.IS_PURCHASE) tbl order by change_date
+/
+----------------------------------------------------------------------------------------------------
+insert into AHA_CUSTOMER_STATUS
+select CUSTOMER_STATUS_ID id,CUSTOMER_STATUS_NAME name ,null,null,null,null from  customer_status
+/
+----------------------------------------------------------------------------------------------------
+insert into aha_customer
+select customer_id id,dl_id ,CUSTOMER_STATUS_ID,p.id,COMMENTS,IS_SMS_SEND,decode(SEJAM_STATUS_TYPE_ID,7,1,0)
+     ,PROFIT_RATE
+     ,IS_PROFIT_ISSUE
+     ,IS_VAT
+     ,IS_EPAYMENT_CUSTOMER
+     ,convert_to_timestamp(CREATION_DATE, CREATION_TIME)
+     ,INSERT_USER_ID
+     ,convert_to_timestamp(MODIFICATION_DATE, MODIFICATION_TIME)
+     ,UPDATE_USER_ID
+from  t_customer c
+          inner join aha_person p on p.REF_ID=c.CUSTOMER_ID
+where customer_id >0
 /
 ----------------------------------------------------------------------------------------------------

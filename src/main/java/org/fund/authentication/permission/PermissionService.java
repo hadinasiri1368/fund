@@ -109,7 +109,7 @@ public class PermissionService {
                 "    inner join userGroupRole ugr on ugr.userGroup.id=ugd.userGroup.id\n" +
                 "    inner join rolePermission rp on rp.role.id=ugr.role.id\n" +
                 "    inner join permission p on p.id=rp.permission.id\n";
-        list = repository.listByQuery(hql, null);
+        list = repository.listObjectByQuery(hql, null);
         this.listAllPermissions.put(TenantContext.getCurrentTenant(), list);
         return list;
     }

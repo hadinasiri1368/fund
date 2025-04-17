@@ -3,6 +3,7 @@ package org.fund.exception;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.fund.model.Customer;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
@@ -61,7 +62,15 @@ public class FundException extends RuntimeException {
         this.params = params;
     }
 
+    public FundException(CustomerExceptionType fundExceptionType) {
+        super(fundExceptionType.getMessageKey());
+        this.status = fundExceptionType.getHttpStatus();
+        this.params = null;
+    }
 
-
-
+    public FundException(CustomerExceptionType fundExceptionType, Object[] params) {
+        super(fundExceptionType.getMessageKey());
+        this.status = fundExceptionType.getHttpStatus();
+        this.params = params;
+    }
 }
