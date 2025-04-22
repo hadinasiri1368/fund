@@ -25,9 +25,6 @@ public class DetailLedger extends BaseEntity implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "F_DETAIL_LEDGER_TYPE_ID")
     private DetailLedgerType detailLedgerType;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "F_ACCOUNT_NATURE_ID")
-    private AccountNature accountNature;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_ACTIVE", nullable = false)
     private Boolean isActive;
 }

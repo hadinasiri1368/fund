@@ -71,14 +71,14 @@ public class JpaRepository {
     }
 
     @Transactional
-    public int executeUpdate(String sql, Map<String, Object> param, Long userId, String uuid) {
-        Query query = entityManager.createQuery(sql);
+    public int executeUpdate(String hql, Map<String, Object> param, Long userId, String uuid) {
+        Query query = entityManager.createQuery(hql);
         if (!FundUtils.isNull(param) && !param.isEmpty()) {
             for (Map.Entry<String, Object> entry : param.entrySet()) {
                 query.setParameter(entry.getKey(), entry.getValue());
             }
         }
-        logQueryWithParameters(sql, param, userId, uuid);
+        logQueryWithParameters(hql, param, userId, uuid);
         int returnValue = query.executeUpdate();
         clearCache();
         return returnValue;
@@ -108,8 +108,8 @@ public class JpaRepository {
     }
 
     @Transactional
-    public int executeUpdate(String sql, Long userId, String uuid) {
-        return executeUpdate(sql, null, userId, uuid);
+    public int executeUpdate(String hql, Long userId, String uuid) {
+        return executeUpdate(hql, null, userId, uuid);
     }
 
     @Transactional

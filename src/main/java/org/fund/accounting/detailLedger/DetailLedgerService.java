@@ -1,0 +1,82 @@
+package org.fund.accounting.detailLedger;
+
+import org.fund.accounting.detailLedger.constant.DetailLedgerType;
+import org.fund.administration.params.ParamService;
+import org.fund.common.FundUtils;
+import org.fund.constant.Consts;
+import org.fund.model.DetailLedger;
+import org.fund.model.Fund;
+import org.fund.model.FundBranch;
+import org.fund.repository.JpaRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class DetailLedgerService {
+    private JpaRepository repository;
+    private ParamService paramService;
+
+    public DetailLedgerService(JpaRepository repository, ParamService paramService) {
+        this.repository = repository;
+        this.paramService = paramService;
+    }
+
+    public void insert(DetailLedger detailLedger, Long userId, String uuid) throws Exception {
+        repository.save(detailLedger, userId, uuid);
+    }
+
+    public void delete(Long detailLedgerId, Long userId, String uuid) throws Exception {
+        repository.removeById(DetailLedger.class, detailLedgerId, userId, uuid);
+    }
+
+    public void deleteByCustomerId(Long customerId, Long userId, String uuid) throws Exception {
+        String hql = "delete DetailLedger dl where exists (select 1 from Customer c where c.id=:customerId and dl.id=c.detailLedger.id)";
+        Map<String, Object> param = new HashMap<>();
+        param.put("customerId", customerId);
+        repository.executeUpdate(hql, param, userId, uuid);
+    }
+
+    public void update(DetailLedger detailLedger, Long userId, String uuid) throws Exception {
+        repository.update(detailLedger, userId, uuid);
+    }
+
+    public List<DetailLedger> list(Long id) {
+        if (FundUtils.isNull(id))
+            return repository.findAll(DetailLedger.class);
+        return repository.findAll(DetailLedger.class).stream()
+                .filter(a -> a.getId().equals(id)).toList();
+    }
+
+    public String getCustomerCode(Fund fund) {
+        Long detailLedgerLength = paramService.getLongValue(fund, Consts.PARAMS_DETAIL_LEDGER_LENGTH);
+        String maxCode = getMaxCode(DetailLedgerType.CUSTOMER);
+        if (FundUtils.isNull(maxCode)) {
+            maxCode = buildLCode(detailLedgerLength);
+        } else {
+            maxCode = (FundUtils.longValue(maxCode) + 1) + "";
+        }
+        return maxCode;
+    }
+
+    private String getMaxCode(DetailLedgerType detailLedgerType) {
+        String hql = "SELECT MAX(dl.code)\n" +
+                "FROM DetailLedger dl\n" +
+                "WHERE dl.detailLedgerType.id = :detailLedgerTypeId";
+        Map<String, Object> paramMap = new HashMap();
+        paramMap.put("detailLedgerTypeId", detailLedgerType.getId());
+        return repository.getStringValue(hql, paramMap);
+    }
+
+    private String buildLCode(Long detailLedgerLength) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('1');
+        for (int i = 1; i <= detailLedgerLength - 2; i++) {
+            sb.append('0');
+        }
+        sb.append('1');
+        return sb.toString();
+    }
+}

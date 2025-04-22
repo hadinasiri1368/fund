@@ -18,6 +18,6 @@ public class AccountNature extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    @Column(columnDefinition = "NVARCHAR2(12)", name = "NATURE_ACCOUNT_NAME", nullable = false)
+    @Column(columnDefinition = "NVARCHAR2(200)", name = "NAME", nullable = false)
     private String natureAccountName;
 }

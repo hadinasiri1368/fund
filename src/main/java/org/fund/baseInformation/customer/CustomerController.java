@@ -6,6 +6,7 @@ import org.fund.baseInformation.customer.dto.CustomerDto;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.Customer;
+import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @Validated
+@RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class CustomerController {
     private final CustomerService service;
     private final FundService fundService;
@@ -49,5 +51,10 @@ public class CustomerController {
     public void remove(@PathVariable @NotEmpty(fieldName = "id")
                        @ValidateField(fieldName = "id", entityClass = Customer.class) Long customerId) throws Exception {
         service.delete(customerId, RequestContext.getUserId(), RequestContext.getUuid());
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/customer/{id}")
+    public List<Customer> getCustomerList(@PathVariable @ValidateField(fieldName = "id", entityClass = Customer.class) Long customerId) {
+        return service.list(customerId);
     }
 }

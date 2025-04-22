@@ -2,45 +2,49 @@ package org.fund.baseInformation.customer;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.accounting.detailLedger.DetailLedgerService;
 import org.fund.administration.calendar.CalendarService;
 import org.fund.administration.params.ParamDto;
 import org.fund.administration.params.ParamService;
+import org.fund.authentication.permission.PermissionService;
 import org.fund.baseInformation.customer.dto.CustomerDto;
 import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
 import org.fund.exception.CustomerExceptionType;
 import org.fund.exception.FundException;
-import org.fund.model.Customer;
-import org.fund.model.Fund;
-import org.fund.model.Permission;
+import org.fund.model.*;
 import org.fund.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 
-record NavDataRec(Long lastAppliedProfitDateNavCount, Long nextWorkingDateAfterLastAppliedProfitDateNavCount) {}
+record NavDataRec(Long lastAppliedProfitDateNavCount, Long nextWorkingDateAfterLastAppliedProfitDateNavCount) {
+}
 
 @Service
 public class CustomerService {
     private final JpaRepository repository;
     private final CalendarService calendarService;
     private final ParamService paramService;
+    private final DetailLedgerService detailLedgerService;
 
     public CustomerService(JpaRepository jpaRepository
             , CalendarService calendarService
             , ParamService paramService
+            , DetailLedgerService detailLedgerService
     ) {
         this.repository = jpaRepository;
         this.calendarService = calendarService;
         this.paramService = paramService;
+        this.detailLedgerService = detailLedgerService;
     }
 
     public void insert(CustomerDto customer, Fund fund, Long userId, String uuid) throws Exception {
         checkBeforInsert(customer, fund);
         repository.save(customer.toCustomer(), userId, uuid);
-        insertDetailLedger();
+        insertDetailLedger(customer, fund, userId, uuid);
         insertBankAccount();
     }
 
@@ -72,7 +76,7 @@ public class CustomerService {
     }
 
     public void delete(Long customerId, Long userId, String uuid) throws Exception {
-        deleteDetailLedger();
+        deleteDetailLedger(customerId, userId, uuid);
         deleteBankAccount();
         repository.removeById(Customer.class, customerId, userId, uuid);
     }
@@ -144,12 +148,28 @@ public class CustomerService {
         return new NavDataRec(LastAppliedProfitDateNavCount, nextWorkingDateAfterLastAppliedProfitDateNavCount);
     }
 
-    private void insertDetailLedger() {
-        throw new RuntimeException("AppliedProfit has not been launched yet");
+    public List<Customer> list(Long id) {
+        if (FundUtils.isNull(id))
+            return repository.findAll(Customer.class);
+        return repository.findAll(Customer.class).stream()
+                .filter(a -> a.getId().equals(id)).toList();
     }
 
-    private void deleteDetailLedger() {
-        throw new RuntimeException("AppliedProfit has not been launched yet");
+    private void insertDetailLedger(CustomerDto newCustomer, Fund fund, Long userId, String uuid) throws Exception {
+        String name = newCustomer.getPerson().getIsCompany() ?
+                newCustomer.getPerson().getCompanyName() :
+                newCustomer.getPerson().getLastName() + " " + newCustomer.getPerson().getFirstName();
+        DetailLedgerType detailLedgerType = repository.findOne(DetailLedgerType.class, org.fund.accounting.detailLedger.constant.DetailLedgerType.CUSTOMER.getId());
+        DetailLedger detailLedger = DetailLedger.builder()
+                .name(name)
+                .detailLedgerType(detailLedgerType)
+                .code(detailLedgerService.getCustomerCode(fund))
+                .isActive(true).build();
+        detailLedgerService.insert(detailLedger, userId, uuid);
+    }
+
+    private void deleteDetailLedger(Long customerId, Long userId, String uuid) throws Exception {
+        detailLedgerService.deleteByCustomerId(customerId, userId, uuid);
     }
 
     private void batchInsertDetailLedger() {
