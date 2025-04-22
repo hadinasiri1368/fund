@@ -44,19 +44,19 @@ public class CustomerService {
     public void insert(CustomerDto customer, Fund fund, Long userId, String uuid) throws Exception {
         checkBeforInsert(customer, fund);
         repository.save(customer.toCustomer(), userId, uuid);
-        insertDetailLedger(customer, fund, userId, uuid);
+        customer.setDetailLedgerId(insertDetailLedger(customer, fund, userId, uuid));
         insertBankAccount();
     }
 
     public void batchInsert(List<CustomerDto> customerList, Fund fund, Long userId, String uuid) throws Exception {
         List<Customer> customers = new ArrayList<>();
-        for (CustomerDto customerDto : customerList) {
-            checkBeforInsert(customerDto, fund);
-            customers.add(customerDto.toCustomer());
+        for (CustomerDto customer : customerList) {
+            checkBeforInsert(customer, fund);
+            customer.setDetailLedgerId(insertDetailLedger(customer, fund, userId, uuid));
+            customers.add(customer.toCustomer());
         }
-        repository.batchInsert(customers, userId, uuid);
-        batchInsertDetailLedger();
         batchInsertBankAccount();
+        repository.batchInsert(customers, userId, uuid);
     }
 
     public void update(CustomerDto customer, Fund fund, Long userId, String uuid) throws Exception {
@@ -155,25 +155,15 @@ public class CustomerService {
                 .filter(a -> a.getId().equals(id)).toList();
     }
 
-    private void insertDetailLedger(CustomerDto newCustomer, Fund fund, Long userId, String uuid) throws Exception {
-        String name = newCustomer.getPerson().getIsCompany() ?
-                newCustomer.getPerson().getCompanyName() :
-                newCustomer.getPerson().getLastName() + " " + newCustomer.getPerson().getFirstName();
-        DetailLedgerType detailLedgerType = repository.findOne(DetailLedgerType.class, org.fund.accounting.detailLedger.constant.DetailLedgerType.CUSTOMER.getId());
-        DetailLedger detailLedger = DetailLedger.builder()
-                .name(name)
-                .detailLedgerType(detailLedgerType)
-                .code(detailLedgerService.getCustomerCode(fund))
-                .isActive(true).build();
+    private Long insertDetailLedger(CustomerDto newCustomer, Fund fund, Long userId, String uuid) throws Exception {
+        DetailLedger detailLedger = detailLedgerService.get(newCustomer.toCustomer(), fund);
         detailLedgerService.insert(detailLedger, userId, uuid);
+        return detailLedger.getId();
     }
+
 
     private void deleteDetailLedger(Long customerId, Long userId, String uuid) throws Exception {
         detailLedgerService.deleteByCustomerId(customerId, userId, uuid);
-    }
-
-    private void batchInsertDetailLedger() {
-        throw new RuntimeException("AppliedProfit has not been launched yet");
     }
 
     private void insertBankAccount() {

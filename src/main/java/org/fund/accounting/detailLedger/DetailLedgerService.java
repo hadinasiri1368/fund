@@ -2,8 +2,10 @@ package org.fund.accounting.detailLedger;
 
 import org.fund.accounting.detailLedger.constant.DetailLedgerType;
 import org.fund.administration.params.ParamService;
+import org.fund.baseInformation.customer.dto.CustomerDto;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
+import org.fund.model.Customer;
 import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.model.FundBranch;
@@ -50,7 +52,20 @@ public class DetailLedgerService {
                 .filter(a -> a.getId().equals(id)).toList();
     }
 
-    public String getCustomerCode(Fund fund) {
+    public DetailLedger get(Customer newCustomer, Fund fund) {
+        String name = newCustomer.getPerson().getIsCompany() ?
+                newCustomer.getPerson().getCompanyName() :
+                newCustomer.getPerson().getLastName() + " " + newCustomer.getPerson().getFirstName();
+        org.fund.model.DetailLedgerType detailLedgerType = repository.findOne(org.fund.model.DetailLedgerType.class, org.fund.accounting.detailLedger.constant.DetailLedgerType.CUSTOMER.getId());
+        DetailLedger detailLedger = DetailLedger.builder()
+                .name(name)
+                .detailLedgerType(detailLedgerType)
+                .code(getCustomerCode(fund))
+                .isActive(true).build();
+        return detailLedger;
+    }
+
+    private String getCustomerCode(Fund fund) {
         Long detailLedgerLength = paramService.getLongValue(fund, Consts.PARAMS_DETAIL_LEDGER_LENGTH);
         String maxCode = getMaxCode(DetailLedgerType.CUSTOMER);
         if (FundUtils.isNull(maxCode)) {
