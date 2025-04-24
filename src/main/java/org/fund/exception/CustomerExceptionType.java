@@ -11,6 +11,8 @@ public enum CustomerExceptionType {
     CAN_NOT_INSERT_BIRTHDATE_AFTER_NOW(HttpStatus.INTERNAL_SERVER_ERROR, "customer.can_not_insert_birthDate_after_now"),
     CAN_NOT_INSERT_FOREIGN_CUSTOMER(HttpStatus.INTERNAL_SERVER_ERROR, "customer.can_not_insert_foreign_customer"),
     CELLPHONE_IS_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "customer.cellPhone_is_invalid"),
+    HAS_NOT_DETAILLEDGER(HttpStatus.INTERNAL_SERVER_ERROR, "customer.has_not_detailLedger"),
+    HAS_NOT_BANKACCOUNT(HttpStatus.INTERNAL_SERVER_ERROR, "customer.has_not_bankAccount"),
     EMAIL_IS_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "customer.email_is_invalid");
     private final HttpStatus httpStatus;
     private final String messageKey;

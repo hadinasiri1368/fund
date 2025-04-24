@@ -112,4 +112,17 @@ public class FundUtils extends CommonUtils {
         return toSHA1(md5(password).getBytes());
     }
 
+    public static String removeNumericPathVariables(String url) {
+        StringBuilder result = new StringBuilder();
+        String[] parts = url.split("/");
+
+        for (String part : parts) {
+            if (part.isBlank()) continue;
+            if (!part.matches("\\d+")) {
+                result.append("/").append(part);
+            }
+        }
+        return result.toString();
+    }
+
 }

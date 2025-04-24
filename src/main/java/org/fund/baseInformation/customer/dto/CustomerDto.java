@@ -26,6 +26,8 @@ public class CustomerDto {
     @ValidateField(fieldName = "customerStatusId", entityClass = CustomerStatus.class)
     @NotEmpty(fieldName = "customerStatusId")
     private Long customerStatusId;
+    @ValidateField(fieldName = "customerBankAccountId", entityClass = CustomerBankAccountDto.class)
+    private Long customerBankAccountId;
     private PersonDto person;
     private String comments;
     private boolean isSmsSend;
@@ -35,12 +37,14 @@ public class CustomerDto {
     private boolean isVat;
     private boolean isEpaymentCustomer;
 
+
     public Customer toCustomer() {
         ObjectMapper objectMapper = new ObjectMapper();
         Customer customer = objectMapper.convertValue(this, Customer.class);
         customer.setDetailLedger(getDetailLedger(detailLedgerId));
         customer.setCustomerStatus(getCustomerStatus(customerStatusId));
         customer.setPerson(getPerson(person));
+        customer.setCustomerBankAccount(getCustomerBankAccount(customerBankAccountId));
         return customer;
     }
 
@@ -65,5 +69,12 @@ public class CustomerDto {
                     .findFirst()
                     .orElse(null);
         return person.toPerson();
+    }
+
+    private CustomerBankAccount getCustomerBankAccount(Long customerBankAccountId) {
+        return repository.findAll(CustomerBankAccount.class).stream()
+                .filter(a -> a.getId().equals(customerBankAccountId))
+                .findFirst()
+                .orElse(null);
     }
 }

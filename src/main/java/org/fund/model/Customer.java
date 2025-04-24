@@ -24,6 +24,9 @@ public class Customer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "F_PERSON_ID")
     private Person person;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "F_CUSTOMER_BANK_ACCOUNT_ID")
+    private CustomerBankAccount customerBankAccount;
     @Column(columnDefinition = "NVARCHAR2(1000)", name = "COMMENTS")
     private String comments;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_SMS_SEND")

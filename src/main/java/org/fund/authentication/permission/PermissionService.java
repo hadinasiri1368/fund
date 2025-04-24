@@ -80,7 +80,7 @@ public class PermissionService {
 
     private Permission getPermission(String requestUrl) {
         return repository.findAll(Permission.class).stream()
-                .filter(a -> a.getIsSensitive() && requestUrl.toLowerCase().startsWith(a.getUrl().toLowerCase()))
+                .filter(a -> a.getIsSensitive() && FundUtils.removeNumericPathVariables(requestUrl).toLowerCase().startsWith(a.getUrl().toLowerCase()))
                 .findFirst()
                 .orElseThrow(() -> new FundException(AuthenticationExceptionType.DO_NOT_HAVE_ACCESS_TO_ADDRESS, new Object[]{requestUrl}));
     }

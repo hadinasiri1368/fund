@@ -713,27 +713,112 @@ Values
     (59, 'لیست تقویم کاری', '/administration/calendar', 1)
     /
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (60, 'ثبت تفصیلی', '/accounting/detailLedger/add', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (70, 'ویرایش تفصیلی', '/accounting/detailLedger/edit', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (80, 'حذف تفصیلی', '/accounting/detailLedger/remove', 1)
+    /
+
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (90, 'لیست تفصیلی', '/accounting/detailLedger', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (91, 'ثبت سرمایه گذار', '/baseInformation/customer/add', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (92, 'ثبت سرمایه گذار به صورت گروهی', '/baseInformation/customer/batch/add', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (93, 'ویرایش سرمایه گذار', '/baseInformation/customer/edit', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (94, 'ویرایش سرمایه گذار به صورت گروهی', '/baseInformation/customer/batch/edit', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (95, 'حذف سرمایه گذار', '/baseInformation/customer/remove', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (96, 'لیست سرمایه گذار', '/baseInformation/customer', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (97, 'ثبت حساب بانکی سرمایه گذار', '/baseInformation/customer/bankAccount/add', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (98, 'ویرایش حساب بانکی سرمایه گذار', '/baseInformation/customer/bankAccount/edit', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (99, 'حذف حساب بانکی سرمایه گذار', '/baseInformation/customer/bankAccount/remove', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'حذف حساب بانکی سرمایه گذار', '/baseInformation/customer/bankAccount/default', 1)
+    /
+
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (60, 'ورود', '/login/**', 0)
+    ((select max(id)+1 from AHA_PERMISSION), 'ورود', '/login/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (61, 'swagger', '/v3/api-docs/**', 0)
+    ((select max(id)+1 from AHA_PERMISSION), 'swagger', '/v3/api-docs/**', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (62, 'swagger', '/swagger-ui.html', 0)
+    ((select max(id)+1 from AHA_PERMISSION), 'swagger', '/swagger-ui.html', 0)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (63, 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
+    ((select max(id)+1 from AHA_PERMISSION), 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
 /
 
 ----------------------------------------------------------------------------------------------------
@@ -965,7 +1050,7 @@ select CUSTOMER_STATUS_ID id,CUSTOMER_STATUS_NAME name ,null,null,null,null from
 /
 ----------------------------------------------------------------------------------------------------
 insert into aha_customer
-select customer_id id,dl_id ,CUSTOMER_STATUS_ID,p.id,COMMENTS,IS_SMS_SEND,decode(SEJAM_STATUS_TYPE_ID,7,1,0)
+select customer_id id,dl_id ,CUSTOMER_STATUS_ID,p.id,null,COMMENTS,IS_SMS_SEND,decode(SEJAM_STATUS_TYPE_ID,7,1,0)
      ,PROFIT_RATE
      ,IS_PROFIT_ISSUE
      ,IS_VAT
@@ -977,5 +1062,37 @@ select customer_id id,dl_id ,CUSTOMER_STATUS_ID,p.id,COMMENTS,IS_SMS_SEND,decode
 from  t_customer c
           inner join aha_person p on p.REF_ID=c.CUSTOMER_ID
 where customer_id >0
+/
+----------------------------------------------------------------------------------------------------
+INSERT INTO AHA_BANK_ACCOUNT_TYPE
+select BA_TYPE_ID ID , BA_TYPE_NAME NAME , NULL, NULL, NULL, NULL from  BANK_ACCOUNT_TYPE
+/
+----------------------------------------------------------------------------------------------------
+INSERT INTO AHA_BANK_ACCOUNT
+select ba.bank_account_id,ba.is_active,ba.ba_type_id,bb.bank_id,ba.account_number,ba.annual_interest,NULL,NULL,NULL,NULL,NULL
+from  bank_account ba
+          inner join bank_branch bb on bb.bank_branch_id=ba.bank_branch_id
+/
+
+INSERT INTO AHA_BANK_ACCOUNT
+select ba.bank_account_id,ba.is_active,ba.ba_type_id,ba.bank_id,ba.account_number,0,ba.SHABA_NUMBER,NULL,NULL,NULL,NULL
+from  customer_bank_account ba
+/
+----------------------------------------------------------------------------------------------------
+insert into AHA_FUND_BANK_ACCOUNT
+select rownum,ba.fund_id,ba.bank_account_id,ba.dl_id,null,null,null,null
+from  bank_account ba
+/
+----------------------------------------------------------------------------------------------------
+insert into AHA_CUSTOMER_BANK_ACCOUNT
+select rownum,cba.customer_id,cba.bank_account_id,null,null,null,null
+from customer_bank_account cba
+/
+----------------------------------------------------------------------------------------------------
+MERGE INTO aha_customer ac
+    USING (select customer_id,cba.id bank_account_id from  t_customer tc left join aha_customer_bank_account cba on cba.f_customer_id=tc.customer_id and cba.f_bank_account_id=tc.bank_account_id) tc
+ON (tc.customer_id = ac.id)
+    WHEN MATCHED THEN
+UPDATE SET ac.f_customer_bank_account_id = tc.bank_account_id
 /
 ----------------------------------------------------------------------------------------------------

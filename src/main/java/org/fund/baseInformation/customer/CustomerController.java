@@ -2,10 +2,12 @@ package org.fund.baseInformation.customer;
 
 import org.fund.administration.fund.FundDto;
 import org.fund.administration.fund.FundService;
+import org.fund.baseInformation.customer.dto.CustomerBankAccountDto;
 import org.fund.baseInformation.customer.dto.CustomerDto;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.Customer;
+import org.fund.model.CustomerBankAccount;
 import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.validator.NotEmpty;
@@ -47,14 +49,38 @@ public class CustomerController {
         service.batchUpdate(customerDtoList, fundService.getDefaultFund(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/customer/remove/{id}")
+    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/remove/{id}")
     public void remove(@PathVariable @NotEmpty(fieldName = "id")
                        @ValidateField(fieldName = "id", entityClass = Customer.class) Long customerId) throws Exception {
         service.delete(customerId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/customer/{id}")
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/{id}")
     public List<Customer> getCustomerList(@PathVariable @ValidateField(fieldName = "id", entityClass = Customer.class) Long customerId) {
         return service.list(customerId);
+    }
+
+    @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccount/add")
+    public void insert(@RequestBody CustomerBankAccountDto customerBankAccountDto) throws Exception {
+        service.saveCustomerBankAccount(customerBankAccountDto, RequestContext.getUserId(), RequestContext.getUuid());
+    }
+
+    @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccount/edit")
+    public void edit(@RequestBody CustomerBankAccountDto customerBankAccountDto) throws Exception {
+        service.updateCustomerBankAccount(customerBankAccountDto, RequestContext.getUserId(), RequestContext.getUuid());
+    }
+
+    @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccount/remove/{id}")
+    public void removeCustomerBankAccount(@PathVariable @NotEmpty(fieldName = "id")
+                                          @ValidateField(fieldName = "id", entityClass = CustomerBankAccount.class) Long customerBankAccountId) throws Exception {
+        service.deleteCustomerBankAccount(customerBankAccountId, RequestContext.getUserId(), RequestContext.getUuid());
+    }
+
+    @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/{customerId}/bankAccount/default/{accountId}")
+    public void setCustomerDefaultBankAccount(@PathVariable @NotEmpty(fieldName = "customerId")
+                                                            @ValidateField(fieldName = "customerId", entityClass = Customer.class) Long customerId,
+                                              @PathVariable @NotEmpty(fieldName = "accountId")
+                                                            @ValidateField(fieldName = "accountId", entityClass = CustomerBankAccount.class) Long accountId) throws Exception {
+        service.setCustomerDefaultBankAccount(customerId, accountId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 }

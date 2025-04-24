@@ -35,7 +35,7 @@ public class DetailLedgerService {
     }
 
     public void deleteByCustomerId(Long customerId, Long userId, String uuid) throws Exception {
-        String hql = "delete DetailLedger dl where exists (select 1 from Customer c where c.id=:customerId and dl.id=c.detailLedger.id)";
+        String hql = "delete detailLedger dl where exists (select 1 from customer c where c.id=:customerId and dl.id=c.detailLedger.id)";
         Map<String, Object> param = new HashMap<>();
         param.put("customerId", customerId);
         repository.executeUpdate(hql, param, userId, uuid);
@@ -78,7 +78,7 @@ public class DetailLedgerService {
 
     private String getMaxCode(DetailLedgerType detailLedgerType) {
         String hql = "SELECT MAX(dl.code)\n" +
-                "FROM DetailLedger dl\n" +
+                "FROM detailLedger dl\n" +
                 "WHERE dl.detailLedgerType.id = :detailLedgerTypeId";
         Map<String, Object> paramMap = new HashMap();
         paramMap.put("detailLedgerTypeId", detailLedgerType.getId());

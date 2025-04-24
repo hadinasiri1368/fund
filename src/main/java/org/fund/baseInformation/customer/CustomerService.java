@@ -7,6 +7,7 @@ import org.fund.administration.calendar.CalendarService;
 import org.fund.administration.params.ParamDto;
 import org.fund.administration.params.ParamService;
 import org.fund.authentication.permission.PermissionService;
+import org.fund.baseInformation.customer.dto.CustomerBankAccountDto;
 import org.fund.baseInformation.customer.dto.CustomerDto;
 import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
@@ -45,7 +46,6 @@ public class CustomerService {
         checkBeforInsert(customer, fund);
         repository.save(customer.toCustomer(), userId, uuid);
         customer.setDetailLedgerId(insertDetailLedger(customer, fund, userId, uuid));
-        insertBankAccount();
     }
 
     public void batchInsert(List<CustomerDto> customerList, Fund fund, Long userId, String uuid) throws Exception {
@@ -55,7 +55,6 @@ public class CustomerService {
             customer.setDetailLedgerId(insertDetailLedger(customer, fund, userId, uuid));
             customers.add(customer.toCustomer());
         }
-        batchInsertBankAccount();
         repository.batchInsert(customers, userId, uuid);
     }
 
@@ -77,7 +76,7 @@ public class CustomerService {
 
     public void delete(Long customerId, Long userId, String uuid) throws Exception {
         deleteDetailLedger(customerId, userId, uuid);
-        deleteBankAccount();
+        deleteCustomerBankAccountByCustomerId(customerId, userId, uuid);
         repository.removeById(Customer.class, customerId, userId, uuid);
     }
 
@@ -155,6 +154,64 @@ public class CustomerService {
                 .filter(a -> a.getId().equals(id)).toList();
     }
 
+    public DetailLedger getDetailLedger(Long id) {
+        Customer customer = repository.findOne(Customer.class, id);
+        String customerName = customer.getPerson().getIsCompany() ? customer.getPerson().getCompanyName() :
+                customer.getPerson().getFirstName() + " " + customer.getPerson().getLastName();
+        if (FundUtils.isNull(customer.getDetailLedger()))
+            throw new FundException(CustomerExceptionType.HAS_NOT_DETAILLEDGER, new Object[]{customerName});
+        return customer.getDetailLedger();
+    }
+
+    public BankAccount getBankAccount(Long id) {
+        Customer customer = repository.findOne(Customer.class, id);
+        String customerName = customer.getPerson().getIsCompany() ? customer.getPerson().getCompanyName() :
+                customer.getPerson().getFirstName() + " " + customer.getPerson().getLastName();
+        if (FundUtils.isNull(customer.getDetailLedger()))
+            throw new FundException(CustomerExceptionType.HAS_NOT_BANKACCOUNT, new Object[]{customerName});
+        return customer.getCustomerBankAccount().getBankAccount();
+    }
+
+    public void saveCustomerBankAccount(CustomerBankAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
+        Long customerBankAccountCount = getCustomerBankAccountCount(customerBankAccount.getCustomerId());
+        boolean isFirst = FundUtils.isNull(customerBankAccount.getId()) && customerBankAccountCount == 0L ? true : false;
+        CustomerBankAccount cba = customerBankAccount.toCustomerBankAccount();
+        repository.save(cba, userId, uuid);
+        if (isFirst) {
+            Customer customer = cba.getCustomer();
+            customer.setCustomerBankAccount(cba);
+            repository.update(customer, userId, uuid);
+        }
+    }
+
+    public void updateCustomerBankAccount(CustomerBankAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
+        repository.save(customerBankAccount.toCustomerBankAccount(), userId, uuid);
+    }
+
+    public void deleteCustomerBankAccount(Long customerBankAccountId, Long userId, String uuid) throws Exception {
+        Customer customer = repository.findAll(Customer.class).stream()
+                .filter(row -> !FundUtils.isNull(row.getCustomerBankAccount()) &&
+                        row.getCustomerBankAccount().getId().equals(customerBankAccountId))
+                .findFirst().orElse(null);
+        if (!FundUtils.isNull(customer)) {
+            customer.setCustomerBankAccount(null);
+            repository.update(customer, userId, uuid);
+        }
+        repository.removeById(CustomerBankAccount.class, customerBankAccountId, userId, uuid);
+    }
+
+    public void setCustomerDefaultBankAccount(Long customerId, Long customerBankAccountId, Long userId, String uuid) throws Exception {
+        Customer customer = repository.findOne(Customer.class, customerId);
+        customer.setCustomerBankAccount(repository.findOne(CustomerBankAccount.class, customerBankAccountId));
+        repository.update(customer, userId, uuid);
+    }
+
+    private Long getCustomerBankAccountCount(Long customerId) {
+        return repository.findAll(CustomerBankAccount.class).stream()
+                .filter(a -> a.getCustomer().getId().equals(customerId))
+                .count();
+    }
+
     private Long insertDetailLedger(CustomerDto newCustomer, Fund fund, Long userId, String uuid) throws Exception {
         DetailLedger detailLedger = detailLedgerService.get(newCustomer.toCustomer(), fund);
         detailLedgerService.insert(detailLedger, userId, uuid);
@@ -166,16 +223,10 @@ public class CustomerService {
         detailLedgerService.deleteByCustomerId(customerId, userId, uuid);
     }
 
-    private void insertBankAccount() {
-        throw new RuntimeException("AppliedProfit has not been launched yet");
-    }
-
-    private void deleteBankAccount() {
-        throw new RuntimeException("AppliedProfit has not been launched yet");
-    }
-
-    private void batchInsertBankAccount() {
-        throw new RuntimeException("AppliedProfit has not been launched yet");
+    private void deleteCustomerBankAccountByCustomerId(Long customerId, Long userId, String uuid) throws Exception {
+        List<CustomerBankAccount> customerBankAccounts = repository.findAll(CustomerBankAccount.class).stream()
+                .filter(a -> a.getCustomer().getId().equals(customerId)).toList();
+        repository.batchRemove(customerBankAccounts, userId, uuid);
     }
 
     private String getLastAppliedProfitDate() {
