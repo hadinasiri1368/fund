@@ -3,6 +3,7 @@ package org.fund.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.fund.config.cache.CacheableEntity;
+import org.fund.model.view.external.Bank;
 
 import java.io.Serializable;
 

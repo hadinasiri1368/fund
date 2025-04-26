@@ -798,6 +798,30 @@ Values
     (100, 'حذف حساب بانکی سرمایه گذار', '/baseInformation/customer/bankAccount/default', 1)
     /
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (101, 'ثبت حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount/add', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (102, 'ویرایش حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount/edit', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (103, 'حذف حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount/remove', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (104, 'نمایش حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount', 1)
+    /
+
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
     /
 Insert into AHA_PERMISSION
@@ -1078,6 +1102,11 @@ INSERT INTO AHA_BANK_ACCOUNT
 select ba.bank_account_id,ba.is_active,ba.ba_type_id,ba.bank_id,ba.account_number,0,ba.SHABA_NUMBER,NULL,NULL,NULL,NULL
 from  customer_bank_account ba
 /
+
+insert into aha_bank_account
+select DL_BANK_ACCOUNT_ID id,is_active,null,bank_id,ACCOUNT_NUMBER,0,SHEBA_NUMBER,null,null,null,null
+from  detail_ledger_bank_account
+/
 ----------------------------------------------------------------------------------------------------
 insert into AHA_FUND_BANK_ACCOUNT
 select rownum,ba.fund_id,ba.bank_account_id,ba.dl_id,null,null,null,null
@@ -1094,5 +1123,12 @@ MERGE INTO aha_customer ac
 ON (tc.customer_id = ac.id)
     WHEN MATCHED THEN
 UPDATE SET ac.f_customer_bank_account_id = tc.bank_account_id
+/
+----------------------------------------------------------------------------------------------------
+INSERT INTO AHA_FINANCIAL_INSTITUTION_BANK_ACCOUNT
+select ROWNUM,dlt.name || ' - ' || dl.name ,dlba.dl_bank_account_id,DL_ID,NULL,NULL,NULL,NULL
+from  detail_ledger_bank_account dlba
+          inner join aha_detail_ledger dl on dl.id=dlba.dl_id
+          inner join aha_detail_ledger_type dlt on dlt.id=dl.f_detail_ledger_type_id
 /
 ----------------------------------------------------------------------------------------------------
