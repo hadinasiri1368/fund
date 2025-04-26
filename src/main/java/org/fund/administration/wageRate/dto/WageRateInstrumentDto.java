@@ -7,7 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WageRateInstrumentDto {
-    private Long instrumentId;
+    private Long id;
+    private Boolean isContract;
     private Double bourseCoPurchase ;
     private Double bourseCoSale ;
     private Double depositCoPurchase ;

@@ -36,5 +36,7 @@ public class Consts {
     //////////////////////////////////////////////////////EMAIL_Message/////////////////////////////////////////////////////////
     public static final String EMAIL_FROM_ADDRESS_NO_REPLY = "noreply@rhbroker.com";
     public static final String ALERT_EMAIL_SUBJECT_VERIFICATION_CODE = "کد اعتبار سنجی مشتری در صتدوق ";
+    //////////////////////////////////////////////////////instrument/////////////////////////////////////////////////////////
+    public static final Long INSTRUMENT_TYPE_DERIVATIVES_NORMAL = 1L;
 
 }

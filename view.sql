@@ -11,7 +11,11 @@ UNION ALL
 SELECT c.contract_id             id,
        c.contract_desc           description,
        TRIM (contract_symbol)    bourse_account,
-       c.market_type             security_type_id,
+       CASE c.market_type
+           WHEN 1 THEN 201
+           WHEN 2 THEN 202
+           WHEN 3 THEN 203
+           END                       security_type_id,
        CASE c.market_type
            WHEN 1 THEN 'FUTURE'
            WHEN 2 THEN 'OPTION'
