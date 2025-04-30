@@ -1,8 +1,10 @@
 package org.fund.accounting.detailLedger;
 
+import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.DetailLedger;
+import org.fund.model.FundBranch;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +39,13 @@ public class DetailLedgerController {
     }
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/accounting/detailLedger/{id}")
-    public List<DetailLedger> getDetailLedgerList(@PathVariable @ValidateField(fieldName = "id", entityClass = DetailLedger.class) Long detailLedgerId) {
-        return service.list(detailLedgerId);
+    public DetailLedger getDetailLedgerList(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = DetailLedger.class) Long detailLedgerId) {
+        List<DetailLedger> detailLedgers = service.list(detailLedgerId);
+        return !FundUtils.isNull(detailLedgers) ? detailLedgers.get(0) : null;
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/accounting/detailLedger")
+    public List<DetailLedger> getAllDetailLedgerList() {
+        return service.list(null);
     }
 }

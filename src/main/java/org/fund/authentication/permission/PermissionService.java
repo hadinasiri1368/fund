@@ -69,6 +69,8 @@ public class PermissionService {
     }
 
     public void validateUserAccess(Users user, String requestUrl) {
+        if (user.getIsAdmin())
+            return;
         Permission permission = getPermission(requestUrl);
         Set<Permission> userPermissions = getPermissions(user);
         if (!userPermissions.contains(permission)) {

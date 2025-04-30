@@ -1,6 +1,7 @@
 package org.fund.baseInformation.binancialInstitutionBankAccount;
 
 import org.fund.accounting.detailLedger.DetailLedgerDto;
+import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.DetailLedger;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class FinancialInstitutionBankAccountController {
     private final FinancialInstitutionBankAccountService service;
+
     public FinancialInstitutionBankAccountController(FinancialInstitutionBankAccountService service) {
         this.service = service;
     }
@@ -38,7 +40,13 @@ public class FinancialInstitutionBankAccountController {
     }
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/financialInstitutionBankAccount/{id}")
-    public List<FinancialInstitutionBankAccount> getFinancialInstitutionBankAccount(@PathVariable @ValidateField(fieldName = "id", entityClass = FinancialInstitutionBankAccount.class) Long financialInstitutionBankAccountId) {
-        return service.list(financialInstitutionBankAccountId);
+    public FinancialInstitutionBankAccount getFinancialInstitutionBankAccount(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = FinancialInstitutionBankAccount.class) Long financialInstitutionBankAccountId) {
+        List<FinancialInstitutionBankAccount> financialInstitutionBankAccounts = service.list(financialInstitutionBankAccountId);
+        return !FundUtils.isNull(financialInstitutionBankAccounts) ? financialInstitutionBankAccounts.get(0) : null;
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/financialInstitutionBankAccount")
+    public List<FinancialInstitutionBankAccount> getAllFinancialInstitutionBankAccount() {
+        return service.list(null);
     }
 }

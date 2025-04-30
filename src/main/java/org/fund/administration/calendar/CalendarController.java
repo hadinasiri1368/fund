@@ -1,5 +1,6 @@
 package org.fund.administration.calendar;
 
+import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.Calendar;
@@ -8,6 +9,7 @@ import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -15,6 +17,7 @@ import java.util.List;
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class CalendarController {
     private final CalendarService service;
+
     public CalendarController(CalendarService service) {
         this.service = service;
     }
@@ -36,7 +39,13 @@ public class CalendarController {
     }
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/calendar/{id}")
-    public List<Calendar> getFundList(@PathVariable @ValidateField(fieldName = "id", entityClass = Calendar.class) Long calendarId) {
-        return service.list(calendarId);
+    public Calendar getCalendarList(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = Calendar.class) Long calendarId) {
+        List<Calendar> calendars = service.list(calendarId);
+        return !FundUtils.isNull(calendars) ? calendars.get(0) : null;
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/calendar")
+    public List<Calendar> getAllCalendarList() {
+        return service.list(null);
     }
 }

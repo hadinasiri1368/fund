@@ -1,6 +1,7 @@
 package org.fund.administration.verificationCode;
 
 import org.fund.administration.branch.FundBranchDto;
+import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.Fund;
@@ -40,7 +41,13 @@ public class VerificationCodeController {
     }
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/verificationCode/{id}")
-    public List<VerificationCode> getFundList(@PathVariable @ValidateField(fieldName = "id", entityClass = VerificationCode.class) Long verificationCodeId) {
-        return service.list(verificationCodeId);
+    public VerificationCode getVerificationCodeList(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = VerificationCode.class) Long verificationCodeId) {
+        List<VerificationCode> verificationCodes = service.list(verificationCodeId);
+        return !FundUtils.isNull(verificationCodes) ? verificationCodes.get(0) : null;
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/verificationCode")
+    public List<VerificationCode> getAllVerificationCodeList() {
+        return service.list(null);
     }
 }

@@ -41,8 +41,14 @@ public class FundController {
     }
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund/{id}")
-    public List<Fund> getFundList(@PathVariable @ValidateField(fieldName = "id", entityClass = Fund.class) Long fundId) {
-        return service.list(getFund(fundId));
+    public Fund getFundList(@PathVariable @ValidateField(fieldName = "id", entityClass = Fund.class) Long fundId) {
+        List<Fund> funds = service.list(getFund(fundId));
+        return !FundUtils.isNull(funds) ? funds.get(0) : null;
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund")
+    public List<Fund> getAllFundList() {
+        return service.list(getFund(null));
     }
 
     private Fund getFund(Long fundId) {
