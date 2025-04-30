@@ -20,7 +20,7 @@ public class UserGroupDetail extends BaseEntity implements Serializable {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "F_USER_ID")
-    private Users users;
+    private Users user;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "F_USER_GROUP_ID")
     private UserGroup userGroup;

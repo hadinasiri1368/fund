@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,12 +24,13 @@ public class PermissionService {
     private String pathsToBypass;
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final JpaRepository repository;
-    private Map<String, List<Object[]>> listAllPermissions = null;
+    private Map<String, List<Object[]>> listAllPermissions;
     private final UserService userService;
 
     public PermissionService(JpaRepository repository, UserService userService) {
         this.repository = repository;
         this.userService = userService;
+        this.listAllPermissions = new HashMap<>();
     }
 
     public void insert(Permission permission, Long userId, String uuid) throws Exception {
@@ -98,18 +96,24 @@ public class PermissionService {
         if (!FundUtils.isNull(list))
             return list;
         String hql = "select p,up.user.id userId from userPermission up \n" +
-                "    inner join permission p on p.id=up.permission.id \n" +
-                "union\n" +
-                "select p,ur.user.id userId from userRole ur \n" +
+                "    inner join permission p on p.id=up.permission.id \n";
+        list = repository.listObjectByQuery(hql, null);
+
+
+        hql = "select p,ur.user.id userId from userRole ur \n" +
                 "    inner join rolePermission rp on rp.role.id=ur.role.id\n" +
-                "    inner join permission p on p.id=rp.permission.id\n" +
-                "union\n" +
-                "select p,ugd.user.id userId from userGroupDetail ugd\n" +
+                "    inner join permission p on p.id=rp.permission.id\n";
+        list.addAll(repository.listObjectByQuery(hql, null));
+
+
+        hql = "select p,ugd.user.id userId from userGroupDetail ugd\n" +
                 "    inner join userGroup ug on ug.id=ugd.userGroup.id\n" +
                 "    inner join userGroupRole ugr on ugr.userGroup.id=ugd.userGroup.id\n" +
                 "    inner join rolePermission rp on rp.role.id=ugr.role.id\n" +
                 "    inner join permission p on p.id=rp.permission.id\n";
-        list = repository.listObjectByQuery(hql, null);
+        list.addAll(repository.listObjectByQuery(hql, null));
+
+
         this.listAllPermissions.put(TenantContext.getCurrentTenant(), list);
         return list;
     }

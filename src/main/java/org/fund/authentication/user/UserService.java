@@ -66,7 +66,7 @@ public class UserService {
         List<UserRole> list;
         for (UserRoleDto userRoleDto : userRoleDtos) {
             list = repository.findAll(UserRole.class).stream()
-                    .filter(a -> a.getUsers().getId().equals(userRoleDto.getUserId()))
+                    .filter(a -> a.getUser().getId().equals(userRoleDto.getUserId()))
                     .toList();
             repository.batchRemove(list, userId, uuid);
             list = new ArrayList<>();
@@ -82,7 +82,7 @@ public class UserService {
         List<UserPermission> list;
         for (UserPermissionDto userPermission : userPermissionDtos) {
             list = repository.findAll(UserPermission.class).stream()
-                    .filter(a -> a.getUsers().getId().equals(userPermission.getUserId()))
+                    .filter(a -> a.getUser().getId().equals(userPermission.getUserId()))
                     .toList();
             repository.batchRemove(list, userId, uuid);
             list = new ArrayList<>();

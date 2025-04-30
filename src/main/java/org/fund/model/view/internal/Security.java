@@ -18,6 +18,7 @@ import org.fund.config.cache.CacheableEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Security {
+    @Id
     @Column(columnDefinition = "NUMBER", name = "ID", nullable = false)
     private Long id;
     @Column(columnDefinition = "VARCHAR2(500)", name = "DESCRIPTION", nullable = false)

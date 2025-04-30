@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.fund.authentication.permission.PermissionService;
 import org.fund.common.FundUtils;
+import org.fund.common.JwtUtil;
 import org.fund.config.authentication.AuthenticationTokenServiceImpl;
 import org.fund.config.authentication.TokenService;
 import org.fund.config.dataBase.TenantContext;
@@ -65,6 +66,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             if (request.getHeader(Consts.HEADER_TENANT_PARAM_NAME) == null) {
                 throw new FundException(GeneralExceptionType.SCHEMAID_ID_IS_NULL);
             }
+            setRequest(request);
             String token = FundUtils.getToken(request);
             if (FundUtils.isNull(token))
                 throw new FundException(AuthenticationExceptionType.TOKEN_IS_NULL);
@@ -147,6 +149,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         TenantContext.setCurrentTenant(tenantId);
         String uuid = FundUtils.generateUUID().toString();
         request.setAttribute(Consts.HEADER_UUID_PARAM_NAME, uuid);
+        RequestContext.setUuid(uuid);
     }
 
     private void printLog(HttpServletRequest request, String uuid, String tenantId) {
@@ -156,5 +159,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         String endTime = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
         log.info(String.format("RequestURL: %s | Start Date : %s | End Date : %s | uuid : %s", request.getRequestURL(), startTime, endTime, uuid));
+    }
+
+    private void setRequest(HttpServletRequest request){
+        String token = FundUtils.getToken(request);
+        Users user = JwtUtil.getTokenData(token);
+        RequestContext.setUser(user);
+        RequestContext.setToken(token);
     }
 }

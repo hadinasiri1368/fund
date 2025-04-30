@@ -1,5 +1,6 @@
 package org.fund.common;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -37,7 +38,8 @@ public class JwtUtil implements Serializable {
 
     public static Users getTokenData(String token) {
         Claims claims = extractAllClaims(token);
-        return (Users) claims.get(claims_key);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(claims.get(claims_key), Users.class);
     }
 
     private static String generateToken(Map<String, Object> claims) {
@@ -74,8 +76,8 @@ public class JwtUtil implements Serializable {
     }
 
 
-    public static boolean validateToken(String token, String subject) {
-        return (subject.equals(extractSubject(token)) && !isTokenExpired(token));
+    public static boolean validateToken(String token) {
+        return !isTokenExpired(token);
     }
 
     @FunctionalInterface

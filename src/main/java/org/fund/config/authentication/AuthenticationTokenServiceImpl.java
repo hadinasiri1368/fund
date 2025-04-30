@@ -44,7 +44,7 @@ public class AuthenticationTokenServiceImpl implements TokenService<String, Stri
 
     @Override
     public Users getTokenData(String id, String value) throws FundException {
-        if (!exists(value) || !JwtUtil.validateToken(value, id))
+        if (!exists(value) || !JwtUtil.validateToken(value))
             throw new FundException(AuthenticationExceptionType.TOKEN_IS_NULL);
         return JwtUtil.getTokenData(value);
     }
