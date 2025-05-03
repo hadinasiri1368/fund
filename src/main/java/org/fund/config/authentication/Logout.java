@@ -8,6 +8,7 @@ import org.fund.config.dataBase.TenantContext;
 import org.fund.config.request.RequestContext;
 import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
+import org.fund.exception.GeneralExceptionType;
 import org.fund.model.Users;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,9 @@ public class Logout implements LogoutHandler {
     }
 
     private String getTokenId(HttpServletRequest request) {
-        return TenantContext.getCurrentTenant() + "_" + JwtUtil.getTokenData(FundUtils.getToken(request)).getId();
+        String token = FundUtils.getToken(request);
+        if (FundUtils.isNull(token))
+            throw new FundException(AuthenticationExceptionType.TOKEN_IS_NULL);
+        return TenantContext.getCurrentTenant() + "_" + JwtUtil.getTokenData(token).getId();
     }
 }
