@@ -42,6 +42,10 @@ public class FundUtils extends CommonUtils {
         return request.getHeader("Authorization").replaceAll("Bearer ", "");
     }
 
+    public static String getCurrentTenant(HttpServletRequest request) {
+        return request.getHeader(Consts.HEADER_TENANT_PARAM_NAME);
+    }
+
     public static boolean checkNationalCode(String nationalCode) {
         if (isNull(nationalCode) || nationalCode.length() != 10) {
             return false;

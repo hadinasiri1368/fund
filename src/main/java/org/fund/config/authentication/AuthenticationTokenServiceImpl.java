@@ -34,12 +34,14 @@ public class AuthenticationTokenServiceImpl implements TokenService<String, Stri
     }
 
     @Override
-    public void removeTokenById(String id) {
-        if (!redisTemplate.hasKey(getId(id)))
+    public void removeTokenById(String tenantId, Long userId, String token) {
+        if (!redisTemplate.hasKey(getId(tenantId + userId)))
             throw new FundException(AuthenticationExceptionType.USER_HAS_NOT_TOKEN);
-        String token = redisTemplate.opsForValue().get(getId(id)).toString();
-        redisTemplate.delete(getId(id));
-        redisTemplate.opsForHash().delete(TenantContext.getCurrentTenant() + key, token);
+        String oldToken = redisTemplate.opsForValue().get(getId(tenantId + userId)).toString();
+        if(!oldToken.equals(token))
+            throw new FundException(AuthenticationExceptionType.TOKEN_IS_NULL);
+        redisTemplate.delete(getId(tenantId + userId));
+        redisTemplate.opsForHash().delete(tenantId + key, oldToken);
     }
 
     @Override
