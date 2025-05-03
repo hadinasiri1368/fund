@@ -1,10 +1,7 @@
-package org.fund.baseInformation.binancialInstitutionBankAccount;
-
-import org.fund.accounting.detailLedger.DetailLedgerDto;
+package org.fund.baseInformation.financialInstitutionBankAccount;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
-import org.fund.model.DetailLedger;
 import org.fund.model.FinancialInstitutionBankAccount;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;

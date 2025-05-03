@@ -1,4 +1,4 @@
-package org.fund.baseInformation.binancialInstitutionBankAccount;
+package org.fund.baseInformation.financialInstitutionBankAccount;
 
 import org.fund.common.FundUtils;
 import org.fund.model.DetailLedger;

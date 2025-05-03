@@ -1,7 +1,6 @@
-package org.fund.baseInformation.binancialInstitutionBankAccount;
+package org.fund.baseInformation.financialInstitutionBankAccount;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.fund.model.*;
