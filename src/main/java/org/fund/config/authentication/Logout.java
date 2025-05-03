@@ -3,6 +3,8 @@ package org.fund.config.authentication;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.fund.common.FundUtils;
+import org.fund.common.JwtUtil;
+import org.fund.config.dataBase.TenantContext;
 import org.fund.config.request.RequestContext;
 import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
@@ -23,6 +25,10 @@ public class Logout implements LogoutHandler {
     public void logout(HttpServletRequest request,
                        HttpServletResponse response,
                        Authentication authentication) {
-        tokenService.removeTokenById(RequestContext.getTokenId());
+        tokenService.removeTokenById(getTokenId(request));
+    }
+
+    private String getTokenId(HttpServletRequest request) {
+        return TenantContext.getCurrentTenant() + "_" + JwtUtil.getTokenData(FundUtils.getToken(request)).getId();
     }
 }
