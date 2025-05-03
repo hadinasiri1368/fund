@@ -48,20 +48,19 @@ public class Logout implements LogoutHandler {
             String currentTime = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
             try {
-                log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}",
-                        HttpStatus.UNAUTHORIZED, e.getMessage(), currentTime, null);
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType("application/json");
-                response.getWriter().write(convertObjectToJson(ExceptionDto.builder()
-                        .code(e.getMessage())
-                        .message(FundUtils.getMessage(e.getMessage(), e.getParams()))
-                        .uuid(null)
-                        .time(currentTime)
-                        .build()));
+                writeResponse(response, currentTime, e.getMessage(), e.getParams());
             } catch (Exception exception) {
                 log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}",
                         HttpStatus.UNAUTHORIZED, e.getMessage(), currentTime, null);
+            }
+        } catch (Exception exception) {
+            String currentTime = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
+            try {
+                writeResponse(response, currentTime, "unhandled_exception.error", null);
+            } catch (Exception exception1) {
+                log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}",
+                        HttpStatus.UNAUTHORIZED, exception1.getMessage(), currentTime, null);
             }
         }
     }
@@ -72,5 +71,19 @@ public class Logout implements LogoutHandler {
         }
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(object);
+    }
+
+    private void writeResponse(HttpServletResponse response, String currentTime, String message, Object[] params) throws Exception {
+        log.error("exception occurred: httpStatus={}, message={}, time={}, uuid={}",
+                HttpStatus.UNAUTHORIZED, message, currentTime, null);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        response.getWriter().write(convertObjectToJson(ExceptionDto.builder()
+                .code(message)
+                .message(FundUtils.getMessage(message, params))
+                .uuid(null)
+                .time(currentTime)
+                .build()));
     }
 }
