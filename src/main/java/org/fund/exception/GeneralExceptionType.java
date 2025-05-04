@@ -12,6 +12,7 @@ public enum GeneralExceptionType {
     DATE_CANNOT_BE_NULL(HttpStatus.BAD_REQUEST, "general_exception.date_cannot_be_null"),
     DATE_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "validation.PersianDateNotValid.message"),
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "general_exception.unknown_error"),
+    FIELD_NOT_VALID(HttpStatus.INTERNAL_SERVER_ERROR, "validation.FieldNotValid.message"),
     DEFAULT_ACTIVE_FUND_NOT_FOUND(HttpStatus.NOT_FOUND, "general_exception.default_active_fund_not_found");
     private final HttpStatus httpStatus;
     private final String messageKey;

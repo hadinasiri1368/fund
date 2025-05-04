@@ -22,7 +22,7 @@ public class DetailLedger extends BaseEntity implements Serializable {
     private String name;
     @Column(columnDefinition = "NVARCHAR2(12)", name = "CODE", nullable = false)
     private String code;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_DETAIL_LEDGER_TYPE_ID")
     private DetailLedgerType detailLedgerType;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_ACTIVE", nullable = false)

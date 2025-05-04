@@ -3,6 +3,7 @@ package org.fund.baseInformation.customer;
 import lombok.Getter;
 import lombok.Setter;
 import org.fund.accounting.detailLedger.DetailLedgerService;
+import org.fund.accounting.detailLedger.constant.DetailLedgerType;
 import org.fund.administration.calendar.CalendarService;
 import org.fund.administration.params.ParamDto;
 import org.fund.administration.params.ParamService;
@@ -213,7 +214,10 @@ public class CustomerService {
     }
 
     private Long insertDetailLedger(CustomerDto newCustomer, Fund fund, Long userId, String uuid) throws Exception {
-        DetailLedger detailLedger = detailLedgerService.get(newCustomer.toCustomer(), fund);
+        String name = newCustomer.getPerson().getIsCompany() ?
+                newCustomer.getPerson().getCompanyName() :
+                newCustomer.getPerson().getLastName() + " " + newCustomer.getPerson().getFirstName();
+        DetailLedger detailLedger = detailLedgerService.get(name, fund, DetailLedgerType.CUSTOMER);
         detailLedgerService.insert(detailLedger, userId, uuid);
         return detailLedger.getId();
     }

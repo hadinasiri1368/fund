@@ -1,5 +1,6 @@
 package org.fund.administration.wageRate;
 
+import org.fund.baseInformation.tradableItem.TradableItemGroup;
 import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
 import org.fund.config.dataBase.TenantContext;
@@ -8,7 +9,7 @@ import org.fund.model.NetAssetValue;
 import org.fund.model.WageRate;
 import org.fund.model.WageRateDetail;
 import org.fund.model.view.external.Instrument;
-import org.fund.model.view.internal.Security;
+import org.fund.model.view.internal.TradableItem;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
 import org.fund.administration.wageRate.dto.WageRateInstrumentDto;
@@ -115,12 +116,12 @@ public class WageRateService {
             }
         }
 
-        List<Security> contracts = getAllContracts();
-        for (Security security : contracts) {
+        List<TradableItem> contracts = getAllContracts();
+        for (TradableItem tradableItem : contracts) {
             for (Boolean pur : purchaseOrSale) {
                 boolean isPurchase = pur;
                 WageRate key = repository.findAll(WageRate.class).stream()
-                        .filter(a -> a.getInstrumentTypeId().equals(security.getSecurityTypeId())
+                        .filter(a -> a.getInstrumentTypeId().equals(tradableItem.getTypeId())
                                 && a.getInstTypeDerivativesId().equals(Consts.INSTRUMENT_TYPE_DERIVATIVES_NORMAL)
                                 && a.getIsOtc().equals(false)
                                 && a.getIsPurchase().equals(isPurchase))
@@ -128,8 +129,8 @@ public class WageRateService {
                 if (!FundUtils.isNull(key)) {
                     NetAssetValue netAssetValue = commonFundService.getLastEndNav(key.getFund());
                     String date = netAssetValue == null ? DateUtils.getTodayJalali() : netAssetValue.getCalcDate();
-                    WageRateDetail wageRateDetail = getWageRateDetail(key, security, date);
-                    fillWageRateInstrumentDto(wageRateInstrument, security.getId(), true, isPurchase, wageRateDetail);
+                    WageRateDetail wageRateDetail = getWageRateDetail(key, tradableItem, date);
+                    fillWageRateInstrumentDto(wageRateInstrument, tradableItem.getId(), true, isPurchase, wageRateDetail);
                 }
             }
         }
@@ -148,12 +149,12 @@ public class WageRateService {
                 .findFirst().orElse(null);
     }
 
-    private WageRateDetail getWageRateDetail(WageRate wageRate, Security security, String date) {
+    private WageRateDetail getWageRateDetail(WageRate wageRate, TradableItem tradableItem, String date) {
         return repository.findAll(WageRateDetail.class).stream()
                 .sorted(Comparator.comparing(WageRateDetail::getIssueDate, Comparator.reverseOrder()))
                 .filter(a -> a.getWageRate().getId().equals(wageRate.getId())
                         && a.getIssueDate().compareTo(date) <= 0
-                        && (a.getInstrumentId() == null || a.getInstrumentId().equals(security.getId())))
+                        && (a.getInstrumentId() == null || a.getInstrumentId().equals(tradableItem.getId())))
                 .findFirst().orElse(null);
     }
 
@@ -169,9 +170,9 @@ public class WageRateService {
         return list;
     }
 
-    private List<Security> getAllContracts() {
-        return repository.findAll(Security.class).stream()
-                .filter(a -> a.getIsContract()).toList();
+    private List<TradableItem> getAllContracts() {
+        return repository.findAll(TradableItem.class).stream()
+                .filter(a -> a.getTradableItemGroup().equals(TradableItemGroup.CONTRACT.getId())).toList();
     }
 
     private void fillWageRateInstrumentDto(List<WageRateInstrumentDto> wageRateInstrumentDtos, Long securityId, boolean isContract, boolean isPurchase, WageRateDetail wageRateDetail) {

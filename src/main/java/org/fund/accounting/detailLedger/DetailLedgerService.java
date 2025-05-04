@@ -52,22 +52,18 @@ public class DetailLedgerService {
                 .filter(a -> a.getId().equals(id)).toList();
     }
 
-    public DetailLedger get(Customer newCustomer, Fund fund) {
-        String name = newCustomer.getPerson().getIsCompany() ?
-                newCustomer.getPerson().getCompanyName() :
-                newCustomer.getPerson().getLastName() + " " + newCustomer.getPerson().getFirstName();
-        org.fund.model.DetailLedgerType detailLedgerType = repository.findOne(org.fund.model.DetailLedgerType.class, org.fund.accounting.detailLedger.constant.DetailLedgerType.CUSTOMER.getId());
+    public DetailLedger get(String name, Fund fund, DetailLedgerType detailLedgerType) {
         DetailLedger detailLedger = DetailLedger.builder()
                 .name(name)
-                .detailLedgerType(detailLedgerType)
-                .code(getCustomerCode(fund))
+                .detailLedgerType(repository.findOne(org.fund.model.DetailLedgerType.class, detailLedgerType.getId()))
+                .code(getCode(fund, detailLedgerType))
                 .isActive(true).build();
         return detailLedger;
     }
 
-    private String getCustomerCode(Fund fund) {
+    private String getCode(Fund fund, DetailLedgerType detailLedgerType) {
         Long detailLedgerLength = paramService.getLongValue(fund, Consts.PARAMS_DETAIL_LEDGER_LENGTH);
-        String maxCode = getMaxCode(DetailLedgerType.CUSTOMER);
+        String maxCode = getMaxCode(detailLedgerType);
         if (FundUtils.isNull(maxCode)) {
             maxCode = buildLCode(detailLedgerLength);
         } else {

@@ -822,6 +822,26 @@ Values
     (104, 'نمایش حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount', 1)
     /
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (105, 'تخصیص تفصیلی به آیتم های معاملاتی', '/baseInformation/tradableItem/detailLedger/add', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (106, 'حذف تفصیلی آیتم های معاملاتی', '/baseInformation/tradableItem/detailLedger/remove', 1)
+    /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (107, 'لیست آیتم های معاملاتی', '/baseInformation/tradableItem', 1)
+    /
+
+
+
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
     /
 Insert into AHA_PERMISSION
@@ -1130,5 +1150,23 @@ select ROWNUM,dlt.name || ' - ' || dl.name ,dlba.dl_bank_account_id,DL_ID,NULL,N
 from  detail_ledger_bank_account dlba
           inner join aha_detail_ledger dl on dl.id=dlba.dl_id
           inner join aha_detail_ledger_type dlt on dlt.id=dl.f_detail_ledger_type_id
+/
+----------------------------------------------------------------------------------------------------
+insert into AHA_TRADABLE_ITEM_DETAIL_LEDGER
+select rownum,vw.id,vw.type_id,vw.TRADABLE_ITEM_GROUP,dl_id,null,null,null,null
+from  instrument_dl idl
+          inner join vw_tradable_item vw on vw.ID=idl.instrument_id and  TRADABLE_ITEM_GROUP=1
+/
+
+insert into AHA_TRADABLE_ITEM_DETAIL_LEDGER
+select (select max(id) from  AHA_TRADABLE_ITEM_DETAIL_LEDGER)+rownum id,vw.id,vw.type_id,vw.TRADABLE_ITEM_GROUP,dl_id,null,null,null,null
+from  ime_contract_dl idl
+          inner join vw_tradable_item vw on vw.ID=idl.IME_CONTRACT_ID and  TRADABLE_ITEM_GROUP=2
+/
+
+insert into AHA_TRADABLE_ITEM_DETAIL_LEDGER
+select (select max(id) from  AHA_TRADABLE_ITEM_DETAIL_LEDGER)+rownum id,vw.id,vw.type_id,vw.TRADABLE_ITEM_GROUP,dl_id,null,null,null,null
+from  bourse_fund_dl idl
+          inner join vw_tradable_item vw on vw.ID=idl.BOURSE_FUND_ID and  TRADABLE_ITEM_GROUP=3
 /
 ----------------------------------------------------------------------------------------------------

@@ -20,7 +20,7 @@ public class DetailLedgerType extends BaseEntity implements Serializable {
     private Long id;
     @Column(columnDefinition = "NVARCHAR2(12)", name = "NAME", nullable = false)
     private String name;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_ACCOUNT_NATURE_ID")
     private AccountNature accountNature;
 }
