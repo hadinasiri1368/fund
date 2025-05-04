@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.fund.authentication.AuthenticationService;
 import org.fund.common.CommonUtils;
 import org.fund.common.FundUtils;
 import org.fund.common.JwtUtil;
@@ -29,10 +30,10 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 @Configuration
 public class Logout implements LogoutHandler {
-    private final TokenService tokenService;
+    private final AuthenticationService authenticationService;
 
-    public Logout(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public Logout(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -40,10 +41,7 @@ public class Logout implements LogoutHandler {
                        HttpServletResponse response,
                        Authentication authentication) {
         try {
-            String token = FundUtils.getToken(request);
-            if (FundUtils.isNull(token))
-                throw new FundException(AuthenticationExceptionType.TOKEN_IS_NULL);
-            tokenService.removeTokenById(FundUtils.getCurrentTenant(request), JwtUtil.getTokenData(token).getId(), token);
+            authenticationService.logout(FundUtils.getCurrentTenant(request),FundUtils.getToken(request));
         } catch (FundException e) {
             String currentTime = LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));

@@ -9,6 +9,7 @@ import org.fund.authentication.permission.role.RolePermissionDto;
 import org.fund.authentication.permission.role.RoleUserGroupDto;
 import org.fund.authentication.user.UserService;
 import org.fund.authentication.user.dto.*;
+import org.fund.config.dataBase.TenantContext;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.UserGroup;
@@ -58,6 +59,11 @@ public class AuthenticationController {
     @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/add")
     public void insertRole(@RequestBody RoleDto roleDto) throws Exception {
         permissionService.insertRole(roleDto.toRole(), RequestContext.getUserId(), RequestContext.getUuid());
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/refreshToken")
+    public String refreshToken() throws Exception {
+        return service.refreshToken(TenantContext.getCurrentTenant(), RequestContext.getToken());
     }
 
     @PutMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/edit")

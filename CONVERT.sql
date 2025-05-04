@@ -840,6 +840,13 @@ Values
     (107, 'لیست آیتم های معاملاتی', '/baseInformation/tradableItem', 1)
     /
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (108, 'به روز رسانی توکن', '/refreshToken', 1)
+    /
+
+
 
 
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL

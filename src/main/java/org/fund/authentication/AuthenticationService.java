@@ -4,16 +4,21 @@ import org.fund.authentication.otp.constant.OtpStrategyType;
 import org.fund.authentication.otp.OtpVisitor;
 import org.fund.authentication.otp.dto.OtpRequestDto;
 import org.fund.common.FundUtils;
+import org.fund.common.JwtUtil;
 import org.fund.config.authentication.TokenService;
 import org.fund.constant.Consts;
+import org.fund.constant.TimeFormat;
 import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
 import org.fund.model.Users;
 import org.fund.administration.params.ParamService;
 import org.fund.repository.JpaRepository;
 import org.fund.service.ProfileService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,17 +30,19 @@ public class AuthenticationService {
     private final ProfileService profileService;
     private final ParamService paramService;
     private final OtpVisitor otpVisitor;
+    private final JwtUtil jwtUtil;
 
     public AuthenticationService(JpaRepository repository
             , TokenService tokenService
             , ProfileService profileService
             , ParamService paramService
-            , OtpVisitor otpVisitor) {
+            , OtpVisitor otpVisitor, JwtUtil jwtUtil) {
         this.repository = repository;
         this.tokenService = tokenService;
         this.profileService = profileService;
         this.paramService = paramService;
         this.otpVisitor = otpVisitor;
+        this.jwtUtil = jwtUtil;
     }
 
     public String login(LoginDto loginDto) throws Exception {
@@ -52,6 +59,18 @@ public class AuthenticationService {
             }
         }
         return tokenService.generateToken(user);
+    }
+
+    public String refreshToken(String tenantId, String token) throws Exception {
+        Users user = JwtUtil.getTokenData(token);
+        logout(tenantId, token);
+        return tokenService.generateToken(user);
+    }
+
+    public void logout(String tenantId, String token) throws Exception {
+        if (FundUtils.isNull(token))
+            throw new FundException(AuthenticationExceptionType.TOKEN_IS_NULL);
+        tokenService.removeTokenById(tenantId, JwtUtil.getTokenData(token).getId(), token);
     }
 
     public List<OtpStrategyType> getOtpStrategyTypeList() {
