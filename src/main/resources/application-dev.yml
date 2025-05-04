@@ -49,3 +49,6 @@ verificationCode:
 
 authentication:
   paths-to-bypass: /v3/api-docs/**,/swagger-ui/**,/swagger-ui.html/**,/favicon.ico
+
+corsConfig:
+  allowedOrigin: http://localhost:${server.port}
