@@ -6,11 +6,17 @@ import org.fund.config.dataBase.TenantContext;
 import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
 import org.fund.model.Users;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.TimeUnit;
+
 @Service
 public class AuthenticationTokenServiceImpl implements TokenService<String, String> {
+    @Value("${jwt.expirationMinutes}")
+    private long expirationMinutes;
+
     private final RedisTemplate<String, Object> redisTemplate;
     private final String key = "_login_token";
 
@@ -23,8 +29,9 @@ public class AuthenticationTokenServiceImpl implements TokenService<String, Stri
         if (redisTemplate.hasKey(getId(TenantContext.getCurrentTenant() + user.getId())))
             return redisTemplate.opsForValue().get(getId(TenantContext.getCurrentTenant() + user.getId())).toString();
         String token = JwtUtil.createToken(user);
-        redisTemplate.opsForValue().set(getId(TenantContext.getCurrentTenant() + user.getId()), token);
+        redisTemplate.opsForValue().set(getId(TenantContext.getCurrentTenant() + user.getId()), token, expirationMinutes, TimeUnit.MINUTES);
         redisTemplate.opsForHash().put(TenantContext.getCurrentTenant() + key, token, user.getId());
+        redisTemplate.expire(TenantContext.getCurrentTenant() + key, expirationMinutes, TimeUnit.MINUTES);
         return token;
     }
 
