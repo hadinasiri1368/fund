@@ -32,4 +32,12 @@ SELECT bf.bourse_fund_id             id,
        3                             tradable_item_group
 FROM bourse_fund  bf
          INNER JOIN fund_type ft ON ft.fund_type_id = bf.fund_type_id
-/
+UNION ALL
+SELECT b.brokerage_id             id,
+       b.brokerage_name           description,
+       b.brokerage_code           bourse_account,
+       1                          type_id,
+       'کارگزاری'                     type_name,
+       4                          tradable_item_group
+FROM brokerage  b
+    /

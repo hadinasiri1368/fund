@@ -1017,4 +1017,10 @@ ALTER TABLE AHA_TRADABLE_ITEM_DETAIL_LEDGER
     ADD UNIQUE (TRADABLE_ITEM_ID, TRADABLE_ITEM_TYPE_ID, TRADABLE_ITEM_GROUP_ID)
     ENABLE VALIDATE
 /
+
+insert into AHA_TRADABLE_ITEM_DETAIL_LEDGER
+select (select max(id) from AHA_TRADABLE_ITEM_DETAIL_LEDGER)+rownum id, ti.id,ti.type_id,ti.TRADABLE_ITEM_GROUP,bd.dl_id,null,null,null,null
+from  BROKERAGE_DL bd
+          inner join VW_TRADABLE_ITEM ti on ti.id=bd.BROKERAGE_id and ti.TRADABLE_ITEM_GROUP=4
+/
 -----------------------------------------------------------------------------------------------------

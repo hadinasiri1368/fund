@@ -26,7 +26,6 @@ public class TradableItemDetailLedgerDto {
     private Long tradableItemTypeId;
     @NotEmpty(fieldName = "tradableItemGroupId")
     private Long tradableItemGroupId;
-    private DetailLedger detailLedger;
 
     public TradableItemDetailLedger toTradableItemDetailLedger() {
         ObjectMapper objectMapper = new ObjectMapper();

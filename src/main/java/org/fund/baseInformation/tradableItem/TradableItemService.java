@@ -4,6 +4,8 @@ import org.fund.accounting.detailLedger.DetailLedgerService;
 import org.fund.accounting.detailLedger.constant.DetailLedgerType;
 import org.fund.administration.fund.FundService;
 import org.fund.common.FundUtils;
+import org.fund.exception.FundException;
+import org.fund.exception.GeneralExceptionType;
 import org.fund.model.DetailLedger;
 import org.fund.model.FinancialInstitutionBankAccount;
 import org.fund.model.Fund;
@@ -29,7 +31,11 @@ public class TradableItemService {
                 .filter(a -> a.getId().equals(tradableItemDetailLedger.getTradableItemId()) &&
                         FundUtils.longValue(a.getTradableItemGroup()).equals(tradableItemDetailLedger.getTradableItemGroupId()))
                 .findFirst().orElse(null);
-        DetailLedger detailLedger = detailLedgerService.get(tradableItem.getDescription(), fund, DetailLedgerType.PUBLIC_COMPANY);
+        if (FundUtils.isNull(tradableItem))
+            throw new FundException(GeneralExceptionType.DATE_VALIDATION_FAILED, new Object[]{"tradableItemId", "tradableItemGroupId"});
+        DetailLedgerType detailLedgerType = DetailLedgerType.getItemById(tradableItemDetailLedger.getTradableItemGroupId());
+        DetailLedger detailLedger = detailLedgerService.get(tradableItem.getDescription(), fund, detailLedgerType);
+        detailLedgerService.insert(detailLedger, userId, uuid);
         repository.save(detailLedger, userId, uuid);
         return detailLedger;
     }
