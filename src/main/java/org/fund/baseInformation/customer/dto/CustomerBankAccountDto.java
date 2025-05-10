@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.baseInformation.bankAccount.BankAccountDto;
 import org.fund.model.BankAccount;
 import org.fund.model.Customer;
 import org.fund.model.CustomerBankAccount;
@@ -26,15 +27,13 @@ public class CustomerBankAccountDto {
     @NotEmpty(fieldName = "customerId")
     @ValidateField(fieldName = "customerId", entityClass = Customer.class)
     private Long customerId;
-    @NotEmpty(fieldName = "bankAccountId")
-    @ValidateField(fieldName = "bankAccountId", entityClass = BankAccount.class)
-    private Long bankAccountId;
+    private BankAccountDto bankAccount;
 
     public CustomerBankAccount toCustomerBankAccount() {
         ObjectMapper objectMapper = new ObjectMapper();
         CustomerBankAccount customerBankAccount = objectMapper.convertValue(this, CustomerBankAccount.class);
         customerBankAccount.setCustomer(getCustomer(customerId));
-        customerBankAccount.setBankAccount(getBankAccount(bankAccountId));
+        customerBankAccount.setBankAccount(getBankAccount(bankAccount));
         return customerBankAccount;
     }
 
@@ -45,10 +44,7 @@ public class CustomerBankAccountDto {
                 .orElse(null);
     }
 
-    private BankAccount getBankAccount(Long bankAccountId) {
-        return repository.findAll(BankAccount.class).stream()
-                .filter(a -> a.getId().equals(bankAccountId))
-                .findFirst()
-                .orElse(null);
+    private BankAccount getBankAccount(BankAccountDto bankAccount) {
+        return bankAccount.toBankAccount();
     }
 }

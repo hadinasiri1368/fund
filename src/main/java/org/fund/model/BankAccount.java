@@ -23,7 +23,7 @@ public class BankAccount extends BaseEntity implements Serializable {
     private Boolean isActive;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_BANK_ACCOUNT_TYPE_ID")
-    private bankAccountType bankAccountType;
+    private BankAccountType bankAccountType;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_BANK_ID")
     private Bank bank;

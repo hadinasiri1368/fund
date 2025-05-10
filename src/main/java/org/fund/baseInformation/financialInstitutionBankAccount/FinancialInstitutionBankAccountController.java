@@ -1,4 +1,6 @@
 package org.fund.baseInformation.financialInstitutionBankAccount;
+
+import org.fund.administration.fund.FundService;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
@@ -15,19 +17,16 @@ import java.util.List;
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class FinancialInstitutionBankAccountController {
     private final FinancialInstitutionBankAccountService service;
+    private FundService fundService;
 
-    public FinancialInstitutionBankAccountController(FinancialInstitutionBankAccountService service) {
+    public FinancialInstitutionBankAccountController(FinancialInstitutionBankAccountService service, FundService fundService) {
         this.service = service;
+        this.fundService = fundService;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/financialInstitutionBankAccount/add")
     public void insert(@RequestBody FinancialInstitutionBankAccountDto financialInstitutionBankAccountDto) throws Exception {
-        service.insert(financialInstitutionBankAccountDto.toFinancialInstitutionBankAccount(), RequestContext.getUserId(), RequestContext.getUuid());
-    }
-
-    @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/financialInstitutionBankAccount/edit")
-    public void edit(@RequestBody FinancialInstitutionBankAccountDto financialInstitutionBankAccountDto) throws Exception {
-        service.update(financialInstitutionBankAccountDto.toFinancialInstitutionBankAccount(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.insert(financialInstitutionBankAccountDto, fundService.getDefaultFund(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/financialInstitutionBankAccount/remove/{id}")

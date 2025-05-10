@@ -8,6 +8,7 @@ import org.fund.administration.calendar.CalendarService;
 import org.fund.administration.params.ParamDto;
 import org.fund.administration.params.ParamService;
 import org.fund.authentication.permission.PermissionService;
+import org.fund.baseInformation.bankAccount.BankAccountService;
 import org.fund.baseInformation.customer.dto.CustomerBankAccountDto;
 import org.fund.baseInformation.customer.dto.CustomerDto;
 import org.fund.common.DateUtils;
@@ -18,6 +19,7 @@ import org.fund.exception.FundException;
 import org.fund.model.*;
 import org.fund.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -31,16 +33,19 @@ public class CustomerService {
     private final CalendarService calendarService;
     private final ParamService paramService;
     private final DetailLedgerService detailLedgerService;
+    private final BankAccountService bankAccountService;
 
     public CustomerService(JpaRepository jpaRepository
             , CalendarService calendarService
             , ParamService paramService
             , DetailLedgerService detailLedgerService
+            , BankAccountService bankAccountService
     ) {
         this.repository = jpaRepository;
         this.calendarService = calendarService;
         this.paramService = paramService;
         this.detailLedgerService = detailLedgerService;
+        this.bankAccountService = bankAccountService;
     }
 
     public void insert(CustomerDto customer, Fund fund, Long userId, String uuid) throws Exception {
@@ -173,10 +178,14 @@ public class CustomerService {
         return customer.getCustomerBankAccount().getBankAccount();
     }
 
+    @Transactional
     public void saveCustomerBankAccount(CustomerBankAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
+        BankAccount bankAccount = customerBankAccount.getBankAccount().toBankAccount();
+        bankAccountService.insert(bankAccount, userId, uuid);
         Long customerBankAccountCount = getCustomerBankAccountCount(customerBankAccount.getCustomerId());
         boolean isFirst = FundUtils.isNull(customerBankAccount.getId()) && customerBankAccountCount == 0L ? true : false;
         CustomerBankAccount cba = customerBankAccount.toCustomerBankAccount();
+        cba.setBankAccount(bankAccount);
         repository.save(cba, userId, uuid);
         if (isFirst) {
             Customer customer = cba.getCustomer();

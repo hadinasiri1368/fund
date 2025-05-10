@@ -807,12 +807,6 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (102, 'ویرایش حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount/edit', 1)
-    /
-
-Insert into AHA_PERMISSION
-(ID, NAME, URL, IS_SENSITIVE)
-Values
     (103, 'حذف حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount/remove', 1)
     /
 
