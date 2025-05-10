@@ -43,7 +43,7 @@ public class TradableItemController {
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/tradableItem/{id}")
     public TradableItemDetailLedgerDto getTradableItemDetailLedger(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = TradableItemDetailLedger.class) Long tradableItemDetailLedgerId) {
-        List<TradableItemDetailLedger> tradableItemDetailLedgers = service.list(tradableItemDetailLedgerId);
+        List<TradableItemDetailLedger> tradableItemDetailLedgers = service.list(tradableItemDetailLedgerId, null);
         return !FundUtils.isNull(tradableItemDetailLedgers) ? TradableItemDetailLedgerDto.toDto(tradableItemDetailLedgers.get(0)) : null;
     }
 
@@ -52,7 +52,7 @@ public class TradableItemController {
         if (FundUtils.isNull(TradableItemGroup.getItemById(tradableItemGroupId.intValue()))) {
             throw new FundException(GeneralExceptionType.FIELD_NOT_VALID, new Object[]{"id"});
         }
-        List<TradableItemDetailLedger> tradableItemDetailLedgers = service.list(null).stream()
+        List<TradableItemDetailLedger> tradableItemDetailLedgers = service.list(null, null).stream()
                 .filter(a -> a.getTradableItemGroupId().equals(tradableItemGroupId)).toList();
         List<TradableItemDetailLedgerDto> tradableItemDetailLedgerDtos = new ArrayList<>();
         for (TradableItemDetailLedger ietm : tradableItemDetailLedgers) {
@@ -63,7 +63,7 @@ public class TradableItemController {
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/tradableItem")
     public List<TradableItemDetailLedgerDto> getAllTradableItemDetailLedger() {
-        List<TradableItemDetailLedger> tradableItemDetailLedgers = service.list(null);
+        List<TradableItemDetailLedger> tradableItemDetailLedgers = service.list(null, null);
         List<TradableItemDetailLedgerDto> tradableItemDetailLedgerDtos = new ArrayList<>();
         for (TradableItemDetailLedger ietm : tradableItemDetailLedgers) {
             tradableItemDetailLedgerDtos.add(TradableItemDetailLedgerDto.toDto(ietm));

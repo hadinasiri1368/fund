@@ -36,7 +36,19 @@ public class Consts {
     //////////////////////////////////////////////////////EMAIL_Message/////////////////////////////////////////////////////////
     public static final String EMAIL_FROM_ADDRESS_NO_REPLY = "noreply@rhbroker.com";
     public static final String ALERT_EMAIL_SUBJECT_VERIFICATION_CODE = "کد اعتبار سنجی مشتری در صتدوق ";
-    //////////////////////////////////////////////////////instrument/////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////instrument derivatives/////////////////////////////////////////////////////////
     public static final Long INSTRUMENT_TYPE_DERIVATIVES_NORMAL = 1L;
+    //////////////////////////////////////////////////////instrument type////////////////////////////////////////////////////////////////
+    public static final Long INSTRUMENT_TYPE_STOCK = 1L;
+    public static final Long INSTRUMENT_TYPE_RIGHT = 2L;
+    public static final Long INSTRUMENT_TYPE_BOND = 3L;
+    public static final Long INSTRUMENT_TYPE_CD = 4L;
+    public static final Long INSTRUMENT_TYPE_ETF1 = 5L;
+    public static final Long INSTRUMENT_TYPE_ETF2 = 6L;
+    public static final Long INSTRUMENT_TYPE_ETF3 = 7L;
+    public static final Long INSTRUMENT_TYPE_ETF4 = 8L;
+    public static final Long INSTRUMENT_TYPE_COMEX_CD = 9L;
+    public static final Long INSTRUMENT_TYPE_ETF_IME = 10L;
+    public static final Long INSTRUMENT_TYPE_ETF_VENTURE = 11L;
 
 }

@@ -1024,3 +1024,20 @@ from  BROKERAGE_DL bd
           inner join VW_TRADABLE_ITEM ti on ti.id=bd.BROKERAGE_id and ti.TRADABLE_ITEM_GROUP=4
 /
 -----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_FUND_OWNERSHIP
+(
+    ID                      NUMBER(18)          NOT NULL,
+    BOURSE_FUND_ID          NUMBER(18)              NULL,
+    INSTRUMENT_ID           NUMBER(18)              NULL,
+    INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+    INSERTED_USER_ID        NUMBER(18)              NULL,
+    UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+    UPDATED_USER_ID         NUMBER(18)              NULL
+)
+    /
+
+ALTER TABLE AHA_FUND_OWNERSHIP ADD (
+    CONSTRAINT PK_AHA_FUND_OWNERSHIP PRIMARY KEY (ID)
+)
+/
+-----------------------------------------------------------------------------------------------------

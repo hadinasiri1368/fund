@@ -840,6 +840,25 @@ Values
     (108, 'به روز رسانی توکن', '/refreshToken', 1)
     /
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (109, 'ثبت صندوق تحت تملک', '/baseInformation/fundOwnership/add', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (110, 'حذف صندوق تحت تملک', '/baseInformation/fundOwnership/remove', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (111, 'نمایش صندوق تحت تملک', '/baseInformation/fundOwnership', 1)
+    /
+
+
 
 
 
@@ -1169,5 +1188,9 @@ insert into AHA_TRADABLE_ITEM_DETAIL_LEDGER
 select (select max(id) from  AHA_TRADABLE_ITEM_DETAIL_LEDGER)+rownum id,vw.id,vw.type_id,vw.TRADABLE_ITEM_GROUP,dl_id,null,null,null,null
 from  bourse_fund_dl idl
           inner join vw_tradable_item vw on vw.ID=idl.BOURSE_FUND_ID and  TRADABLE_ITEM_GROUP=3
+/
+----------------------------------------------------------------------------------------------------
+insert into aha_fund_ownership
+select rownum,bourse_fund_id,instrument_id,null,null,null,null from  fund_ownership
 /
 ----------------------------------------------------------------------------------------------------

@@ -6,7 +6,8 @@ import java.util.Objects;
 public enum TradableItemGroup {
     INSTRUMENT(1, "نماد"),
     CONTRACT(2, "قرارداد"),
-    FUND(3, "صندوق");
+    FUND(3, "صندوق"),
+    BROKERAGE(4, "کارگزاری");
 
     private final Integer id;
     private final String title;

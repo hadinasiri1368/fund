@@ -32,7 +32,7 @@ public class TradableItemService {
                         FundUtils.longValue(a.getTradableItemGroup()).equals(tradableItemDetailLedger.getTradableItemGroupId()))
                 .findFirst().orElse(null);
         if (FundUtils.isNull(tradableItem))
-            throw new FundException(GeneralExceptionType.DATE_VALIDATION_FAILED, new Object[]{"tradableItemId", "tradableItemGroupId"});
+            throw new FundException(GeneralExceptionType.FIELD_NOT_VALID, new Object[]{"tradableItemId,tradableItemGroupId"});
         DetailLedgerType detailLedgerType = DetailLedgerType.getItemById(tradableItemDetailLedger.getTradableItemGroupId());
         DetailLedger detailLedger = detailLedgerService.get(tradableItem.getDescription(), fund, detailLedgerType);
         detailLedgerService.insert(detailLedger, userId, uuid);
@@ -46,10 +46,12 @@ public class TradableItemService {
         repository.removeById(TradableItemDetailLedger.class, tradableItemDetailLedgerId, userId, uuid);
     }
 
-    public List<TradableItemDetailLedger> list(Long tradableItemId) {
+    public List<TradableItemDetailLedger> list(Long tradableItemId, TradableItemGroup tradableItemGroup) {
         if (!FundUtils.isNull(tradableItemId))
             return repository.findAll(TradableItemDetailLedger.class).stream()
-                    .filter(a -> a.getId().equals(tradableItemId)).toList();
-        return repository.findAll(TradableItemDetailLedger.class);
+                    .filter(a -> a.getId().equals(tradableItemId) &&
+                            (FundUtils.isNull(tradableItemGroup) || a.getTradableItemGroupId().intValue() == tradableItemGroup.getId())).toList();
+        return repository.findAll(TradableItemDetailLedger.class).stream()
+                .filter(a -> FundUtils.isNull(tradableItemGroup) || a.getTradableItemGroupId().intValue() == tradableItemGroup.getId()).toList();
     }
 }
