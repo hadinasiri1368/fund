@@ -857,7 +857,11 @@ Insert into AHA_PERMISSION
 Values
     (111, 'نمایش صندوق تحت تملک', '/baseInformation/fundOwnership', 1)
     /
-
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (112, 'نمایش مجوز های دسترسی', '/authentication/permission', 1)
+    /
 
 
 

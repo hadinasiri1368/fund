@@ -172,4 +172,12 @@ public class PermissionService {
             repository.batchInsert(list, userId, uuid);
         }
     }
+
+    public List<Permission> listPermission(Long id){
+        if(FundUtils.isNull(id))
+            return  repository.findAll(Permission.class);
+        return repository.findAll(Permission.class).stream()
+                .filter(a -> a.getId().equals(id))
+                .collect(Collectors.toList());
+    }
 }

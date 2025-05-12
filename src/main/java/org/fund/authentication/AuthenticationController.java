@@ -12,6 +12,7 @@ import org.fund.authentication.user.dto.*;
 import org.fund.config.dataBase.TenantContext;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.model.Permission;
 import org.fund.model.UserGroup;
 import org.fund.validator.NotEmpty;
 import org.springframework.validation.annotation.Validated;
@@ -90,6 +91,17 @@ public class AuthenticationController {
     @DeleteMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/permission/remove")
     public void deletePermission(@NotEmpty(fieldName = "permissionId") Long permissionId) throws Exception {
         permissionService.delete(permissionId, RequestContext.getUserId(), RequestContext.getUuid());
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/permission/{id}")
+    public Permission getPermission(@PathVariable("id") Long id) {
+        List<Permission> permissionList = permissionService.listPermission(id);
+        return permissionList.get(0);
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/permission")
+    public List<Permission> getPermission() {
+        return permissionService.listPermission(null);
     }
 
     @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/add")
