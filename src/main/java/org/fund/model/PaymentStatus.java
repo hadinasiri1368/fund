@@ -1,0 +1,26 @@
+package org.fund.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.fund.config.cache.CacheableEntity;
+
+import java.io.Serializable;
+
+@Table(name = "AHA_PAYMENT_STATUS")
+@Entity(name = "paymentStatus")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@CacheableEntity
+public class PaymentStatus extends BaseEntity implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
+    @Column(columnDefinition = "NVARCHAR2(50)", name = "NAME", nullable = false)
+    private String name;
+    @Column(columnDefinition = "NVARCHAR2(100)", name = "USAGE_TYPE", nullable = false)
+    private String usageType;
+
+}

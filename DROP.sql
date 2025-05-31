@@ -1,21 +1,20 @@
-
 BEGIN
-EXECUTE IMMEDIATE 'update  aha_customer set  f_CUSTOMER_BANK_ACCOUNt_id =null';
-EXECUTE IMMEDIATE 'ALTER TABLE AHA_CUSTOMER_BANK_ACCOUNT DROP CONSTRAINT FK_CBA_2_CUSTOMER';
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Failed to process table');
+FOR rec IN (
+      SELECT
+         ac.table_name,
+         ac.constraint_name
+      FROM
+         all_constraints ac
+      WHERE  ac.constraint_type = 'R' -- Foreign Key
+         AND ac.table_name LIKE 'AHA_%'
+   ) LOOP
+      EXECUTE IMMEDIATE 'ALTER TABLE ' || rec.table_name ||
+                        ' DROP CONSTRAINT ' || rec.constraint_name;
+END LOOP;
 END;
 /
 
-BEGIN
-EXECUTE IMMEDIATE 'ALTER TABLE AHA_CUSTOMER_BANK_ACCOUNT MODIFY(F_CUSTOMER_ID  NULL)';
-EXECUTE IMMEDIATE 'update  AHA_CUSTOMER_BANK_ACCOUNT set  f_CUSTOMER_id =null';
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Failed to process table: ');
-END;
-/
+
 
 
 DECLARE
@@ -47,7 +46,3 @@ END; -- End of inner BEGIN...END for each table
 END LOOP;
 END;
 /
-
-
-
-

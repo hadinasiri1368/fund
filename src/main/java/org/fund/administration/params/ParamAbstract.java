@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 @Service
 public abstract class ParamAbstract implements Param {
-    public final JpaRepository repository;
+    protected final JpaRepository repository;
 
     public ParamAbstract(JpaRepository repository) {
         this.repository = repository;

@@ -861,28 +861,85 @@ Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
     (112, 'نمایش مجوز های دسترسی', '/authentication/permission', 1)
-    /
+/
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (113, 'ثبت دلایل پرداخت', '/paymentModule/paymentReason/add', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (114, 'ویرایش دلایل پرداخت', '/paymentModule/paymentReason/edit', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (115, 'نمایش دلایل پرداخت', '/paymentModule/paymentReason', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (116, 'نمایش دلایل پرداخت', '/paymentModule/paymentReason', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (117, 'حذف دلایل پرداخت', '/paymentModule/paymentReason/remove', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (118, 'ثبت پرداخت', '/paymentModule/payment/add', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (119, 'ویرایش پرداخت', '/paymentModule/payment/edit', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (120, 'حذف پرداخت', '/paymentModule/payment/remove', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (121, 'نمایش پرداخت', '/paymentModule/payment', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (122, 'تغییر وضعیت پرداخت', '/paymentModule/payment/changeStatus', 1)
+/
 
 
 
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
-    /
+/
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
     ((select max(id)+1 from AHA_PERMISSION), 'ورود', '/login/**', 0)
-    /
+/
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
     ((select max(id)+1 from AHA_PERMISSION), 'swagger', '/v3/api-docs/**', 0)
-    /
+/
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
     ((select max(id)+1 from AHA_PERMISSION), 'swagger', '/swagger-ui.html', 0)
-    /
+/
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
@@ -1193,8 +1250,157 @@ select (select max(id) from  AHA_TRADABLE_ITEM_DETAIL_LEDGER)+rownum id,vw.id,vw
 from  bourse_fund_dl idl
           inner join vw_tradable_item vw on vw.ID=idl.BOURSE_FUND_ID and  TRADABLE_ITEM_GROUP=3
 /
+
+insert into AHA_TRADABLE_ITEM_DETAIL_LEDGER
+select (select max(id) from AHA_TRADABLE_ITEM_DETAIL_LEDGER)+rownum id, ti.id,ti.type_id,ti.TRADABLE_ITEM_GROUP,bd.dl_id,null,null,null,null
+from  BROKERAGE_DL bd
+          inner join VW_TRADABLE_ITEM ti on ti.id=bd.BROKERAGE_id and ti.TRADABLE_ITEM_GROUP=4
+/
 ----------------------------------------------------------------------------------------------------
 insert into aha_fund_ownership
 select rownum,bourse_fund_id,instrument_id,null,null,null,null from  fund_ownership
 /
 ----------------------------------------------------------------------------------------------------
+INSERT INTO AHA_PAYMENT_TYPE
+select RP_TYPE_ID,RP_TYPE_NAME,NULL,NULL,NULL,NULL from  RP_TYPE
+/
+----------------------------------------------------------------------------------------------------
+insert into AHA_PAYMENT_STATUS
+select PAYMENT_OGS_ID,PAYMENT_OGS_NAME,'PAYMENT_DETAIL',null,null,null,null from  payment_og_status
+/
+
+insert into AHA_PAYMENT_STATUS
+select (select MAX(ID) from  AHA_PAYMENT_STATUS)+PAYMENT_OGM_STATUS_ID ID,PAYMENT_OGM_STATUS_NAME,'PAYMENT',null,null,null,null from  payment_ogM_status
+/
+----------------------------------------------------------------------------------------------------
+insert into AHA_PAYMENT_ORIGIN
+select PAYMENT_OG_ORIGIN_ID,PAYMENT_OG_ORIGIN_NAME,null,null,null,null from  PAYMENT_og_ORIGIN
+/
+----------------------------------------------------------------------------------------------------
+insert into AHA_PAYMENT
+select NR.RECEIPT_ID id,RECEIPT_NUMBER,NR.branch_id,NR.RP_REASON_ID,nr.from_sl_id,null,nvl(tc.dl_id,FROM_DL_ID) dl_id ,NR.fund_id,nr.RP_TYPE_ID,NULL,NULL,null,nr.RECEIPT_DATE,nr.COMMENTS,nr.IS_MANUAL,0,NULL
+     ,convert_to_timestamp(nr.CREATION_DATE,nr.CREATION_TIME) INSERTED_DATE_TIME,nr.APPUSER_ID,convert_to_timestamp(nr.MODIFICATION_DATE,nr.MODIFICATION_TIME) UPDATED_DATE_TIME,nr.APPUSER_ID
+from  N_RECEIPT NR
+          left join t_customer tc on tc.customer_id=NR.FROM_CUSTOMER_ID
+/
+
+insert into AHA_PAYMENT_DETAIL
+select NW.wire_id,NR.RECEIPT_ID id,ba.dl_id,NULL,fo.fund_order_id,ba.bank_account_id,NW.AMOUNT,NW.COMMENTS,null,p.INSERTED_DATE_TIME,INSERTED_USER_ID,UPDATED_DATE_TIME,UPDATED_USER_ID
+from  N_RECEIPT NR
+          INNER JOIN n_wire NW ON NW.RECEIPT_ID=NR.RECEIPT_ID
+          left  join fund_order fo on fo.RECEIPT_id=nr.RECEIPT_id
+          inner join bank_account ba on ba.bank_account_id= NW.TO_BANK_ACCOUNT_ID
+          inner join aha_payment p on p.id=NR.RECEIPT_ID
+/
+
+insert into AHA_PAYMENT
+select p.PAYMENT_ID,p.PAYMENT_NUMBER,p.BRANCH_ID,p.RP_REASON_ID,p.FROM_SL_ID,p.TO_SL_ID,nvl(ba.dl_id,nvl(tc.dl_id,p.from_dl_id)) dl_id,p.fund_id,p.RP_TYPE_ID,NULL,NULL,nvl(ba.bank_account_id,tc.bank_account_id),p.payment_date,p.comments,p.is_manual,0,NULL
+     ,convert_to_timestamp(p.CREATION_DATE,p.CREATION_TIME) INSERTED_DATE_TIME,p.APPUSER_ID,convert_to_timestamp(p.MODIFICATION_DATE,p.MODIFICATION_TIME) UPDATED_DATE_TIME,p.APPUSER_ID
+from  payment p
+          left join bank_account ba on ba.bank_account_id=p.form_bank_account_id
+          left join bank_branch bb on bb.bank_branch_id=ba.bank_branch_id
+          left join t_customer tc on tc.customer_id=p.from_customer_id
+where p.rp_type_id not in (7,8,9)
+/
+
+insert into aha_payment_detail
+select (select max(id) from aha_payment_detail )+rownum id,p.PAYMENT_ID,nvl(ba.dl_id,nvl(tc.dl_id,p.to_dl_id)) dl_id,NULL,fo.fund_order_id,nvl(ba.bank_account_id,tc.bank_account_id),p.amount,p.COMMENTS,null
+     ,ap.INSERTED_DATE_TIME,ap.INSERTED_USER_ID,ap.UPDATED_DATE_TIME,ap.UPDATED_USER_ID
+from  payment p
+          left join bank_account ba on ba.bank_account_id=p.to_bank_account_id
+          left join bank_branch bb on bb.bank_branch_id=ba.bank_branch_id
+          left join t_customer tc on tc.customer_id=p.to_customer_id
+          left join fund_order fo on fo.PAYMENT_ID=p.payment_id
+          inner join aha_payment ap on ap.id=p.payment_id
+where p.rp_type_id not in (7,8,9)
+/
+
+insert into aha_payment
+select p.payment_id,p.PAYMENT_NUMBER,p.BRANCH_ID,p.rp_reason_id,p.from_sl_id,p.to_sl_id,nvl(ba.dl_id,nvl(ba.dl_id,tc.dl_id)) dl_id,p.fund_id,p.rp_type_id,NULL,NULL,nvl(ba.bank_account_id,tc.bank_account_id),p.payment_date,p.comments,p.is_manual,0,NULL
+     ,convert_to_timestamp(p.CREATION_DATE,p.CREATION_TIME) INSERTED_DATE_TIME,p.APPUSER_ID,convert_to_timestamp(p.MODIFICATION_DATE,p.MODIFICATION_TIME) UPDATED_DATE_TIME,p.APPUSER_ID
+from  payment p
+          left join bank_account ba on ba.bank_account_id=p.form_bank_account_id
+          left join t_customer tc on tc.customer_id=p.from_customer_id
+where p.rp_type_id=7
+/
+
+insert into aha_payment_detail
+select pt.pay_to_id,p.payment_id,nvl(tc.dl_id,pt.to_dl_id) dl_id,NULL,NULL,tc.bank_account_id,pt.amount,pt.comments,null
+     ,ap.inserted_date_time,ap.inserted_user_id,ap.updated_date_time,ap.updated_user_id
+from  payment p
+          inner join pay_to pt on pt.payment_id=p.payment_id
+          left  join t_customer tc on tc.customer_id=pt.to_customer_id
+          inner join aha_payment ap on ap.id=p.payment_id
+where p.rp_type_id=7
+/
+
+INSERT INTO AHA_PAYMENT
+select DISTINCT POM.PAYMENT_OGM_ID,POM.PAYMENT_NUMBER,POM.BRANCH_ID,P.RP_REASON_ID,P.FROM_SL_ID,P.TO_SL_ID,BA.DL_ID,POM.FUND_ID,P.RP_TYPE_ID,POM.POGM_STATUS_ID+7 POGM_STATUS_ID,POM.PAYMENT_ORIGIN_ID,PCT.BANK_ACCOUNT_ID,POM.PAYMENT_DATE,POM.COMMENTS,P.IS_MANUAL,POM.SENT_TO_BANK,POM.MASTER_UUID
+              ,convert_to_timestamp(p.CREATION_DATE,p.CREATION_TIME) INSERTED_DATE_TIME,p.APPUSER_ID,convert_to_timestamp(p.MODIFICATION_DATE,p.MODIFICATION_TIME) UPDATED_DATE_TIME,p.APPUSER_ID
+from  PAYMENT P
+          INNER JOIN PAYMENT_OG_LINE POL ON POL.PAYMENT_ID=P.PAYMENT_ID
+          INNER JOIN PAYMENT_OG_MASTER POM ON POM.PAYMENT_OGM_ID=POL.PAYMENT_OGM_ID
+          INNER JOIN PAYABLE_CHECK_TEMPLATE PCT ON PCT.PC_TEMPLATE_ID=POM.PC_TEMPLATE_ID
+          INNER JOIN BANK_ACCOUNT BA ON BA.BANK_ACCOUNT_ID=P.FORM_BANK_ACCOUNT_ID
+          INNER JOIN BANK_BRANCH BB ON BB.BANK_BRANCH_ID=BA.BANK_BRANCH_ID
+WHERE P.RP_TYPE_ID=8
+/
+
+INSERT INTO AHA_PAYMENT_DETAIL
+select P.PAYMENT_ID,POM.PAYMENT_OGM_ID,NVL(TC.DL_ID,POL.TO_DL_ID),POL.PAYMENT_OGS_ID,POL.FUND_ORDER_ID,NVL(POL.BANK_ACCOUNT_ID,ABA.ID),POL.AMOUNT,POL.COMMENTS,POL.LINE_UUID
+     ,AP.INSERTED_DATE_TIME,AP.INSERTED_USER_ID,AP.UPDATED_DATE_TIME,AP.UPDATED_USER_ID
+from  PAYMENT P
+          INNER JOIN PAYMENT_OG_LINE POL ON POL.PAYMENT_ID=P.PAYMENT_ID
+          INNER JOIN PAYMENT_OG_MASTER POM ON POM.PAYMENT_OGM_ID=POL.PAYMENT_OGM_ID
+          LEFT  JOIN T_CUSTOMER TC ON TC.CUSTOMER_ID=POL.TO_CUSTOMER_ID
+          LEFT  JOIN AHA_BANK_ACCOUNT ABA  ON ABA.ID= POL.TO_DL_BANK_ACCOUNT_ID
+          INNER JOIN AHA_PAYMENT AP ON AP.ID=POM.PAYMENT_OGM_ID
+WHERE P.RP_TYPE_ID=8
+/
+
+INSERT INTO AHA_PAYMENT
+select distinct POM.PAYMENT_OGM_ID,POM.PAYMENT_NUMBER,POM.BRANCH_ID,P.RP_REASON_ID,P.FROM_SL_ID,P.TO_SL_ID,BA.DL_ID,POM.FUND_ID,P.RP_TYPE_ID,POM.POGM_STATUS_ID+7 POGM_STATUS_ID,POM.PAYMENT_ORIGIN_ID,PCT.BANK_ACCOUNT_ID,POM.PAYMENT_DATE,POM.COMMENTS,P.IS_MANUAL,POM.SENT_TO_BANK,POM.MASTER_UUID
+              ,convert_to_timestamp(p.CREATION_DATE,p.CREATION_TIME) INSERTED_DATE_TIME,p.APPUSER_ID,convert_to_timestamp(p.MODIFICATION_DATE,p.MODIFICATION_TIME) UPDATED_DATE_TIME,p.APPUSER_ID
+from  PAYMENT P
+          INNER JOIN PAYMENT_OG_LINE POL ON POL.PAYMENT_ID=P.PAYMENT_ID
+          INNER JOIN PAYMENT_OG_MASTER POM ON POM.PAYMENT_OGM_ID=POL.PAYMENT_OGM_ID
+          INNER JOIN PAYABLE_CHECK_TEMPLATE PCT ON PCT.PC_TEMPLATE_ID=POM.PC_TEMPLATE_ID
+          INNER JOIN BANK_ACCOUNT BA ON BA.BANK_ACCOUNT_ID=P.FORM_BANK_ACCOUNT_ID
+          INNER JOIN BANK_BRANCH BB ON BB.BANK_BRANCH_ID=BA.BANK_BRANCH_ID
+WHERE P.RP_TYPE_ID=9
+/
+
+INSERT INTO AHA_PAYMENT_DETAIL
+select P.PAYMENT_ID,POM.PAYMENT_OGM_ID,NVL(TC.DL_ID,POL.TO_DL_ID),POL.PAYMENT_OGS_ID,POL.FUND_ORDER_ID,NVL(POL.BANK_ACCOUNT_ID,ABA.ID),POL.AMOUNT,POL.COMMENTS,POL.LINE_UUID
+     ,AP.INSERTED_DATE_TIME,AP.INSERTED_USER_ID,AP.UPDATED_DATE_TIME,AP.UPDATED_USER_ID
+from  PAYMENT P
+          INNER JOIN PAYMENT_OG_LINE POL ON POL.PAYMENT_ID=P.PAYMENT_ID
+          INNER JOIN PAYMENT_OG_MASTER POM ON POM.PAYMENT_OGM_ID=POL.PAYMENT_OGM_ID
+          LEFT  JOIN T_CUSTOMER TC ON TC.CUSTOMER_ID=POL.TO_CUSTOMER_ID
+          LEFT  JOIN AHA_BANK_ACCOUNT ABA  ON ABA.ID= POL.TO_DL_BANK_ACCOUNT_ID
+          INNER JOIN AHA_PAYMENT AP ON AP.ID=POM.PAYMENT_OGM_ID
+WHERE P.RP_TYPE_ID=9
+/
+
+insert into aha_payment
+select distinct POM.PAYMENT_OGM_ID,POM.PAYMENT_NUMBER,POM.BRANCH_ID,pct.RP_REASON_ID,null,null,BA.DL_ID,POM.FUND_ID,decode(pol.to_customer_id,null,9,8),POM.POGM_STATUS_ID+7 POGM_STATUS_ID,POM.PAYMENT_ORIGIN_ID,PCT.BANK_ACCOUNT_ID,POM.PAYMENT_DATE,POM.COMMENTS,0,POM.SENT_TO_BANK,POM.MASTER_UUID
+              ,pom.REG_DATE INSERTED_DATE_TIME,pom.APPUSER_ID,pom.REG_DATE UPDATED_DATE_TIME,pom.APPUSER_ID
+from  payment_og_line pol
+          inner join payment_og_master pom on pom.PAYMENT_OGM_ID=pol.PAYMENT_OGM_ID
+          inner join PAYABLE_CHECK_TEMPLATE pct on pct.PC_TEMPLATE_ID = pom.PC_TEMPLATE_ID
+          inner join bank_account ba on ba.bank_account_id=pct.bank_account_id
+where pol.payment_id is null
+  and not exists(select 1 from  aha_payment ap where ap.id = pom.PAYMENT_OGM_ID)
+/
+
+insert into aha_payment_detail
+select pol.PAYMENT_OGL_ID,POM.PAYMENT_OGM_ID,NVL(TC.DL_ID,POL.TO_DL_ID),POL.PAYMENT_OGS_ID,POL.FUND_ORDER_ID,NVL(POL.BANK_ACCOUNT_ID,ABA.ID),POL.AMOUNT,POL.COMMENTS,POL.LINE_UUID
+     ,pom.REG_DATE INSERTED_DATE_TIME,pom.APPUSER_ID,pom.REG_DATE UPDATED_DATE_TIME,pom.APPUSER_ID
+from  payment_og_line pol
+          inner join payment_og_master pom on pom.PAYMENT_OGM_ID=pol.PAYMENT_OGM_ID
+          left  join t_customer tc on tc.customer_id=pol.TO_CUSTOMER_ID
+          LEFT  JOIN AHA_BANK_ACCOUNT ABA  ON ABA.ID= POL.TO_DL_BANK_ACCOUNT_ID
+where pol.payment_id is null
+/
+----------------------------------------------------------------------------------------------------
+

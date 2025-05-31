@@ -1,4 +1,4 @@
-package org.fund.administration.params.Impl;
+package org.fund.administration.params.impl;
 
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
