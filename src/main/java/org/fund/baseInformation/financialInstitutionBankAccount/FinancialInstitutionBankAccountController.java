@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class FinancialInstitutionBankAccountController {
     private final FinancialInstitutionBankAccountService service;
-    private FundService fundService;
+    private final FundService fundService;
 
     public FinancialInstitutionBankAccountController(FinancialInstitutionBankAccountService service, FundService fundService) {
         this.service = service;

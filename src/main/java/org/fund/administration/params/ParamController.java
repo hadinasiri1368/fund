@@ -1,5 +1,6 @@
 package org.fund.administration.params;
 
+import org.fund.administration.fund.FundService;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
@@ -21,11 +22,11 @@ import java.util.Optional;
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class ParamController {
     private final ParamService service;
-    private final JpaRepository repository;
+    private final FundService fundService;
 
-    public ParamController(ParamService service, JpaRepository repository) {
+    public ParamController(ParamService service,FundService fundService) {
         this.service = service;
-        this.repository = repository;
+        this.fundService = fundService;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/add")
@@ -142,6 +143,6 @@ public class ParamController {
 
 
     private Fund getFund(Long fundId) {
-        return repository.findOne(Fund.class, fundId);
+        return fundService.getFund(fundId);
     }
 }

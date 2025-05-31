@@ -16,12 +16,10 @@ import java.util.List;
 @Validated
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class FundController {
-    private final JpaRepository repository;
     private final FundService service;
 
-    public FundController(FundService service, JpaRepository repository) {
+    public FundController(FundService service) {
         this.service = service;
-        this.repository = repository;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/fund/add")
@@ -53,6 +51,6 @@ public class FundController {
 
     private Fund getFund(Long fundId) {
         if (FundUtils.isNull(fundId)) return null;
-        return repository.findOne(Fund.class, fundId);
+        return service.getFund(fundId);
     }
 }
