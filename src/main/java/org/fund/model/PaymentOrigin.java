@@ -6,8 +6,8 @@ import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;
 
-@Table(name = "AHA_PAYMENT_TYPE")
-@Entity(name = "paymentType")
+@Table(name = "AHA_PAYMENT_ORIGIN")
+@Entity(name = "paymentOrigin")
 @Getter
 @Setter
 @AllArgsConstructor
