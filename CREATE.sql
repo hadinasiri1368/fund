@@ -1194,3 +1194,109 @@ ALTER TABLE AHA_PAYMENT_DETAIL ADD CONSTRAINT FK_PAYMENT_DETAIL_2_BANK_ACCOUNT F
     REFERENCES AHA_BANK_ACCOUNT (ID)
 /
 -----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_VOUCHER_STATUS
+(
+    ID                      NUMBER(18)          NOT NULL,
+    NAME                    NVARCHAR2(100)      NOT NULL,
+    INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+    INSERTED_USER_ID        NUMBER(18)              NULL,
+    UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+    UPDATED_USER_ID         NUMBER(18)              NULL
+)
+/
+
+ALTER TABLE AHA_VOUCHER_STATUS ADD (
+    CONSTRAINT PK_AHA_VOUCHER_STATUS PRIMARY KEY (ID)
+)
+/
+-----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_VOUCHER_TYPE
+(
+    ID                      NUMBER(18)          NOT NULL,
+    NAME                    NVARCHAR2(100)      NOT NULL,
+    INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+    INSERTED_USER_ID        NUMBER(18)              NULL,
+    UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+    UPDATED_USER_ID         NUMBER(18)              NULL
+)
+/
+
+ALTER TABLE AHA_VOUCHER_TYPE ADD (
+    CONSTRAINT PK_AHA_VOUCHER_TYPE PRIMARY KEY (ID)
+)
+/
+-----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_VOUCHER
+(
+    ID                      NUMBER(18)          NOT NULL,
+    F_VOUCHER_TYPE_ID       NUMBER(18)          NOT NULL,
+    F_FUND_BRANCH_ID        NUMBER(18)          NOT NULL,
+    F_VOUCHER_STATUS_ID     NUMBER(18)          NOT NULL,
+    F_FUND_ID               NUMBER(18)          NOT NULL,
+    CODE                    NVARCHAR2(50)           NULL,
+    VOUCHER_DATE            NVARCHAR2(10)       NOT NULL,
+    COMMENTS                NVARCHAR2(1000)         NULL,
+    IS_MANUAL               NUMBER(1)           NOT NULL,
+    INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+    INSERTED_USER_ID        NUMBER(18)              NULL,
+    UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+    UPDATED_USER_ID         NUMBER(18)              NULL
+)
+/
+
+ALTER TABLE AHA_VOUCHER ADD (
+    CONSTRAINT PK_AHA_VOUCHER PRIMARY KEY (ID)
+)
+/
+
+ALTER TABLE AHA_VOUCHER ADD CONSTRAINT FK_VOUCHER_2_VOUCHER_TYPE FOREIGN KEY (F_VOUCHER_TYPE_ID)
+    REFERENCES AHA_VOUCHER_TYPE (ID)
+/
+
+ALTER TABLE AHA_VOUCHER ADD CONSTRAINT FK_VOUCHER_2_FUND_BRANCH FOREIGN KEY (F_FUND_BRANCH_ID)
+    REFERENCES AHA_FUND_BRANCH (ID)
+/
+
+ALTER TABLE AHA_VOUCHER ADD CONSTRAINT FK_VOUCHER_2_VOUCHER_STATUS FOREIGN KEY (F_VOUCHER_STATUS_ID)
+    REFERENCES AHA_VOUCHER_STATUS (ID)
+/
+
+ALTER TABLE AHA_VOUCHER ADD CONSTRAINT FK_VOUCHER_2_FUND FOREIGN KEY (F_FUND_ID)
+    REFERENCES AHA_FUND (ID)
+/
+-----------------------------------------------------------------------------------------------------
+CREATE TABLE AHA_VOUCHER_DETAIL
+(
+    ID                      NUMBER(18)          NOT NULL,
+    F_VOUCHER_ID            NUMBER(18)          NOT NULL,
+    F_SUBSIDIARY_LEDGER_ID  NUMBER(18)          NOT NULL,
+    F_DETAIL_LEDGER_ID      NUMBER(18)              NULL,
+    LINE_NUMBER             NUMBER(9)           NOT NULL,
+    COMMENTS                NVARCHAR2(1000)         NULL,
+    DEBIT_AMOUNT            NUMBER(18) DEFAULT 0 NOT NULL,
+    CREDIT_AMOUNT           NUMBER(18) DEFAULT 0 NOT NULL,
+    REFERENCE_ID            NUMBER(18)               NULL,
+    INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
+    INSERTED_USER_ID        NUMBER(18)              NULL,
+    UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,
+    UPDATED_USER_ID         NUMBER(18)              NULL
+)
+/
+
+ALTER TABLE AHA_VOUCHER_DETAIL ADD (
+    CONSTRAINT PK_AHA_VOUCHER_DETAIL PRIMARY KEY (ID)
+)
+/
+
+ALTER TABLE AHA_VOUCHER_DETAIL ADD CONSTRAINT FK_VOUCHER_DETAI_2_VOUCHER FOREIGN KEY (F_VOUCHER_ID)
+    REFERENCES AHA_VOUCHER (ID)
+/
+
+ALTER TABLE AHA_VOUCHER_DETAIL ADD CONSTRAINT FK_VOUCHER_DETAI_2_SL FOREIGN KEY (F_SUBSIDIARY_LEDGER_ID)
+    REFERENCES AHA_SUBSIDIARY_LEDGER (ID)
+/
+
+ALTER TABLE AHA_VOUCHER_DETAIL ADD CONSTRAINT FK_VOUCHER_DETAI_2_DL FOREIGN KEY (F_DETAIL_LEDGER_ID)
+    REFERENCES AHA_DETAIL_LEDGER (ID)
+/
+-----------------------------------------------------------------------------------------------------

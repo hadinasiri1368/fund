@@ -86,4 +86,15 @@ public class FundException extends RuntimeException {
         this.params = params;
     }
 
+    public FundException(VoucherExceptionType voucherExceptionType) {
+        super(voucherExceptionType.getMessageKey());
+        this.status = voucherExceptionType.getHttpStatus();
+        this.params = null;
+    }
+
+    public FundException(VoucherExceptionType voucherExceptionType, Object[] params) {
+        super(voucherExceptionType.getMessageKey());
+        this.status = voucherExceptionType.getHttpStatus();
+        this.params = params;
+    }
 }

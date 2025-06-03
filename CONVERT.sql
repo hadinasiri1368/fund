@@ -921,6 +921,32 @@ Values
     (122, 'تغییر وضعیت پرداخت', '/paymentModule/payment/changeStatus', 1)
 /
 
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (123, 'ثبت سند حسابداری', '/accounting/voucher/add', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (124, 'ویرایش سند حسابداری', '/accounting/voucher/edit', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (125, 'حذف سند حسابداری', '/accounting/voucher/remove', 1)
+/
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (126, 'نمایش سند حسابداری', '/accounting/voucher', 1)
+/
+
+
+
 
 
 UPDATE AHA_PERMISSION SET URL = '/api/v1' || URL
@@ -1403,4 +1429,22 @@ from  payment_og_line pol
 where pol.payment_id is null
 /
 ----------------------------------------------------------------------------------------------------
-
+insert into AHA_VOUCHER_TYPE
+select VOUCHER_TYPE_ID,VOUCHER_TYPE_NAMe,null,null,null,null from  voucher_type
+/
+----------------------------------------------------------------------------------------------------
+insert into aha_VOUCHER_STATUS
+select VOUCHER_STATUS_ID,VOUCHER_STATUS_NAME,null,null,null,null from  VOUCHER_STATUS
+/
+----------------------------------------------------------------------------------------------------
+INSERT INTO AHA_VOUCHER
+select VOUCHER_ID,VOUCHER_TYPE_ID,BRANCH_ID,VOUCHER_STATUS_ID,FUND_ID,VOUCHER_NUMBER,VOUCHER_DATE,COMMENTS,IS_MANUAL
+     ,convert_to_timestamp(CREATION_DATE,CREATION_TIME),APPUSER_ID,convert_to_timestamp(MODIFICATION_DATE,MODIFICATION_TIME),APPUSER_ID
+from  VOUCHER_MASTER
+/
+----------------------------------------------------------------------------------------------------
+INSERT INTO AHA_VOUCHER_DETAIL
+select VOUCHER_LINE_ID,VOUCHER_ID,SL_ID,DL_ID,LINE_NUMBER,COMMENTS,DEBIT_AMOUNT,CREDIT_AMOUNT,REFERENCE_ID,NULL,NULL,NULL,NULL
+from  VOUCHER_LINE
+/
+----------------------------------------------------------------------------------------------------
