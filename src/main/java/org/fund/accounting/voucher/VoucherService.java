@@ -76,8 +76,8 @@ public class VoucherService {
 
     public List<VoucherResponseDto> list(Long id) {
         String hql = "select \n" +
-                "          v.id,\n" +
-                "          v.id voucherId,\n" +
+                "          v.id id,\n" +
+                "          vd.voucher.id voucherId,\n" +
                 "          vt.id  voucherTypeId,\n" +
                 "          vt.name  voucherTypeName,\n" +
                 "          fb.id  fundBranchId,\n" +
@@ -86,18 +86,18 @@ public class VoucherService {
                 "          vs.name  voucherStatusName,\n" +
                 "          f.id  fundId,\n" +
                 "          f.name  fundName,\n" +
-                "          v.code,\n" +
-                "          v.voucherDate,\n" +
-                "          v.comments,\n" +
-                "          v.isManual,\n" +
+                "          v.code code,\n" +
+                "          v.voucherDate voucherDate,\n" +
+                "          v.comments comments,\n" +
+                "          v.isManual isManual,\n" +
                 "          vd.id detailId,\n" +
                 "          sl.id subsidiaryLedgerId,\n" +
                 "          sl.name subsidiaryLedgerName,\n" +
                 "          dl.id detailLedgerId,\n" +
                 "          dl.name detailLedgerName,\n" +
                 "          vd.comments detailComments,\n" +
-                "          vd.debitAmount,\n" +
-                "          vd.creditAmount,\n" +
+                "          vd.debitAmount debitAmount,\n" +
+                "          vd.creditAmount creditAmount\n" +
                 "        from\n" +
                 "          voucher v\n" +
                 "        inner join voucherDetail vd on vd.voucher.id = v.id\n" +
