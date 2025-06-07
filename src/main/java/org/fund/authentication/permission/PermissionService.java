@@ -58,6 +58,7 @@ public class PermissionService {
         return false;
     }
 
+
     public boolean isBypassedUrl(String requestUrl) {
         String[] paths = pathsToBypass.split(",");
         for (String path : paths) {
@@ -177,6 +178,14 @@ public class PermissionService {
         if(FundUtils.isNull(id))
             return  repository.findAll(Permission.class);
         return repository.findAll(Permission.class).stream()
+                .filter(a -> a.getId().equals(id))
+                .collect(Collectors.toList());
+    }
+
+    public List<Role> listRole(Long id){
+        if(FundUtils.isNull(id))
+            return  repository.findAll(Role.class);
+        return repository.findAll(Role.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .collect(Collectors.toList());
     }

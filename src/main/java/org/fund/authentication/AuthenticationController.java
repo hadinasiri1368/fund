@@ -12,9 +12,9 @@ import org.fund.authentication.user.dto.*;
 import org.fund.config.dataBase.TenantContext;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
-import org.fund.model.Permission;
-import org.fund.model.UserGroup;
+import org.fund.model.*;
 import org.fund.validator.NotEmpty;
+import org.fund.validator.ValidateField;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +43,7 @@ public class AuthenticationController {
         return service.login(loginDto);
     }
 
-    @GetMapping("/getOtpStrategies")
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL +"/getOtpStrategies")
     public Map<Integer, String> getOtpStrategies() {
         return service.getOtpStrategyTypeList().stream()
                 .collect(Collectors.toMap(
@@ -52,7 +52,7 @@ public class AuthenticationController {
                 ));
     }
 
-    @PostMapping(path = "/sendOtpForLogin")
+    @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/sendOtpForLogin")
     public void sendOtpForLogin(@RequestBody OtpRequestDto otpRequestDto) {
         service.sendOtpForLogin(otpRequestDto);
     }
@@ -72,8 +72,8 @@ public class AuthenticationController {
         permissionService.updateRole(roleDto.toRole(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @DeleteMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/remove")
-    public void deleteRole(@NotEmpty(fieldName = "roleId") Long roleId) throws Exception {
+    @DeleteMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/remove/{id}")
+    public void deleteRole(@PathVariable("id") @NotEmpty(fieldName = "roleId") Long roleId) throws Exception {
         permissionService.deleteRole(roleId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
@@ -88,13 +88,13 @@ public class AuthenticationController {
         permissionService.update(permissionDto.toPermission(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
-    @DeleteMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/permission/remove")
-    public void deletePermission(@NotEmpty(fieldName = "permissionId") Long permissionId) throws Exception {
+    @DeleteMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/permission/remove/{id}")
+    public void deletePermission(@PathVariable("id") @NotEmpty(fieldName = "permissionId") Long permissionId) throws Exception {
         permissionService.delete(permissionId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/permission/{id}")
-    public Permission getPermission(@PathVariable("id") Long id) {
+    public Permission getPermission(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = Permission.class) Long id) {
         List<Permission> permissionList = permissionService.listPermission(id);
         return permissionList.get(0);
     }
@@ -103,6 +103,18 @@ public class AuthenticationController {
     public List<Permission> getPermission() {
         return permissionService.listPermission(null);
     }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role")
+    public List<Role> getRole() {
+         return permissionService.listRole(null);
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/{id}")
+    public Role getRole(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = Role.class) Long id) {
+        List<Role> roleList = permissionService.listRole(id);
+        return roleList.get(0);
+    }
+
 
     @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/add")
     public void insertUser(@RequestBody UserDto userDto) throws Exception {
@@ -157,5 +169,21 @@ public class AuthenticationController {
     @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/assignPermissionToUser")
     public void assignPermissionToUser(@RequestBody List<UserPermissionDto> userPermissionDtos) throws Exception {
         userService.assignPermissionToUser(userPermissionDtos, RequestContext.getUserId(), RequestContext.getUuid());
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/{id}")
+    public Users getUser(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = Users.class) Long id) {
+        List<Users> users = userService.listUsers(id);
+        return users.get(0);
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user")
+    public List<Users> getUser() {
+        return userService.listUsers(null);
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/userRolePerUser/{userId}")
+    public List<UserRole> userRoles(@PathVariable Long userId) {
+        return userService.findUserRole(userId);
     }
 }
