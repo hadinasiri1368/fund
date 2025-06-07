@@ -16,7 +16,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class Calendar extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @Column(columnDefinition = "CHAR(10)", name = "CALENDAR_DATE", nullable = false)
     private String calendarDate;

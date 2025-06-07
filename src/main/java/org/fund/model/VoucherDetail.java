@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Builder
 public class VoucherDetail extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_VOUCHER_ID")

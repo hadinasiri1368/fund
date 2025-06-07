@@ -16,7 +16,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class UserRole extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @ManyToOne
     @JoinColumn(name = "F_USER_ID")

@@ -16,7 +16,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class FundInformation extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "F_FUND_TYPE")

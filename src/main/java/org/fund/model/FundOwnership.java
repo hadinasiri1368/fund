@@ -18,7 +18,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class FundOwnership extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_BOURSE_FUND_ID")

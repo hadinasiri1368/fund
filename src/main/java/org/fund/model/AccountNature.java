@@ -16,7 +16,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class AccountNature extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @Column(columnDefinition = "NVARCHAR2(200)", name = "NAME", nullable = false)
     private String natureAccountName;

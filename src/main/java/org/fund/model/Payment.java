@@ -18,7 +18,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class Payment extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @Column(columnDefinition = "NVARCHAR2(300)", name = "CODE", nullable = false)
     private String code;

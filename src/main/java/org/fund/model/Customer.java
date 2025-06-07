@@ -13,7 +13,7 @@ import org.fund.config.cache.CacheableEntity;
 @CacheableEntity
 public class Customer extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "F_DETAIL_LEDGER_ID")

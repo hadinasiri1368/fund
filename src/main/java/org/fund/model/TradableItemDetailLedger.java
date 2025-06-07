@@ -19,7 +19,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class TradableItemDetailLedger extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @Column(columnDefinition = "NUMBER", name = "TRADABLE_ITEM_ID", nullable = false)
     private Long tradableItemId;

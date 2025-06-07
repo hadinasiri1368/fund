@@ -16,7 +16,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class Menu extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @Column(name = "NAME", columnDefinition = "NVARCHAR2(50)", nullable = false)
     private String name;

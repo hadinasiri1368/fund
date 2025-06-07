@@ -16,8 +16,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class Person extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "person_seq")
-    @SequenceGenerator(name = "person_seq", sequenceName = "PERSON_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @Column(name = "IS_COMPANY", columnDefinition = "NUMBER(1)", nullable = false)
     private Boolean isCompany;

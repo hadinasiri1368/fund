@@ -17,7 +17,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class BankAccount extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_ACTIVE", nullable = false)
     private Boolean isActive;

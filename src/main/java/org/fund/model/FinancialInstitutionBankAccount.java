@@ -14,7 +14,7 @@ import org.fund.config.cache.CacheableEntity;
 @CacheableEntity
 public class FinancialInstitutionBankAccount {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @Column(columnDefinition = "NVARCHAR2(200)", name = "NAME", nullable = false)
     private String name;

@@ -16,7 +16,7 @@ import java.io.Serializable;
 @CacheableEntity
 public class MmtpConfig extends BaseEntity implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @Column(columnDefinition = "CHAR(3)", name = "BROKERAGE_CODE", nullable = false)
     private String brokerageCode;
