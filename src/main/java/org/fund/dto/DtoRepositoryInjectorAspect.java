@@ -17,27 +17,31 @@ public class DtoRepositoryInjectorAspect {
     public DtoRepositoryInjectorAspect(JpaRepository repository) {
         this.repository = repository;
     }
-    @Pointcut("execution(* org.fund..*Controller.*(..)) || " +
-              "execution(* org.fund..*Service.*(..))    || " +
-              "execution(* org.fund..*Abstract.*(..))   || " +
-              "execution(* org.fund..*Visitor.*(..))")
+    @Pointcut("execution(* org.fund..*Controller.to*(..)) || " +
+              "execution(* org.fund..*Service.to*(..))    || " +
+              "execution(* org.fund..*Abstract.to*(..))   || " +
+              "execution(* org.fund..*Visitor.to*(..))")
     public void allControllerMethods() {
     }
 
     @Before("allControllerMethods()")
     public void injectRepositoryToDto(JoinPoint joinPoint) {
+        boolean found = false;
         for (Object arg : joinPoint.getArgs()) {
             if (arg instanceof BaseDto dto) {
                 dto.setRepository(repository);
+                found = true;
             }
 
             if (arg instanceof List<?> collection) {
                 for (Object item : collection) {
                     if (item instanceof BaseDto dtoItem) {
                         dtoItem.setRepository(repository);
+                        found=true;
                     }
                 }
             }
+            if (found) break;
         }
     }
 }
