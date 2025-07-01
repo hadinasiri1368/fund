@@ -70,8 +70,8 @@ public class UserService {
                     .toList();
             repository.batchRemove(list, userId, uuid);
             list = new ArrayList<>();
-            for (Role role : userRoleDto.toRoles()) {
-                list.add(new UserRole(null, userRoleDto.toUser(), role));
+            for (Role role : userRoleDto.toEntityList(Role.class, repository)) {
+                list.add(new UserRole(null, userRoleDto.toEntity(Users.class, repository), role));
             }
             repository.batchInsert(list, userId, uuid);
         }

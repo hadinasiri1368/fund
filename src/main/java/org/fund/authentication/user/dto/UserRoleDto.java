@@ -2,30 +2,47 @@ package org.fund.authentication.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.fund.dto.BaseDto;
+import org.fund.dto.DtoConvertible;
 import org.fund.model.Role;
 import org.fund.model.Users;
+import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Setter
 @Getter
-public class UserRoleDto extends BaseDto {
+public class UserRoleDto implements DtoConvertible {
     @NotEmpty(fieldName = "userId")
     private Long userId;
     @NotEmpty(fieldName = "roleIds")
     private List<Long> roleIds;
 
-    public Users toUser() {
-        return repository.findOne(Users.class, userId);
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
+        return repository.findOne(targetType, userId);
     }
 
-    public List<Role> toRoles() {
-        List<Role> list = new ArrayList<>();
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        List<T> list = new ArrayList<>();
         for (Long roleId : roleIds) {
-            list.add(repository.findOne(Role.class, roleId));
+            list.add(repository.findOne(entityClass, roleId));
         }
         return list;
     }
+
+//    public Users toUser(JpaRepository repository) {
+//        return repository.findOne(Users.class, userId);
+//    }
+//
+//    public List<Role> toRoles(JpaRepository repository) {
+//        List<Role> list = new ArrayList<>();
+//        for (Long roleId : roleIds) {
+//            list.add(repository.findOne(Role.class, roleId));
+//        }
+//        return list;
+//    }
 }
