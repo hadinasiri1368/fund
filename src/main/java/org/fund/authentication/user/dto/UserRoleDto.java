@@ -2,27 +2,18 @@ package org.fund.authentication.user.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.dto.BaseDto;
 import org.fund.model.Role;
 import org.fund.model.Users;
-import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-public class UserRoleDto {
-    private final JpaRepository repository;
-    public UserRoleDto(final JpaRepository repository) {
-        this.repository = repository;
-    }
-    @Setter
-    @Getter
+@Setter
+@Getter
+public class UserRoleDto extends BaseDto {
     @NotEmpty(fieldName = "userId")
     private Long userId;
-    @Setter
-    @Getter
     @NotEmpty(fieldName = "roleIds")
     private List<Long> roleIds;
 
