@@ -1,6 +1,7 @@
 package org.fund.administration.params;
 
 import org.fund.common.FundUtils;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.exception.FundException;
 import org.fund.exception.ParamExceptionType;
 import org.fund.model.DetailLedger;
@@ -12,13 +13,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class ParamService {
     private final ParamVisitor paramVisitor;
+    private final GenericDtoMapper mapper;
 
-    public ParamService(ParamVisitor paramVisitor) {
+    public ParamService(ParamVisitor paramVisitor, GenericDtoMapper mapper) {
         this.paramVisitor = paramVisitor;
+        this.mapper = mapper;
     }
 
     public void insert(ParamDto param, Long userId, String uuid) throws Exception {
-        paramVisitor.insert(param.toParams(), userId, uuid);
+        paramVisitor.insert(mapper.toEntity(Params.class, param), userId, uuid);
     }
 
     public void delete(Long paramId, Long userId, String uuid) throws Exception {

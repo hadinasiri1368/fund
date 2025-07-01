@@ -2,6 +2,7 @@ package org.fund.paymentModule.payment;
 
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.model.Payment;
 import org.fund.model.PaymentDetail;
 import org.fund.paymentModule.payment.constant.PaymentStatus;
@@ -21,19 +22,21 @@ import java.util.List;
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class PaymnetController {
     private final PaymentService service;
+    private final GenericDtoMapper mapper;
 
-    public PaymnetController(PaymentService service) {
+    public PaymnetController(PaymentService service, GenericDtoMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/paymentModule/payment/add")
     public void insert(@RequestBody PaymentDto paymentDto) throws Exception {
-        service.insert(paymentDto.toPayment(), paymentDto.toPaymentDetails(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.insert(mapper.toEntity(Payment.class, paymentDto), mapper.toEntityList(PaymentDetail.class, paymentDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/paymentModule/payment/edit")
     public void edit(@RequestBody PaymentDto paymentDto) throws Exception {
-        service.update(paymentDto.toPayment(), paymentDto.toPaymentDetails(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.update(mapper.toEntity(Payment.class, paymentDto), mapper.toEntityList(PaymentDetail.class, paymentDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/paymentModule/payment/remove/{id}")
@@ -46,7 +49,7 @@ public class PaymnetController {
     public void remove(@RequestBody @NotEmpty(fieldName = "paymentDetailDtos") List<PaymentDetailDto> paymentDetailDtos) throws Exception {
         List<PaymentDetail> paymentDetails = new ArrayList<>();
         for (PaymentDetailDto paymentDetailDto : paymentDetailDtos) {
-            paymentDetails.add(paymentDetailDto.toPaymentDetail());
+            paymentDetails.add(mapper.toEntity(PaymentDetail.class, paymentDetailDto));
         }
         service.delete(paymentDetails, RequestContext.getUserId(), RequestContext.getUuid());
     }

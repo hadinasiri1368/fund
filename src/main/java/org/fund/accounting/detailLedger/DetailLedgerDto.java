@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.dto.DtoConvertible;
 import org.fund.model.AccountNature;
 import org.fund.model.Customer;
 import org.fund.model.DetailLedger;
@@ -11,34 +12,36 @@ import org.fund.model.DetailLedgerType;
 import org.fund.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 
 @Getter
 @Setter
-@Component
-public class DetailLedgerDto {
-    private final JpaRepository repository;
-
-    public DetailLedgerDto(JpaRepository repository) {
-        this.repository = repository;
-    }
-
+public class DetailLedgerDto implements DtoConvertible {
     private Long id;
     private String name;
     private String code;
     private Long detailLedgerTypeId;
     private Boolean isActive;
 
-    public DetailLedger toDetailLedger() {
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
-        DetailLedger detailLedger = objectMapper.convertValue(this, DetailLedger.class);
-        detailLedger.setDetailLedgerType(getDetailLedgerType(detailLedgerTypeId));
-        return detailLedger;
+        T entity = objectMapper.convertValue(this, targetType);
+
+        if (entity instanceof DetailLedger detailLedger) {
+            detailLedger.setDetailLedgerType(getDetailLedgerType(repository, detailLedgerTypeId));
+        }
+
+        return entity;
     }
 
-    private DetailLedgerType getDetailLedgerType(Long detailLedgerTypeId) {
-        return repository.findAll(DetailLedgerType.class).stream()
-                .filter(a -> a.getId().equals(detailLedgerTypeId))
-                .findFirst()
-                .orElse(null);
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        return List.of();
+    }
+
+    private DetailLedgerType getDetailLedgerType(JpaRepository repository, Long detailLedgerTypeId) {
+        return repository.findOne(DetailLedgerType.class, detailLedgerTypeId);
     }
 }

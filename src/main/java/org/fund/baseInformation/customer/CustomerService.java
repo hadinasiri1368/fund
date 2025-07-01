@@ -14,6 +14,7 @@ import org.fund.baseInformation.customer.dto.CustomerDto;
 import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.exception.CustomerExceptionType;
 import org.fund.exception.FundException;
 import org.fund.model.*;
@@ -34,11 +35,13 @@ public class CustomerService {
     private final ParamService paramService;
     private final DetailLedgerService detailLedgerService;
     private final BankAccountService bankAccountService;
+    private final GenericDtoMapper mapper;
 
     public CustomerService(JpaRepository jpaRepository
             , CalendarService calendarService
             , ParamService paramService
             , DetailLedgerService detailLedgerService
+            , GenericDtoMapper mapper
             , BankAccountService bankAccountService
     ) {
         this.repository = jpaRepository;
@@ -46,11 +49,12 @@ public class CustomerService {
         this.paramService = paramService;
         this.detailLedgerService = detailLedgerService;
         this.bankAccountService = bankAccountService;
+        this.mapper = mapper;
     }
 
     public void insert(CustomerDto customer, Fund fund, Long userId, String uuid) throws Exception {
         checkBeforInsert(customer, fund);
-        repository.save(customer.toCustomer(), userId, uuid);
+        repository.save(mapper.toEntity(Customer.class, customer), userId, uuid);
         customer.setDetailLedgerId(insertDetailLedger(customer, fund, userId, uuid));
     }
 
@@ -59,7 +63,7 @@ public class CustomerService {
         for (CustomerDto customer : customerList) {
             checkBeforInsert(customer, fund);
             customer.setDetailLedgerId(insertDetailLedger(customer, fund, userId, uuid));
-            customers.add(customer.toCustomer());
+            customers.add(mapper.toEntity(Customer.class, customer));
         }
         repository.batchInsert(customers, userId, uuid);
     }
@@ -67,7 +71,7 @@ public class CustomerService {
     public void update(CustomerDto customer, Fund fund, Long userId, String uuid) throws Exception {
         NavDataRec navDataRec = getNavData(fund);
         checkBeforUpdate(customer, fund, navDataRec);
-        repository.update(customer.toCustomer(), userId, uuid);
+        repository.update(mapper.toEntity(Customer.class, customer), userId, uuid);
     }
 
     public void batchUpdate(List<CustomerDto> customerList, Fund fund, Long userId, String uuid) throws Exception {
@@ -75,7 +79,7 @@ public class CustomerService {
         List<Customer> customers = new ArrayList<>();
         for (CustomerDto customerDto : customerList) {
             checkBeforUpdate(customerDto, fund, navDataRec);
-            customers.add(customerDto.toCustomer());
+            customers.add(mapper.toEntity(Customer.class, customerDto));
         }
         repository.update(customers, userId, uuid);
     }
@@ -180,11 +184,11 @@ public class CustomerService {
 
     @Transactional
     public void saveCustomerBankAccount(CustomerBankAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
-        BankAccount bankAccount = customerBankAccount.getBankAccount().toBankAccount();
+        BankAccount bankAccount = mapper.toEntity(BankAccount.class, customerBankAccount.getBankAccount());
         bankAccountService.insert(bankAccount, userId, uuid);
         Long customerBankAccountCount = getCustomerBankAccountCount(customerBankAccount.getCustomerId());
         boolean isFirst = FundUtils.isNull(customerBankAccount.getId()) && customerBankAccountCount == 0L ? true : false;
-        CustomerBankAccount cba = customerBankAccount.toCustomerBankAccount();
+        CustomerBankAccount cba = mapper.toEntity(CustomerBankAccount.class, customerBankAccount);
         cba.setBankAccount(bankAccount);
         repository.save(cba, userId, uuid);
         if (isFirst) {
@@ -195,7 +199,7 @@ public class CustomerService {
     }
 
     public void updateCustomerBankAccount(CustomerBankAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
-        repository.save(customerBankAccount.toCustomerBankAccount(), userId, uuid);
+        repository.save(mapper.toEntity(CustomerBankAccount.class, customerBankAccount), userId, uuid);
     }
 
     public void deleteCustomerBankAccount(Long customerBankAccountId, Long userId, String uuid) throws Exception {

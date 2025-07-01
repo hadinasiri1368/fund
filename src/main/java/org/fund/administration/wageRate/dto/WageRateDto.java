@@ -3,6 +3,8 @@ package org.fund.administration.wageRate.dto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.dto.DtoConvertible;
+import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.model.WageRate;
 import org.fund.model.view.external.InstrumentType;
@@ -12,16 +14,11 @@ import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Getter
 @Setter
-@Component
-public class WageRateDto {
-    private final JpaRepository repository;
-
-    public WageRateDto(JpaRepository repository) {
-        this.repository = repository;
-    }
-
+public class WageRateDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "fundId")
     @ValidateField(fieldName = "fundId", entityClass = Fund.class)
@@ -36,14 +33,24 @@ public class WageRateDto {
     private Boolean isPurchase;
     private WageRateDetailDto wageRateDetail;
 
-    public WageRate toWageRate() {
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
-        WageRate wageRate = objectMapper.convertValue(this, WageRate.class);
-        wageRate.setFund(getFund());
-        return wageRate;
+        T entity = objectMapper.convertValue(this, targetType);
+
+        if (entity instanceof WageRate wageRate) {
+            wageRate.setFund(getFund(repository));
+        }
+
+        return entity;
     }
 
-    private Fund getFund() {
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        return List.of();
+    }
+
+    private Fund getFund(JpaRepository repository) {
         return repository.findOne(Fund.class, fundId);
     }
 }

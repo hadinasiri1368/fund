@@ -7,7 +7,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.accounting.voucher.dto.VoucherDetailDto;
 import org.fund.common.FundUtils;
+import org.fund.dto.DtoConvertible;
 import org.fund.model.*;
 import org.fund.model.view.external.Bank;
 import org.fund.paymentModule.paymentReason.PaymentReasonDto;
@@ -22,15 +24,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Component
-public class PaymentDto {
-    private final JpaRepository repository;
-
-    public PaymentDto(JpaRepository repository) {
-        this.repository = repository;
-    }
-
-
+public class PaymentDto implements DtoConvertible {
     private Long id;
     private String code;
     @NotEmpty(fieldName = "paymentReasonId")
@@ -68,81 +62,85 @@ public class PaymentDto {
     @NotEmpty(fieldName = "PaymentDetails")
     private List<PaymentDetailDto> PaymentDetails;
 
-    public Payment toPayment() {
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
-        Payment payment = objectMapper.convertValue(this, Payment.class);
-        payment.setPaymentReason(getPaymentReason(this.paymentReasonId));
-        payment.setFromSubsidiaryLedger(getSubsidiaryLedger(this.fromSubsidiaryLedgerId));
-        payment.setToSubsidiaryLedger(getSubsidiaryLedger(this.toSubsidiaryLedgerId));
-        payment.setFromDetailLedger(getDetailLedger(this.fromDetailLedgerId));
-        payment.setFund(getFund(this.fundId));
-        payment.setBank(getBank(this.bankId));
-        payment.setPaymentType(getPaymentType(this.paymentTypeId));
-        payment.setPaymentStatus(getPaymentStatus(this.paymentStatusId));
-        payment.setPaymentOrigin(getPaymentOrigin(this.paymentOriginId));
-        return payment;
-    }
+        T entity = objectMapper.convertValue(this, targetType);
 
-    public List<PaymentDetail> toPaymentDetails() {
-        List<PaymentDetail> paymentDetails = new ArrayList<>();
-        if (FundUtils.isNull(PaymentDetails) || PaymentDetails.size() == 0)
-            return null;
-        for (PaymentDetailDto paymentDetail : PaymentDetails) {
-            paymentDetails.add(paymentDetail.toPaymentDetail());
+        if (entity instanceof Payment payment) {
+            payment.setPaymentReason(getPaymentReason(repository, paymentReasonId));
+            payment.setFromSubsidiaryLedger(getSubsidiaryLedger(repository, fromSubsidiaryLedgerId));
+            payment.setToSubsidiaryLedger(getSubsidiaryLedger(repository, toSubsidiaryLedgerId));
+            payment.setFromDetailLedger(getDetailLedger(repository, fromDetailLedgerId));
+            payment.setFund(getFund(repository, fundId));
+            payment.setBank(getBank(repository, bankId));
+            payment.setPaymentType(getPaymentType(repository, paymentTypeId));
+            payment.setPaymentStatus(getPaymentStatus(repository, paymentStatusId));
+            payment.setPaymentOrigin(getPaymentOrigin(repository, paymentOriginId));
         }
-        return paymentDetails;
+
+        return entity;
     }
 
-    private PaymentReason getPaymentReason(Long id) {
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        List<T> entities = new ArrayList<>();
+        for (PaymentDetailDto paymentDetailDto : PaymentDetails) {
+            entities.add(paymentDetailDto.toEntity(entityClass, repository));
+        }
+        return entities;
+    }
+
+    private PaymentReason getPaymentReason(JpaRepository repository, Long id) {
         return repository.findAll(PaymentReason.class).stream()
                 .filter(a -> a.getId().equals(paymentReasonId))
                 .findFirst()
                 .orElse(null);
     }
 
-    private SubsidiaryLedger getSubsidiaryLedger(Long id) {
+    private SubsidiaryLedger getSubsidiaryLedger(JpaRepository repository, Long id) {
         return repository.findAll(SubsidiaryLedger.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
-    private DetailLedger getDetailLedger(Long id) {
+    private DetailLedger getDetailLedger(JpaRepository repository, Long id) {
         return repository.findAll(DetailLedger.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
-    private Fund getFund(Long id) {
+    private Fund getFund(JpaRepository repository, Long id) {
         return repository.findAll(Fund.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
-    private Bank getBank(Long id) {
+    private Bank getBank(JpaRepository repository, Long id) {
         return repository.findAll(Bank.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
-    private PaymentType getPaymentType(Long id) {
+    private PaymentType getPaymentType(JpaRepository repository, Long id) {
         return repository.findAll(PaymentType.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
-    private PaymentStatus getPaymentStatus(Long id) {
+    private PaymentStatus getPaymentStatus(JpaRepository repository, Long id) {
         return repository.findAll(PaymentStatus.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst()
                 .orElse(null);
     }
 
-    private PaymentOrigin getPaymentOrigin(Long id) {
+    private PaymentOrigin getPaymentOrigin(JpaRepository repository, Long id) {
         return repository.findAll(PaymentOrigin.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .findFirst()

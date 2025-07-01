@@ -4,6 +4,7 @@ import org.fund.administration.calendar.CalendarDto;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.model.Calendar;
 import org.fund.model.PaymentReason;
 import org.fund.validator.NotEmpty;
@@ -18,18 +19,21 @@ import java.util.List;
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class PaymentReasonController {
     private final PaymentReasonService service;
-    public PaymentReasonController(PaymentReasonService service) {
+    private final GenericDtoMapper mapper;
+
+    public PaymentReasonController(PaymentReasonService service, GenericDtoMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/paymentModule/paymentReason/add")
     public void insert(@RequestBody PaymentReasonDto paymentReasonDto) throws Exception {
-        service.insert(paymentReasonDto.toPaymentReason(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.insert(mapper.toEntity(PaymentReason.class, paymentReasonDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/paymentModule/paymentReason/edit")
     public void edit(@RequestBody PaymentReasonDto paymentReasonDto) throws Exception {
-        service.update(paymentReasonDto.toPaymentReason(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.update(mapper.toEntity(PaymentReason.class, paymentReasonDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/paymentModule/paymentReason/remove/{id}")

@@ -3,15 +3,19 @@ package org.fund.baseInformation.bankAccount;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.dto.DtoConvertible;
 import org.fund.model.BankAccount;
 import org.fund.model.BankAccountType;
 import org.fund.model.view.external.Bank;
+import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 
+import java.util.List;
+
 @Getter
 @Setter
-public class BankAccountDto {
+public class BankAccountDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "isActive")
     private Boolean isActive;
@@ -26,8 +30,14 @@ public class BankAccountDto {
     private Long annualinterest;
     private String shabaNumber;
 
-    public BankAccount toBankAccount() {
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(this, BankAccount.class);
+        return objectMapper.convertValue(this, targetType);
+    }
+
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        return List.of();
     }
 }

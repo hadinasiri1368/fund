@@ -8,15 +8,19 @@ import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.dto.DtoConvertible;
 import org.fund.model.Calendar;
 import org.fund.model.VerificationCode;
+import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidPersianDate;
+
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
-public class CalendarDto {
+public class CalendarDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "calendarDate")
     @ValidPersianDate(fieldName = "calendarDate")
@@ -26,8 +30,14 @@ public class CalendarDto {
     @NotEmpty(fieldName = "isVacation")
     private Boolean isVacation;
 
-    public Calendar toCalendar() {
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(this, Calendar.class);
+        return objectMapper.convertValue(this, targetType);
+    }
+
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        return List.of();
     }
 }

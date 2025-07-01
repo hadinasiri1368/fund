@@ -3,6 +3,7 @@ package org.fund.accounting.voucher.dto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.dto.DtoConvertible;
 import org.fund.model.DetailLedger;
 import org.fund.model.SubsidiaryLedger;
 import org.fund.model.Voucher;
@@ -10,18 +11,12 @@ import org.fund.model.VoucherDetail;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
-import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Getter
 @Setter
-@Component
-public class VoucherDetailDto {
-    private final JpaRepository repository;
-
-    public VoucherDetailDto(JpaRepository repository) {
-        this.repository = repository;
-    }
-
+public class VoucherDetailDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "voucherId")
     @ValidateField(fieldName = "voucherId", entityClass = Voucher.class)
@@ -37,24 +32,34 @@ public class VoucherDetailDto {
     @NotEmpty(fieldName = "creditAmount")
     private Long creditAmount;
 
-    public VoucherDetail toVoucherDetail() {
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
-        VoucherDetail voucherDetail = objectMapper.convertValue(this, VoucherDetail.class);
-        voucherDetail.setVoucher(getVoucher(voucherId));
-        voucherDetail.setSubsidiaryLedger(getSubsidiaryLedger(subsidiaryLedgerId));
-        voucherDetail.setDetailLedger(getDetailLedger(detailLedgerId));
-        return voucherDetail;
+        T entity = objectMapper.convertValue(this, targetType);
+
+        if (entity instanceof VoucherDetail voucherDetail) {
+            voucherDetail.setVoucher(getVoucher(repository, voucherId));
+            voucherDetail.setSubsidiaryLedger(getSubsidiaryLedger(repository, subsidiaryLedgerId));
+            voucherDetail.setDetailLedger(getDetailLedger(repository, detailLedgerId));
+        }
+
+        return entity;
     }
 
-    private Voucher getVoucher(Long id) {
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        return List.of();
+    }
+
+    private Voucher getVoucher(JpaRepository repository, Long id) {
         return repository.findOne(Voucher.class, id);
     }
 
-    private SubsidiaryLedger getSubsidiaryLedger(Long id) {
+    private SubsidiaryLedger getSubsidiaryLedger(JpaRepository repository, Long id) {
         return repository.findOne(SubsidiaryLedger.class, id);
     }
 
-    private DetailLedger getDetailLedger(Long id) {
+    private DetailLedger getDetailLedger(JpaRepository repository, Long id) {
         return repository.findOne(DetailLedger.class, id);
     }
 }

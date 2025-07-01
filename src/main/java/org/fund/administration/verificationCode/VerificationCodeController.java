@@ -4,6 +4,7 @@ import org.fund.administration.branch.FundBranchDto;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.model.Fund;
 import org.fund.model.FundBranch;
 import org.fund.model.VerificationCode;
@@ -18,20 +19,22 @@ import java.util.List;
 @Validated
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class VerificationCodeController {
+    private final GenericDtoMapper mapper;
     private final VerificationCodeService service;
 
-    public VerificationCodeController(VerificationCodeService service) {
+    public VerificationCodeController(VerificationCodeService service, GenericDtoMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/verificationCode/add")
     public void insert(@RequestBody VerificationCodeDto verificationCodeDto) throws Exception {
-        service.insert(verificationCodeDto.toVerificationCode(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.insert(mapper.toEntity(VerificationCode.class,verificationCodeDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/verificationCode/edit")
     public void edit(@RequestBody VerificationCodeDto verificationCodeDto) throws Exception {
-        service.update(verificationCodeDto.toVerificationCode(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.update(mapper.toEntity(VerificationCode.class,verificationCodeDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/verificationCode/remove/{id}")

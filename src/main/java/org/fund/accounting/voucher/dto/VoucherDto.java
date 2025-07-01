@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.catalina.mapper.Mapper;
 import org.fund.common.FundUtils;
+import org.fund.dto.DtoConvertible;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.model.*;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
@@ -18,13 +21,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Component
-public class VoucherDto {
-    private final JpaRepository repository;
-
-    public VoucherDto(JpaRepository repository) {
-        this.repository = repository;
-    }
+public class VoucherDto implements DtoConvertible {
 
     private Long id;
     @NotEmpty(fieldName = "voucherTypeId")
@@ -47,39 +44,43 @@ public class VoucherDto {
     private Boolean isManual;
     private List<VoucherDetailDto> voucherDetails;
 
-    public Voucher toVoucher() {
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
-        Voucher voucher = objectMapper.convertValue(this, Voucher.class);
-        voucher.setVoucherType(getVoucherType(voucherTypeId));
-        voucher.setFundBranch(getFundBranch(fundBranchId));
-        voucher.setVoucherStatus(getVoucherStatus(voucherStatusId));
-        voucher.setFund(getFund(fundId));
-        return voucher;
-    }
+        T entity = objectMapper.convertValue(this, targetType);
 
-    public List<VoucherDetail> toVoucherDetails() {
-        if (FundUtils.isNull(voucherDetails) || voucherDetails.size() == 0)
-            return null;
-        List<VoucherDetail> voucherDetailList = new ArrayList<>();
-        for (VoucherDetailDto voucherDetail : voucherDetails) {
-            voucherDetailList.add(voucherDetail.toVoucherDetail());
+        if (entity instanceof Voucher voucher) {
+            voucher.setVoucherType(getVoucherType(repository, voucherTypeId));
+            voucher.setFundBranch(getFundBranch(repository, fundBranchId));
+            voucher.setVoucherStatus(getVoucherStatus(repository, voucherStatusId));
+            voucher.setFund(getFund(repository, fundId));
         }
-        return voucherDetailList;
+
+        return entity;
     }
 
-    private VoucherType getVoucherType(Long id) {
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        List<T> entities = new ArrayList<>();
+        for (VoucherDetailDto voucherDetail : voucherDetails) {
+            entities.add(voucherDetail.toEntity(entityClass, repository));
+        }
+        return entities;
+    }
+
+    private VoucherType getVoucherType(JpaRepository repository, Long id) {
         return repository.findOne(VoucherType.class, id);
     }
 
-    private FundBranch getFundBranch(Long id) {
+    private FundBranch getFundBranch(JpaRepository repository, Long id) {
         return repository.findOne(FundBranch.class, id);
     }
 
-    private VoucherStatus getVoucherStatus(Long id) {
+    private VoucherStatus getVoucherStatus(JpaRepository repository, Long id) {
         return repository.findOne(VoucherStatus.class, id);
     }
 
-    private Fund getFund(Long id) {
+    private Fund getFund(JpaRepository repository, Long id) {
         return repository.findOne(Fund.class, id);
     }
 }

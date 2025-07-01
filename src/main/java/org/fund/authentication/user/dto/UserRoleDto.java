@@ -34,9 +34,4 @@ public class UserRoleDto implements DtoConvertible {
         }
         return list;
     }
-
-    @Override
-    public <T> T toEntity(Class<T> targetType, JpaRepository repository, Long id) {
-        return null;
-    }
 }

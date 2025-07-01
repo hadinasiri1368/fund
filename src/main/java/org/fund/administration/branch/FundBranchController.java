@@ -3,6 +3,7 @@ package org.fund.administration.branch;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.model.Fund;
 import org.fund.model.FundBranch;
 import org.fund.validator.NotEmpty;
@@ -17,19 +18,21 @@ import java.util.List;
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class FundBranchController {
     private final FundBranchService service;
+    private final GenericDtoMapper mapper;
 
-    public FundBranchController(FundBranchService service) {
+    public FundBranchController(FundBranchService service, GenericDtoMapper mapper) {
         this.service = service;
+        this.mapper = mapper;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/branch/add")
     public void insert(@RequestBody FundBranchDto fundBranchDto) throws Exception {
-        service.insert(fundBranchDto.toFundBranch(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.insert(mapper.toEntity(FundBranch.class, fundBranchDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/branch/edit")
     public void edit(@RequestBody FundBranchDto fundBranchDto) throws Exception {
-        service.update(fundBranchDto.toFundBranch(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.update(mapper.toEntity(FundBranch.class, fundBranchDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/branch/remove/{id}")

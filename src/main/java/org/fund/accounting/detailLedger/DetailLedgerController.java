@@ -3,7 +3,9 @@ package org.fund.accounting.detailLedger;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.model.DetailLedger;
+import org.fund.model.DetailLedgerType;
 import org.fund.model.FundBranch;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
@@ -17,19 +19,21 @@ import java.util.List;
 @RequestMapping(Consts.DEFAULT_PREFIX_API_URL)
 public class DetailLedgerController {
     private final DetailLedgerService service;
+    private final GenericDtoMapper dtoMapper;
 
-    public DetailLedgerController(DetailLedgerService service) {
+    public DetailLedgerController(DetailLedgerService service, GenericDtoMapper dtoMapper) {
         this.service = service;
+        this.dtoMapper = dtoMapper;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/accounting/detailLedger/add")
     public void insert(@RequestBody DetailLedgerDto detailLedgerDto) throws Exception {
-        service.insert(detailLedgerDto.toDetailLedger(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.insert(dtoMapper.toEntity(DetailLedger.class, detailLedgerDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/accounting/detailLedger/edit")
     public void edit(@RequestBody DetailLedgerDto detailLedgerDto) throws Exception {
-        service.update(detailLedgerDto.toDetailLedger(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.update(dtoMapper.toEntity(DetailLedger.class, detailLedgerDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/accounting/detailLedger/remove/{id}")

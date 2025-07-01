@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.dto.DtoConvertible;
 import org.fund.model.DetailLedger;
 import org.fund.model.DetailLedgerType;
 import org.fund.model.FinancialInstitutionBankAccount;
@@ -15,9 +16,11 @@ import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Getter
 @Setter
-public class TradableItemDetailLedgerDto {
+public class TradableItemDetailLedgerDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "tradableItemId")
     @ValidateField(fieldName = "tradableItemId", entityClass = TradableItem.class)
@@ -27,9 +30,15 @@ public class TradableItemDetailLedgerDto {
     @NotEmpty(fieldName = "tradableItemGroupId")
     private Long tradableItemGroupId;
 
-    public TradableItemDetailLedger toTradableItemDetailLedger() {
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(this, TradableItemDetailLedger.class);
+        return objectMapper.convertValue(this, targetType);
+    }
+
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        return List.of();
     }
 
     public static TradableItemDetailLedgerDto toDto(TradableItemDetailLedger tradableItemDetailLedger) {

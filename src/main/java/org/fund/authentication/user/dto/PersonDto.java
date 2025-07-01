@@ -1,17 +1,23 @@
 package org.fund.authentication.user.dto;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.fund.dto.DtoConvertible;
+import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
+
+import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonDto {
+public class PersonDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "person.isCompany")
     private Boolean isCompany;
@@ -40,4 +46,15 @@ public class PersonDto {
     private String companyName;
     @NotEmpty(fieldName = "person.lastName")
     private String address;
+
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(this, targetType);
+    }
+
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        return List.of();
+    }
 }

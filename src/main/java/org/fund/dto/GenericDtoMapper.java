@@ -22,10 +22,5 @@ public class GenericDtoMapper {
     public <T> List<T> toEntityList(Class<T> entityClass, DtoConvertible dto) {
         return dto.toEntityList(entityClass, repository);
     }
-
-    public <T> T toEntity(Class<T> targetType, DtoConvertible dto, Long id) {
-        return dto.toEntity(targetType, repository, id);
-    }
-
 }
 

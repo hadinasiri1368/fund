@@ -5,6 +5,7 @@ import org.fund.baseInformation.financialInstitutionBankAccount.FinancialInstitu
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
 import org.fund.model.FinancialInstitutionBankAccount;
@@ -24,15 +25,17 @@ import java.util.stream.Collectors;
 public class TradableItemController {
     private final TradableItemService service;
     private final FundService fundService;
+    private final GenericDtoMapper mapper;
 
-    public TradableItemController(TradableItemService service, FundService fundService) {
+    public TradableItemController(TradableItemService service, FundService fundService, GenericDtoMapper mapper) {
         this.service = service;
         this.fundService = fundService;
+        this.mapper = mapper;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/tradableItem/detailLedger/add")
     public void insert(@RequestBody TradableItemDetailLedgerDto tradableItemDetailLedgerDto) throws Exception {
-        service.insert(tradableItemDetailLedgerDto.toTradableItemDetailLedger(), fundService.getDefaultFund(), RequestContext.getUserId(), RequestContext.getUuid());
+        service.insert(mapper.toEntity(TradableItemDetailLedger.class, tradableItemDetailLedgerDto), fundService.getDefaultFund(), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/tradableItem/detailLedger/remove/{id}")

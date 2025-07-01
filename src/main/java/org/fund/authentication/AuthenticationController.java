@@ -12,6 +12,7 @@ import org.fund.authentication.user.dto.*;
 import org.fund.config.dataBase.TenantContext;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.model.Permission;
 import org.fund.model.Role;
 import org.fund.model.UserGroup;
@@ -32,13 +33,16 @@ public class AuthenticationController {
     private final AuthenticationService service;
     private final PermissionService permissionService;
     private final UserService userService;
+    private final GenericDtoMapper mapper;
 
     public AuthenticationController(AuthenticationService service
             , PermissionService permissionService
+            , GenericDtoMapper mapper
             , UserService userService) {
         this.service = service;
         this.permissionService = permissionService;
         this.userService = userService;
+        this.mapper = mapper;
     }
 
     @PostMapping(path = "/login")
@@ -83,12 +87,12 @@ public class AuthenticationController {
 
     @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/permission/add")
     public void insertPermission(@RequestBody PermissionDto permissionDto) throws Exception {
-        permissionService.insert(permissionDto.toPermission(), RequestContext.getUserId(), RequestContext.getUuid());
+        permissionService.insert(mapper.toEntity(Permission.class, permissionDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/permission/edit")
     public void updatePermission(@RequestBody PermissionDto permissionDto) throws Exception {
-        permissionService.update(permissionDto.toPermission(), RequestContext.getUserId(), RequestContext.getUuid());
+        permissionService.update(mapper.toEntity(Permission.class, permissionDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/permission/remove/{id}")
@@ -109,12 +113,12 @@ public class AuthenticationController {
 
     @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/add")
     public void insertUser(@RequestBody UserDto userDto) throws Exception {
-        userService.insert(userDto.toUser(), RequestContext.getUserId(), RequestContext.getUuid());
+        userService.insert(mapper.toEntity(Users.class, userDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/edit")
     public void updateUser(@RequestBody UserDto userDto) throws Exception {
-        userService.update(userDto.toUser(), RequestContext.getUserId(), RequestContext.getUuid());
+        userService.update(mapper.toEntity(Users.class, userDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/remove")
@@ -124,12 +128,12 @@ public class AuthenticationController {
 
     @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/userGroup/add")
     public void insertUserGroup(@RequestBody UserGroupDto userGroupDto) throws Exception {
-        userService.insertUserGroup(userGroupDto.toUserGroup(), RequestContext.getUserId(), RequestContext.getUuid());
+        userService.insertUserGroup(mapper.toEntity(UserGroup.class, userGroupDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/userGroup/edit")
     public void updateUserGroup(@RequestBody UserGroupDto userGroupDto) throws Exception {
-        userService.updateUserGroup(userGroupDto.toUserGroup(), RequestContext.getUserId(), RequestContext.getUuid());
+        userService.updateUserGroup(mapper.toEntity(UserGroup.class, userGroupDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/userGroup/remove")

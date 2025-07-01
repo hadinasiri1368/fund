@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.dto.DtoConvertible;
+import org.fund.model.DetailLedger;
 import org.fund.model.WageRate;
 import org.fund.model.WageRateDetail;
 import org.fund.model.view.external.Industry;
@@ -14,16 +16,12 @@ import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+import java.util.List;
+
 @Getter
 @Setter
-@Component
-public class WageRateDetailDto {
-    private final JpaRepository repository;
-
-    public WageRateDetailDto(JpaRepository repository) {
-        this.repository = repository;
-    }
-
+public class WageRateDetailDto implements DtoConvertible {
     private Long id;
     @ValidateField(fieldName = "wageRateId", entityClass = WageRate.class)
     private Long wageRateId;
@@ -60,14 +58,22 @@ public class WageRateDetailDto {
     @NotEmpty(fieldName = "maxRayanBourse")
     private Double maxRayanBourse;
 
-    public WageRateDetail toWageRateDetail() {
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
-        WageRateDetail wageRateDetail = objectMapper.convertValue(this, WageRateDetail.class);
-        wageRateDetail.setWageRate(getWageRate());
-        return wageRateDetail;
+        T entity = objectMapper.convertValue(this, targetType);
+        if (entity instanceof WageRateDetail wageRateDetail) {
+            wageRateDetail.setWageRate(getWageRate(repository));
+        }
+        return entity;
     }
 
-    private WageRate getWageRate() {
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        return List.of();
+    }
+
+    private WageRate getWageRate(JpaRepository repository) {
         return repository.findOne(WageRate.class, wageRateId);
     }
 }
