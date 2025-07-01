@@ -17,8 +17,10 @@ public class DtoRepositoryInjectorAspect {
     public DtoRepositoryInjectorAspect(JpaRepository repository) {
         this.repository = repository;
     }
-
-    @Pointcut("execution(* org.fund..*Dto.*(..))")
+    @Pointcut("execution(* org.fund..*Controller.*(..)) || " +
+              "execution(* org.fund..*Service.*(..))    || " +
+              "execution(* org.fund..*Abstract.*(..))   || " +
+              "execution(* org.fund..*Visitor.*(..))")
     public void allControllerMethods() {
     }
 
