@@ -4,6 +4,7 @@ import org.fund.authentication.permission.PermissionService;
 import org.fund.authentication.user.dto.UserGroupDetailDto;
 import org.fund.authentication.user.dto.UserPermissionDto;
 import org.fund.authentication.user.dto.UserRoleDto;
+import org.fund.common.FundUtils;
 import org.fund.dto.GenericDtoMapper;
 import org.fund.model.*;
 import org.fund.repository.JpaRepository;
@@ -95,5 +96,24 @@ public class UserService {
             repository.batchInsert(list, userId, uuid);
         }
     }
+
+    public List<Users> listUsers(Long id) {
+        if (!FundUtils.isNull(id))
+            return repository.findAll(Users.class).stream()
+                    .filter(a -> a.getId().equals(id)).toList();
+        return repository.findAll(Users.class).stream().toList();
+    }
+
+    public UserRoleDto findUserRole(Long userId){
+        List<UserRole> userRoles =repository.findAll(UserRole.class).stream()
+                .filter(a -> a.getUser().getId().equals(userId)).toList();
+
+        UserRoleDto userRoleDto=new UserRoleDto();
+        userRoleDto.setUserId(userId);
+        userRoleDto.setRoleIds(userRoles.stream().map(a->a.getRole().getId()).toList());
+
+        return userRoleDto;
+    }
+
 
 }

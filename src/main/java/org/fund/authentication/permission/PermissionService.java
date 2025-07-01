@@ -180,4 +180,12 @@ public class PermissionService {
                 .filter(a -> a.getId().equals(id))
                 .collect(Collectors.toList());
     }
+
+    public List<Role> listRole(Long id){
+        if(FundUtils.isNull(id))
+            return  repository.findAll(Role.class);
+        return repository.findAll(Role.class).stream()
+                .filter(a -> a.getId().equals(id))
+                .collect(Collectors.toList());
+    }
 }
