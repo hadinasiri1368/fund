@@ -34,15 +34,8 @@ public class UserRoleDto implements DtoConvertible {
         return list;
     }
 
-//    public Users toUser(JpaRepository repository) {
-//        return repository.findOne(Users.class, userId);
-//    }
-//
-//    public List<Role> toRoles(JpaRepository repository) {
-//        List<Role> list = new ArrayList<>();
-//        for (Long roleId : roleIds) {
-//            list.add(repository.findOne(Role.class, roleId));
-//        }
-//        return list;
-//    }
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository, Long id) {
+        return null;
+    }
 }

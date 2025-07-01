@@ -4,6 +4,7 @@ import org.fund.authentication.permission.PermissionService;
 import org.fund.authentication.user.dto.UserGroupDetailDto;
 import org.fund.authentication.user.dto.UserPermissionDto;
 import org.fund.authentication.user.dto.UserRoleDto;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.model.*;
 import org.fund.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,11 @@ import java.util.List;
 @Service
 public class UserService {
     private final JpaRepository repository;
+    private final GenericDtoMapper genericDtoMapper;
 
-    public UserService(JpaRepository repository) {
+    public UserService(JpaRepository repository, GenericDtoMapper genericDtoMapper) {
         this.repository = repository;
+        this.genericDtoMapper = genericDtoMapper;
     }
 
     public void insert(Users users, Long userId, String uuid) throws Exception {
@@ -70,8 +73,8 @@ public class UserService {
                     .toList();
             repository.batchRemove(list, userId, uuid);
             list = new ArrayList<>();
-            for (Role role : userRoleDto.toEntityList(Role.class, repository)) {
-                list.add(new UserRole(null, userRoleDto.toEntity(Users.class, repository), role));
+            for (Role role : genericDtoMapper.toEntityList(Role.class, userRoleDtos.getFirst())) {
+                list.add(new UserRole(null, genericDtoMapper.toEntity(Users.class, userRoleDtos.getFirst()), role));
             }
             repository.batchInsert(list, userId, uuid);
         }
