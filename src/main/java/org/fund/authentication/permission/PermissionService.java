@@ -6,6 +6,7 @@ import org.fund.authentication.user.UserService;
 import org.fund.authentication.user.dto.UserPermissionDto;
 import org.fund.common.FundUtils;
 import org.fund.config.dataBase.TenantContext;
+import org.fund.dto.GenericDtoMapper;
 import org.fund.exception.AuthenticationExceptionType;
 import org.fund.exception.FundException;
 import org.fund.model.*;
@@ -26,10 +27,12 @@ public class PermissionService {
     private final JpaRepository repository;
     private Map<String, List<Object[]>> listAllPermissions;
     private final UserService userService;
+    private final GenericDtoMapper mapper;
 
-    public PermissionService(JpaRepository repository, UserService userService) {
+    public PermissionService(JpaRepository repository, UserService userService, GenericDtoMapper mapper) {
         this.repository = repository;
         this.userService = userService;
+        this.mapper = mapper;
         this.listAllPermissions = new HashMap<>();
     }
 
@@ -133,8 +136,8 @@ public class PermissionService {
                     .toList();
             repository.batchRemove(list, userId, uuid);
             list = new ArrayList<>();
-            for (Permission permission : rolePermissionDto.toPermissions()) {
-                list.add(new RolePermission(null, rolePermissionDto.toRole(), permission));
+            for (Permission permission : mapper.toEntityList(Permission.class, rolePermissionDto)) {
+                list.add(new RolePermission(null, mapper.toEntity(Role.class, rolePermissionDto), permission));
             }
             repository.batchInsert(list, userId, uuid);
         }
@@ -166,24 +169,24 @@ public class PermissionService {
                     .toList();
             repository.batchRemove(list, userId, uuid);
             list = new ArrayList<>();
-            for (Role role : roleUserGroupDto.toRoles()) {
-                list.add(new UserGroupRole(null, role, roleUserGroupDto.toUserGroup()));
+            for (Role role : mapper.toEntityList(Role.class, roleUserGroupDto)) {
+                list.add(new UserGroupRole(null, role, mapper.toEntity(UserGroup.class, roleUserGroupDto)));
             }
             repository.batchInsert(list, userId, uuid);
         }
     }
 
-    public List<Permission> listPermission(Long id){
-        if(FundUtils.isNull(id))
-            return  repository.findAll(Permission.class);
+    public List<Permission> listPermission(Long id) {
+        if (FundUtils.isNull(id))
+            return repository.findAll(Permission.class);
         return repository.findAll(Permission.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .collect(Collectors.toList());
     }
 
-    public List<Role> listRole(Long id){
-        if(FundUtils.isNull(id))
-            return  repository.findAll(Role.class);
+    public List<Role> listRole(Long id) {
+        if (FundUtils.isNull(id))
+            return repository.findAll(Role.class);
         return repository.findAll(Role.class).stream()
                 .filter(a -> a.getId().equals(id))
                 .collect(Collectors.toList());

@@ -1,17 +1,21 @@
 package org.fund.authentication.permission.role;
 
 import lombok.*;
+import org.fund.accounting.voucher.dto.VoucherDetailDto;
+import org.fund.dto.DtoConvertible;
 import org.fund.model.Permission;
 import org.fund.model.Role;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class RolePermissionDto {
+public class RolePermissionDto implements DtoConvertible {
     private final JpaRepository repository;
 
     public RolePermissionDto(JpaRepository repository) {
@@ -28,15 +32,17 @@ public class RolePermissionDto {
     @NotEmpty(fieldName = "permissionIds")
     private List<Long> permissionIds;
 
-    public Role toRole() {
-        return repository.findOne(Role.class, roleId);
+    @Override
+    public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
+        return repository.findOne(targetType, roleId);
     }
 
-    public List<Permission> toPermissions() {
-        List<Permission> permissions = new ArrayList<>();
-        for (Long permissionId : permissionIds) {
-            permissions.add(repository.findOne(Permission.class, permissionId));
+    @Override
+    public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
+        List<T> entities = new ArrayList<>();
+        for (Long id : permissionIds) {
+            entities.add(repository.findOne(entityClass, id));
         }
-        return permissions;
+        return entities;
     }
 }

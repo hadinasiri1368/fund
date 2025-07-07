@@ -66,7 +66,7 @@ public class AuthenticationController {
 
     @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/add")
     public void insertRole(@RequestBody RoleDto roleDto) throws Exception {
-        permissionService.insertRole(roleDto.toRole(), RequestContext.getUserId(), RequestContext.getUuid());
+        permissionService.insertRole(mapper.toEntity(Role.class, roleDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/refreshToken")
@@ -76,7 +76,7 @@ public class AuthenticationController {
 
     @PutMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/edit")
     public void updateRole(@RequestBody RoleDto roleDto) throws Exception {
-        permissionService.updateRole(roleDto.toRole(), RequestContext.getUserId(), RequestContext.getUuid());
+        permissionService.updateRole(mapper.toEntity(Role.class, roleDto), RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @DeleteMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/remove/{id}")
