@@ -2,30 +2,17 @@ package org.fund.authentication.permission.role;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.catalina.User;
-import org.fund.authentication.user.dto.UserGroupDto;
 import org.fund.dto.DtoConvertible;
-import org.fund.model.Role;
-import org.fund.model.UserGroup;
 import org.fund.repository.JpaRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Setter
+@Getter
 public class RoleUserGroupDto implements DtoConvertible {
-    private final JpaRepository repository;
 
-    public RoleUserGroupDto(JpaRepository repository) {
-        this.repository = repository;
-    }
-
-    @Setter
-    @Getter
     private Long userGroupId;
-    @Setter
-    @Getter
     private List<Long> roleIds;
 
     @Override

@@ -14,21 +14,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+
+@Getter
+@Setter
 public class RolePermissionDto implements DtoConvertible {
-    private final JpaRepository repository;
 
-    public RolePermissionDto(JpaRepository repository) {
-        this.repository = repository;
-    }
-
-    @Setter
-    @Getter
     @NotEmpty(fieldName = "roleId")
     @ValidateField(fieldName = "roleId", entityClass = Role.class)
     private Long roleId;
-    @Setter
-    @Getter
     @NotEmpty(fieldName = "permissionIds")
     private List<Long> permissionIds;
 

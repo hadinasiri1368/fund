@@ -190,6 +190,22 @@ public class AuthenticationController {
     @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/{id}")
     public Role getRole(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = Role.class) Long id) {
         List<Role> roleList = permissionService.listRole(id);
-        return roleList.get(0);
+        return roleList.getFirst();
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/userGroup/{id}")
+    public UserGroup getUserGroup(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = UserGroup.class) Long id) {
+        List<UserGroup> userGroupList = userService.listUserGroup(id);
+        return userGroupList.getFirst();
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/userGroup")
+    public List<UserGroup> getUserGroup() {
+        return userService.listUserGroup(null);
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/userGroup/userGroupRolePerUserGroup/{userGroupId}")
+    public RoleUserGroupDto userGroupRoles(@PathVariable Long userGroupId) {
+        return userService.findUserGroupRole(userGroupId);
     }
 }

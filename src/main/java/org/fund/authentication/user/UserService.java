@@ -1,9 +1,7 @@
 package org.fund.authentication.user;
 
-import org.fund.authentication.permission.PermissionService;
-import org.fund.authentication.user.dto.UserGroupDetailDto;
-import org.fund.authentication.user.dto.UserPermissionDto;
-import org.fund.authentication.user.dto.UserRoleDto;
+import org.fund.authentication.permission.role.RoleUserGroupDto;
+import org.fund.authentication.user.dto.*;
 import org.fund.common.FundUtils;
 import org.fund.dto.GenericDtoMapper;
 import org.fund.model.*;
@@ -111,9 +109,22 @@ public class UserService {
         UserRoleDto userRoleDto = new UserRoleDto();
         userRoleDto.setUserId(userId);
         userRoleDto.setRoleIds(userRoles.stream().map(a -> a.getRole().getId()).toList());
-
         return userRoleDto;
     }
 
+    public List<UserGroup> listUserGroup(Long id){
+        if (!FundUtils.isNull(id))
+            return repository.findAll(UserGroup.class).stream()
+                    .filter(a-> a.getId().equals(id)).toList();
+        return repository.findAll(UserGroup.class).stream().toList();
+    }
 
+    public RoleUserGroupDto findUserGroupRole (Long userGroupId) {
+        List<UserGroupRole> userGroupRoles = repository.findAll(UserGroupRole.class).stream()
+                .filter(a->a.getUserGroup().getId().equals(userGroupId)).toList();
+        RoleUserGroupDto userGroupRoleDto = new RoleUserGroupDto();
+        userGroupRoleDto.setUserGroupId(userGroupId);
+        userGroupRoleDto.setRoleIds(userGroupRoles.stream().map(a-> a.getRole().getId()).toList());
+        return userGroupRoleDto;
+    }
 }
