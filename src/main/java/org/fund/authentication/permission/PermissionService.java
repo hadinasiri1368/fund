@@ -191,4 +191,14 @@ public class PermissionService {
                 .filter(a -> a.getId().equals(id))
                 .collect(Collectors.toList());
     }
+
+    public RolePermissionDto findRolePermission (Long roleId) {
+        List<RolePermission> rolePermissions = repository.findAll(RolePermission.class).stream()
+                .filter(a->a.getRole().getId().equals(roleId)).toList();
+        RolePermissionDto rolePermissionDto = new RolePermissionDto();
+        rolePermissionDto.setRoleId(roleId);
+        rolePermissionDto.setPermissionIds(rolePermissions.stream().map(a-> a.getPermission().getId()).toList());
+        return rolePermissionDto;
+    }
+
 }

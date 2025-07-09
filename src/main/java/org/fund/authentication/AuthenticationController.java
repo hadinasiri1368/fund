@@ -208,4 +208,10 @@ public class AuthenticationController {
     public RoleUserGroupDto userGroupRoles(@PathVariable Long userGroupId) {
         return userService.findUserGroupRole(userGroupId);
     }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/rolePermissionPerRoleId/{roleId}")
+    public RolePermissionDto rolePermissions(@PathVariable Long roleId) {
+        return permissionService.findRolePermission(roleId);
+    }
+
 }
