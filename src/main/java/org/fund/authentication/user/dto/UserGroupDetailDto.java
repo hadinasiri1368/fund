@@ -16,20 +16,20 @@ import java.util.List;
 @Getter
 public class UserGroupDetailDto implements DtoConvertible {
 
-    @NotEmpty(fieldName = "userGroupId")
-    private Long userGroupId;
-    @NotEmpty(fieldName = "userIds")
-    private List<Long> userIds;
+    @NotEmpty(fieldName = "userId")
+    private Long userId;
+    @NotEmpty(fieldName = "userGroupIds")
+    private List<Long> userGroupIds;
 
     @Override
     public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
-        return repository.findOne(targetType, userGroupId);
+        return repository.findOne(targetType, userId);
     }
 
     @Override
     public <T> List<T> toEntityList(Class<T> entityClass, JpaRepository repository) {
         List<T> list = new ArrayList<>();
-        for (Long userId : userIds) {
+        for (Long userId : userGroupIds) {
             list.add(repository.findOne(entityClass, userId));
         }
         return list;

@@ -52,12 +52,12 @@ public class UserService {
         List<UserGroupDetail> list;
         for (UserGroupDetailDto userGroupDetailDto : userPermissionDtos) {
             list = repository.findAll(UserGroupDetail.class).stream()
-                    .filter(a -> a.getUserGroup().getId().equals(userGroupDetailDto.getUserGroupId()))
+                    .filter(a -> a.getUser().getId().equals(userGroupDetailDto.getUserId()))
                     .toList();
             repository.batchRemove(list, userId, uuid);
             list = new ArrayList<>();
-            for (Users user : mapper.toEntityList(Users.class, userGroupDetailDto)) {
-                list.add(new UserGroupDetail(null, user, mapper.toEntity(UserGroup.class, userGroupDetailDto)));
+            for (UserGroup userGroup : mapper.toEntityList(UserGroup.class, userGroupDetailDto)) {
+                list.add(new UserGroupDetail(null, mapper.toEntity(Users.class, userGroupDetailDto), userGroup));
             }
             repository.batchInsert(list, userId, uuid);
         }
@@ -112,19 +112,37 @@ public class UserService {
         return userRoleDto;
     }
 
-    public List<UserGroup> listUserGroup(Long id){
+    public List<UserGroup> listUserGroup(Long id) {
         if (!FundUtils.isNull(id))
             return repository.findAll(UserGroup.class).stream()
-                    .filter(a-> a.getId().equals(id)).toList();
+                    .filter(a -> a.getId().equals(id)).toList();
         return repository.findAll(UserGroup.class).stream().toList();
     }
 
-    public RoleUserGroupDto findUserGroupRole (Long userGroupId) {
+    public RoleUserGroupDto findUserGroupRole(Long userGroupId) {
         List<UserGroupRole> userGroupRoles = repository.findAll(UserGroupRole.class).stream()
-                .filter(a->a.getUserGroup().getId().equals(userGroupId)).toList();
+                .filter(a -> a.getUserGroup().getId().equals(userGroupId)).toList();
         RoleUserGroupDto userGroupRoleDto = new RoleUserGroupDto();
         userGroupRoleDto.setUserGroupId(userGroupId);
-        userGroupRoleDto.setRoleIds(userGroupRoles.stream().map(a-> a.getRole().getId()).toList());
+        userGroupRoleDto.setRoleIds(userGroupRoles.stream().map(a -> a.getRole().getId()).toList());
         return userGroupRoleDto;
+    }
+
+    public UserPermissionDto findUserPermission(Long userId) {
+        List<UserPermission> userPermissions = repository.findAll(UserPermission.class).stream()
+                .filter(a -> a.getUser().getId().equals(userId)).toList();
+        UserPermissionDto userPermissionDto = new UserPermissionDto();
+        userPermissionDto.setUserId(userId);
+        userPermissionDto.setPermissionIds(userPermissions.stream().map(a -> a.getPermission().getId()).toList());
+        return userPermissionDto;
+    }
+
+    public UserGroupDetailDto findUserGroupDetail(Long userId) {
+        List<UserGroupDetail> userGroupDetails = repository.findAll(UserGroupDetail.class).stream()
+                .filter(a -> a.getUser().getId().equals(userId)).toList();
+        UserGroupDetailDto groupDetailDto = new UserGroupDetailDto();
+        groupDetailDto.setUserId(userId);
+        groupDetailDto.setUserGroupIds(userGroupDetails.stream().map(a -> a.getUserGroup().getId()).toList());
+        return groupDetailDto;
     }
 }

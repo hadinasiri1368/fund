@@ -214,4 +214,14 @@ public class AuthenticationController {
         return permissionService.findRolePermission(roleId);
     }
 
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/userPermissionPerUserId/{userId}")
+    public UserPermissionDto getUserPermissions(@PathVariable Long userId){
+        return userService.findUserPermission(userId);
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/user/userGroupPerUserId/{userId}")
+    public UserGroupDetailDto getUserGroupDetails(@PathVariable Long userId){
+        return userService.findUserGroupDetail(userId);
+    }
+
 }
