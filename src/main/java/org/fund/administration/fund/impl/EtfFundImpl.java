@@ -9,8 +9,10 @@ import org.fund.model.Fund;
 import org.fund.model.MmtpConfig;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
+import org.springframework.stereotype.Service;
 
-public class EtfFundImpl extends FundAbstract implements IFund {
+@Service
+public class EtfFundImpl extends FundAbstract {
     public EtfFundImpl(JpaRepository repository, CommonFundService commonFundService) {
         super(repository, commonFundService);
     }

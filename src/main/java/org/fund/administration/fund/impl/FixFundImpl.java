@@ -10,8 +10,10 @@ import org.fund.model.Fund;
 import org.fund.model.MmtpConfig;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
+import org.springframework.stereotype.Service;
 
-public class FixFundImpl extends FundAbstract implements IFund {
+@Service
+public class FixFundImpl extends FundAbstract {
     public FixFundImpl(JpaRepository repository, CommonFundService commonFundService) {
         super(repository, commonFundService);
     }

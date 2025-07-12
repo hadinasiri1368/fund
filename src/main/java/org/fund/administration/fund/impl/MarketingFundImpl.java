@@ -9,8 +9,10 @@ import org.fund.model.MmtpConfig;
 import org.fund.administration.params.ParamService;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
+import org.springframework.stereotype.Service;
 
-public class MarketingFundImpl extends FundAbstract implements IFund {
+@Service
+public class MarketingFundImpl extends FundAbstract{
     private final ParamService paramService;
 
     public MarketingFundImpl(JpaRepository repository
