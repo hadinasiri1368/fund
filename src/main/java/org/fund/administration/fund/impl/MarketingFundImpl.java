@@ -1,5 +1,6 @@
 package org.fund.administration.fund.impl;
 
+import org.fund.administration.fund.IFund;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
 import org.fund.administration.fund.FundAbstract;
@@ -9,7 +10,7 @@ import org.fund.administration.params.ParamService;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
 
-public class MarketingFundImpl extends FundAbstract {
+public class MarketingFundImpl extends FundAbstract implements IFund {
     private final ParamService paramService;
 
     public MarketingFundImpl(JpaRepository repository

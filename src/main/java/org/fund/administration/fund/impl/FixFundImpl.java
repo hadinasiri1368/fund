@@ -1,6 +1,8 @@
 package org.fund.administration.fund.impl;
 
 
+import jakarta.persistence.Id;
+import org.fund.administration.fund.IFund;
 import org.fund.exception.FundException;
 import org.fund.exception.FundExceptionType;
 import org.fund.administration.fund.FundAbstract;
@@ -9,7 +11,7 @@ import org.fund.model.MmtpConfig;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
 
-public class FixFundImpl extends FundAbstract {
+public class FixFundImpl extends FundAbstract implements IFund {
     public FixFundImpl(JpaRepository repository, CommonFundService commonFundService) {
         super(repository, commonFundService);
     }

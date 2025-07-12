@@ -1,5 +1,6 @@
 package org.fund.administration.fund.impl;
 
+import org.fund.administration.fund.IFund;
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
 import org.fund.exception.FundExceptionType;
@@ -9,7 +10,7 @@ import org.fund.model.MmtpConfig;
 import org.fund.repository.JpaRepository;
 import org.fund.service.CommonFundService;
 
-public class EtfFundImpl extends FundAbstract {
+public class EtfFundImpl extends FundAbstract implements IFund {
     public EtfFundImpl(JpaRepository repository, CommonFundService commonFundService) {
         super(repository, commonFundService);
     }
