@@ -18,7 +18,7 @@ public class TenantKeyGenerator implements KeyGenerator {
     @Override
     public Object generate(Object target, Method method, Object... params) {
         String tenantId = TenantContext.getCurrentTenant();
-        String key = tenantId + "::" + getKey(params);
+        String key = tenantId + "::" + getKey(params) + "." + method.getName();
         return key;
     }
 

@@ -83,4 +83,9 @@ public class CustomerController {
                                                             @ValidateField(fieldName = "accountId", entityClass = CustomerBankAccount.class) Long accountId) throws Exception {
         service.setCustomerDefaultBankAccount(customerId, accountId, RequestContext.getUserId(), RequestContext.getUuid());
     }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer")
+    public List<CustomerDto> getCustomerList(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
+        return service.listDto(page, size);
+    }
 }

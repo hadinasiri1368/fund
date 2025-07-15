@@ -1,5 +1,6 @@
 package org.fund.authentication.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PersonDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "person.isCompany")
@@ -46,6 +48,8 @@ public class PersonDto implements DtoConvertible {
     private String companyName;
     @NotEmpty(fieldName = "person.lastName")
     private String address;
+    @NotEmpty(fieldName = "person.isIranian")
+    private Boolean isIranian;
 
     @Override
     public <T> T toEntity(Class<T> targetType, JpaRepository repository) {

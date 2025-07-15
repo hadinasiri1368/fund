@@ -6,6 +6,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.model.BaseEntity;
+import org.fund.model.Fund;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -62,6 +64,8 @@ public class CacheAspect {
                                 .orElse(null);
                     } else if ("findAll".equals(methodName)) {
                         return cacheService.findAll((Class<?>) entity);
+                    } else if ("findAllByPage".equals(methodName)) {
+                        return cacheService.findAllByPage((Class<?>) entity, (Pageable) joinPoint.getArgs()[1]);
                     } else if ("batchInsert".equals(methodName)) {
                         cacheService.batchInsert((List<?>) entity, RequestContext.getUserId(), RequestContext.getUuid());
                         return null;

@@ -1,7 +1,10 @@
 package org.fund.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
+import org.fund.authentication.user.dto.PersonDto;
+import org.fund.baseInformation.customer.dto.CustomerDto;
 import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;
@@ -13,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@CacheableEntity
+//@CacheableEntity
 public class Person extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
@@ -60,4 +63,9 @@ public class Person extends BaseEntity implements Serializable {
     private Boolean isIranian;
     @Column(name = "REF_ID", columnDefinition = "NUMBER(18)")
     private Long refId;
+
+    public PersonDto toDto() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(this, PersonDto.class);
+    }
 }

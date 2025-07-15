@@ -19,6 +19,10 @@ import org.fund.exception.CustomerExceptionType;
 import org.fund.exception.FundException;
 import org.fund.model.*;
 import org.fund.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +41,7 @@ public class CustomerService {
     private final BankAccountService bankAccountService;
     private final GenericDtoMapper mapper;
 
-    public CustomerService(JpaRepository jpaRepository
-            , CalendarService calendarService
-            , ParamService paramService
-            , DetailLedgerService detailLedgerService
-            , GenericDtoMapper mapper
-            , BankAccountService bankAccountService
-    ) {
+    public CustomerService(JpaRepository jpaRepository, CalendarService calendarService, ParamService paramService, DetailLedgerService detailLedgerService, GenericDtoMapper mapper, BankAccountService bankAccountService) {
         this.repository = jpaRepository;
         this.calendarService = calendarService;
         this.paramService = paramService;
@@ -92,8 +90,7 @@ public class CustomerService {
 
     private void checkBeforUpdate(CustomerDto newCustomer, Fund fund, NavDataRec navDataRec) throws Exception {
         Customer oldCustomer = repository.findOne(Customer.class, newCustomer.getId());
-        if (oldCustomer.isSejam())
-            throw new FundException(CustomerExceptionType.CAN_NOT_EDIT_SEJAM_CUSTOMER);
+        if (oldCustomer.isSejam()) throw new FundException(CustomerExceptionType.CAN_NOT_EDIT_SEJAM_CUSTOMER);
 
         if (navDataRec.lastAppliedProfitDateNavCount() == 2L && navDataRec.nextWorkingDateAfterLastAppliedProfitDateNavCount() == 0)
             throw new FundException(CustomerExceptionType.CAN_NOT_EDIT_CUSTOMER_IN_APPLIED_PROFIT);
@@ -134,40 +131,38 @@ public class CustomerService {
     private NavDataRec getNavData(Fund fund) {
         String LastAppliedProfitDate = getLastAppliedProfitDate();
         String nextWorkingDateAfterLastAppliedProfitDate = calendarService.getNextWorkingDate(LastAppliedProfitDate);
-        String hql = "SELECT f.calcDate calcDate, COUNT(f) cnt " +
-                "FROM netAssetValue f " +
-                "WHERE f.calcDate IN (:dates) " +
-                "AND   f.fund.id = :fundId " +
-                "GROUP BY f.calcDate";
+        String hql = "SELECT f.calcDate calcDate, COUNT(f) cnt " + "FROM netAssetValue f " + "WHERE f.calcDate IN (:dates) " + "AND   f.fund.id = :fundId " + "GROUP BY f.calcDate";
         Map<String, Object> param = new HashMap();
         param.put("dates", Arrays.asList(LastAppliedProfitDate, nextWorkingDateAfterLastAppliedProfitDate));
         param.put("fundId", fund.getId());
         List<Map<String, Object>> list = repository.listMapByQuery(hql, param);
 
-        Long LastAppliedProfitDateNavCount = list.stream()
-                .filter(row -> LastAppliedProfitDate.equals(row.get("calcDate")))
-                .map(row -> (FundUtils.longValue(row.get("cnt"))))
-                .findFirst().orElse(0L);
+        Long LastAppliedProfitDateNavCount = list.stream().filter(row -> LastAppliedProfitDate.equals(row.get("calcDate"))).map(row -> (FundUtils.longValue(row.get("cnt")))).findFirst().orElse(0L);
 
-        Long nextWorkingDateAfterLastAppliedProfitDateNavCount = list.stream()
-                .filter(row -> LastAppliedProfitDate.equals(row.get("calcDate")))
-                .map(row -> (FundUtils.longValue(row.get("cnt"))))
-                .findFirst().orElse(0L);
+        Long nextWorkingDateAfterLastAppliedProfitDateNavCount = list.stream().filter(row -> LastAppliedProfitDate.equals(row.get("calcDate"))).map(row -> (FundUtils.longValue(row.get("cnt")))).findFirst().orElse(0L);
 
         return new NavDataRec(LastAppliedProfitDateNavCount, nextWorkingDateAfterLastAppliedProfitDateNavCount);
     }
 
     public List<Customer> list(Long id) {
-        if (FundUtils.isNull(id))
-            return repository.findAll(Customer.class);
-        return repository.findAll(Customer.class).stream()
-                .filter(a -> a.getId().equals(id)).toList();
+        if (FundUtils.isNull(id)) return repository.findAll(Customer.class);
+        return repository.findAll(Customer.class).stream().filter(a -> a.getId().equals(id)).toList();
+    }
+
+    @EntityGraph(attributePaths = {"detailLedger", "customerStatus", "customerBankAccount", "person"})
+    public List<CustomerDto> listDto(int page, int size) {
+        List<CustomerDto> list = new ArrayList<>();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Customer> customerList = repository.findAllByPage(Customer.class, pageable);
+        for (Customer customer : customerList.getContent()) {
+            list.add(customer.toDto());
+        }
+        return list;
     }
 
     public DetailLedger getDetailLedger(Long id) {
         Customer customer = repository.findOne(Customer.class, id);
-        String customerName = customer.getPerson().getIsCompany() ? customer.getPerson().getCompanyName() :
-                customer.getPerson().getFirstName() + " " + customer.getPerson().getLastName();
+        String customerName = customer.getPerson().getIsCompany() ? customer.getPerson().getCompanyName() : customer.getPerson().getFirstName() + " " + customer.getPerson().getLastName();
         if (FundUtils.isNull(customer.getDetailLedger()))
             throw new FundException(CustomerExceptionType.HAS_NOT_DETAILLEDGER, new Object[]{customerName});
         return customer.getDetailLedger();
@@ -175,8 +170,7 @@ public class CustomerService {
 
     public BankAccount getBankAccount(Long id) {
         Customer customer = repository.findOne(Customer.class, id);
-        String customerName = customer.getPerson().getIsCompany() ? customer.getPerson().getCompanyName() :
-                customer.getPerson().getFirstName() + " " + customer.getPerson().getLastName();
+        String customerName = customer.getPerson().getIsCompany() ? customer.getPerson().getCompanyName() : customer.getPerson().getFirstName() + " " + customer.getPerson().getLastName();
         if (FundUtils.isNull(customer.getDetailLedger()))
             throw new FundException(CustomerExceptionType.HAS_NOT_BANKACCOUNT, new Object[]{customerName});
         return customer.getCustomerBankAccount().getBankAccount();
@@ -203,10 +197,7 @@ public class CustomerService {
     }
 
     public void deleteCustomerBankAccount(Long customerBankAccountId, Long userId, String uuid) throws Exception {
-        Customer customer = repository.findAll(Customer.class).stream()
-                .filter(row -> !FundUtils.isNull(row.getCustomerBankAccount()) &&
-                        row.getCustomerBankAccount().getId().equals(customerBankAccountId))
-                .findFirst().orElse(null);
+        Customer customer = repository.findAll(Customer.class).stream().filter(row -> !FundUtils.isNull(row.getCustomerBankAccount()) && row.getCustomerBankAccount().getId().equals(customerBankAccountId)).findFirst().orElse(null);
         if (!FundUtils.isNull(customer)) {
             customer.setCustomerBankAccount(null);
             repository.update(customer, userId, uuid);
@@ -221,15 +212,11 @@ public class CustomerService {
     }
 
     private Long getCustomerBankAccountCount(Long customerId) {
-        return repository.findAll(CustomerBankAccount.class).stream()
-                .filter(a -> a.getCustomer().getId().equals(customerId))
-                .count();
+        return repository.findAll(CustomerBankAccount.class).stream().filter(a -> a.getCustomer().getId().equals(customerId)).count();
     }
 
     private Long insertDetailLedger(CustomerDto newCustomer, Fund fund, Long userId, String uuid) throws Exception {
-        String name = newCustomer.getPerson().getIsCompany() ?
-                newCustomer.getPerson().getCompanyName() :
-                newCustomer.getPerson().getLastName() + " " + newCustomer.getPerson().getFirstName();
+        String name = newCustomer.getPerson().getIsCompany() ? newCustomer.getPerson().getCompanyName() : newCustomer.getPerson().getLastName() + " " + newCustomer.getPerson().getFirstName();
         DetailLedger detailLedger = detailLedgerService.get(name, fund, DetailLedgerType.CUSTOMER);
         detailLedgerService.insert(detailLedger, userId, uuid);
         return detailLedger.getId();
@@ -241,8 +228,7 @@ public class CustomerService {
     }
 
     private void deleteCustomerBankAccountByCustomerId(Long customerId, Long userId, String uuid) throws Exception {
-        List<CustomerBankAccount> customerBankAccounts = repository.findAll(CustomerBankAccount.class).stream()
-                .filter(a -> a.getCustomer().getId().equals(customerId)).toList();
+        List<CustomerBankAccount> customerBankAccounts = repository.findAll(CustomerBankAccount.class).stream().filter(a -> a.getCustomer().getId().equals(customerId)).toList();
         repository.batchRemove(customerBankAccounts, userId, uuid);
     }
 

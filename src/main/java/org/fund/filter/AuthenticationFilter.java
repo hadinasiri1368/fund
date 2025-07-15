@@ -82,8 +82,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
                 checkTenant(request);
-                printLog(request, request.getAttribute(Consts.HEADER_UUID_PARAM_NAME).toString(), TenantContext.getCurrentTenant());
+                String startTime = LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
+                log.info(String.format("RequestURL: %s | Start Date : %s | uuid : %s | schemaId : %s", request.getRequestURL(), startTime, request.getAttribute(Consts.HEADER_UUID_PARAM_NAME).toString(), TenantContext.getCurrentTenant()));
                 filterChain.doFilter(request, response);
+                String endTime = LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
+                log.info(String.format("RequestURL: %s | Start Date : %s | End Date : %s | uuid : %s", request.getRequestURL(), startTime, endTime, request.getAttribute(Consts.HEADER_UUID_PARAM_NAME).toString()));
             }
         } catch (FundException e) {
             String currentTime = LocalDateTime.now()
@@ -152,16 +157,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         RequestContext.setUuid(uuid);
     }
 
-    private void printLog(HttpServletRequest request, String uuid, String tenantId) {
-        String startTime = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
-        log.info(String.format("RequestURL: %s | Start Date : %s | uuid : %s | schemaId : %s", request.getRequestURL(), startTime, uuid, tenantId));
-        String endTime = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern(Consts.GREGORIAN_DATE_FORMAT + " " + TimeFormat.HOUR_MINUTE_SECOND.getValue()));
-        log.info(String.format("RequestURL: %s | Start Date : %s | End Date : %s | uuid : %s", request.getRequestURL(), startTime, endTime, uuid));
-    }
-
-    private void setRequest(HttpServletRequest request){
+    private void setRequest(HttpServletRequest request) {
         String token = FundUtils.getToken(request);
         Users user = JwtUtil.getTokenData(token);
         RequestContext.setUser(user);

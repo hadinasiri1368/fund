@@ -9,6 +9,8 @@ import org.fund.repository.JpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -27,6 +29,11 @@ public class CacheService {
     @Cacheable(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
     public <ENTITY> List<ENTITY> findAll(Class<ENTITY> entityClass) {
         return jpaRepository.findAll(entityClass);
+    }
+
+    @Cacheable(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    public <ENTITY> Page<ENTITY> findAllByPage(Class<ENTITY> entityClass, Pageable pageable) {
+        return jpaRepository.findAllByPage(entityClass, pageable);
     }
 
     @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
