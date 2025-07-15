@@ -12,6 +12,7 @@ import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,14 +79,14 @@ public class CustomerController {
 
     @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/{customerId}/bankAccount/default/{accountId}")
     public void setCustomerDefaultBankAccount(@PathVariable("customerId") @NotEmpty(fieldName = "customerId")
-                                                            @ValidateField(fieldName = "customerId", entityClass = Customer.class) Long customerId,
+                                              @ValidateField(fieldName = "customerId", entityClass = Customer.class) Long customerId,
                                               @PathVariable("accountId") @NotEmpty(fieldName = "accountId")
-                                                            @ValidateField(fieldName = "accountId", entityClass = CustomerBankAccount.class) Long accountId) throws Exception {
+                                              @ValidateField(fieldName = "accountId", entityClass = CustomerBankAccount.class) Long accountId) throws Exception {
         service.setCustomerDefaultBankAccount(customerId, accountId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer")
-    public List<CustomerDto> getCustomerList(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
+    public Page<CustomerDto> getCustomerList(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
         return service.listDto(page, size);
     }
 }

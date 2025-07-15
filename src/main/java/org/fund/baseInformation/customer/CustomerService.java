@@ -20,6 +20,7 @@ import org.fund.exception.FundException;
 import org.fund.model.*;
 import org.fund.repository.JpaRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -149,15 +150,14 @@ public class CustomerService {
         return repository.findAll(Customer.class).stream().filter(a -> a.getId().equals(id)).toList();
     }
 
-    @EntityGraph(attributePaths = {"detailLedger", "customerStatus", "customerBankAccount", "person"})
-    public List<CustomerDto> listDto(int page, int size) {
+    public Page<CustomerDto> listDto(int page, int size) {
         List<CustomerDto> list = new ArrayList<>();
         Pageable pageable = PageRequest.of(page, size);
         Page<Customer> customerList = repository.findAllByPage(Customer.class, pageable);
         for (Customer customer : customerList.getContent()) {
             list.add(customer.toDto());
         }
-        return list;
+        return new PageImpl<>(list, pageable, customerList.getTotalElements());
     }
 
     public DetailLedger getDetailLedger(Long id) {

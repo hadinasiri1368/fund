@@ -27,7 +27,6 @@ public class CustomerDto implements DtoConvertible {
     @ValidateField(fieldName = "customerBankAccountId", entityClass = CustomerBankAccountDto.class)
     private Long customerBankAccountId;
     private PersonDto person;
-    private Long personId;
     private String comments;
     private boolean isSmsSend;
     private boolean isSejam;
