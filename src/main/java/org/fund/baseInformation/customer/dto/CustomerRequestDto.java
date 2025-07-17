@@ -10,14 +10,12 @@ import org.fund.model.*;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
-import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
-public class CustomerDto implements DtoConvertible {
+public class CustomerRequestDto implements DtoConvertible {
     private Long id;
     @ValidateField(fieldName = "detailLedgerId", entityClass = DetailLedger.class)
     private Long detailLedgerId;

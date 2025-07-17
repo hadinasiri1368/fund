@@ -1,16 +1,13 @@
 package org.fund.baseInformation.customer;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.fund.accounting.detailLedger.DetailLedgerService;
 import org.fund.accounting.detailLedger.constant.DetailLedgerType;
 import org.fund.administration.calendar.CalendarService;
-import org.fund.administration.params.ParamDto;
 import org.fund.administration.params.ParamService;
-import org.fund.authentication.permission.PermissionService;
 import org.fund.baseInformation.bankAccount.BankAccountService;
 import org.fund.baseInformation.customer.dto.CustomerBankAccountDto;
-import org.fund.baseInformation.customer.dto.CustomerDto;
+import org.fund.baseInformation.customer.dto.CustomerRequestDto;
+import org.fund.baseInformation.customer.dto.CustomerResponseDto;
 import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
@@ -19,11 +16,11 @@ import org.fund.exception.CustomerExceptionType;
 import org.fund.exception.FundException;
 import org.fund.model.*;
 import org.fund.repository.JpaRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,16 +47,20 @@ public class CustomerService {
         this.bankAccountService = bankAccountService;
         this.mapper = mapper;
     }
+    @Value("${PageRequest.page}")
+    private Integer page;
+    @Value("${PageRequest.size}")
+    private Integer size;
 
-    public void insert(CustomerDto customer, Fund fund, Long userId, String uuid) throws Exception {
+    public void insert(CustomerRequestDto customer, Fund fund, Long userId, String uuid) throws Exception {
         checkBeforInsert(customer, fund);
         repository.save(mapper.toEntity(Customer.class, customer), userId, uuid);
         customer.setDetailLedgerId(insertDetailLedger(customer, fund, userId, uuid));
     }
 
-    public void batchInsert(List<CustomerDto> customerList, Fund fund, Long userId, String uuid) throws Exception {
+    public void batchInsert(List<CustomerRequestDto> customerList, Fund fund, Long userId, String uuid) throws Exception {
         List<Customer> customers = new ArrayList<>();
-        for (CustomerDto customer : customerList) {
+        for (CustomerRequestDto customer : customerList) {
             checkBeforInsert(customer, fund);
             customer.setDetailLedgerId(insertDetailLedger(customer, fund, userId, uuid));
             customers.add(mapper.toEntity(Customer.class, customer));
@@ -67,18 +68,18 @@ public class CustomerService {
         repository.batchInsert(customers, userId, uuid);
     }
 
-    public void update(CustomerDto customer, Fund fund, Long userId, String uuid) throws Exception {
+    public void update(CustomerRequestDto customer, Fund fund, Long userId, String uuid) throws Exception {
         NavDataRec navDataRec = getNavData(fund);
         checkBeforUpdate(customer, fund, navDataRec);
         repository.update(mapper.toEntity(Customer.class, customer), userId, uuid);
     }
 
-    public void batchUpdate(List<CustomerDto> customerList, Fund fund, Long userId, String uuid) throws Exception {
+    public void batchUpdate(List<CustomerRequestDto> customerList, Fund fund, Long userId, String uuid) throws Exception {
         NavDataRec navDataRec = getNavData(fund);
         List<Customer> customers = new ArrayList<>();
-        for (CustomerDto customerDto : customerList) {
-            checkBeforUpdate(customerDto, fund, navDataRec);
-            customers.add(mapper.toEntity(Customer.class, customerDto));
+        for (CustomerRequestDto customerRequestDto : customerList) {
+            checkBeforUpdate(customerRequestDto, fund, navDataRec);
+            customers.add(mapper.toEntity(Customer.class, customerRequestDto));
         }
         repository.update(customers, userId, uuid);
     }
@@ -89,7 +90,7 @@ public class CustomerService {
         repository.removeById(Customer.class, customerId, userId, uuid);
     }
 
-    private void checkBeforUpdate(CustomerDto newCustomer, Fund fund, NavDataRec navDataRec) throws Exception {
+    private void checkBeforUpdate(CustomerRequestDto newCustomer, Fund fund, NavDataRec navDataRec) throws Exception {
         Customer oldCustomer = repository.findOne(Customer.class, newCustomer.getId());
         if (oldCustomer.isSejam()) throw new FundException(CustomerExceptionType.CAN_NOT_EDIT_SEJAM_CUSTOMER);
 
@@ -98,13 +99,13 @@ public class CustomerService {
         validateCustomer(newCustomer, fund);
     }
 
-    private void checkBeforInsert(CustomerDto newCustomer, Fund fund) {
+    private void checkBeforInsert(CustomerRequestDto newCustomer, Fund fund) {
         if (!paramService.getBooleanValue(fund, Consts.PARAMS_BO_CUST_REGISTER_MANUAL))
             throw new FundException(CustomerExceptionType.CAN_NOT_INSERT_CUSTOMER);
         validateCustomer(newCustomer, fund);
     }
 
-    private void validateCustomer(CustomerDto newCustomer, Fund fund) {
+    private void validateCustomer(CustomerRequestDto newCustomer, Fund fund) {
         if (!newCustomer.getPerson().getIsCompany()) {
             if (newCustomer.getPerson().getIsIranian()) {
                 if (newCustomer.getPerson().getBirthDate().compareTo(DateUtils.getTodayJalali()) > 0) {
@@ -145,17 +146,25 @@ public class CustomerService {
         return new NavDataRec(LastAppliedProfitDateNavCount, nextWorkingDateAfterLastAppliedProfitDateNavCount);
     }
 
-    public List<Customer> list(Long id) {
-        if (FundUtils.isNull(id)) return repository.findAll(Customer.class);
-        return repository.findAll(Customer.class).stream().filter(a -> a.getId().equals(id)).toList();
+    public List<CustomerResponseDto> list(Long id) {
+        List<Customer> customers = repository.findAll(Customer.class);
+        if (FundUtils.isNull(id)) {
+            return customers.stream().map(Customer::toResponseDto).toList();
+        }
+        return customers.stream()
+                .filter(customer -> customer.getId().equals(id))
+                .map(Customer::toResponseDto)
+                .toList();
     }
 
-    public Page<CustomerDto> listDto(int page, int size) {
-        List<CustomerDto> list = new ArrayList<>();
+    public Page<CustomerResponseDto> listDto(Integer page, Integer size) {
+        List<CustomerResponseDto> list = new ArrayList<>();
+        if (FundUtils.isNull(page) || page < 0) page = this.page;
+        if (FundUtils.isNull(size) || size <= 0) size = this.size;
         Pageable pageable = PageRequest.of(page, size);
         Page<Customer> customerList = repository.findAllByPage(Customer.class, pageable);
         for (Customer customer : customerList.getContent()) {
-            list.add(customer.toDto());
+            list.add(customer.toResponseDto());
         }
         return new PageImpl<>(list, pageable, customerList.getTotalElements());
     }
@@ -215,7 +224,7 @@ public class CustomerService {
         return repository.findAll(CustomerBankAccount.class).stream().filter(a -> a.getCustomer().getId().equals(customerId)).count();
     }
 
-    private Long insertDetailLedger(CustomerDto newCustomer, Fund fund, Long userId, String uuid) throws Exception {
+    private Long insertDetailLedger(CustomerRequestDto newCustomer, Fund fund, Long userId, String uuid) throws Exception {
         String name = newCustomer.getPerson().getIsCompany() ? newCustomer.getPerson().getCompanyName() : newCustomer.getPerson().getLastName() + " " + newCustomer.getPerson().getFirstName();
         DetailLedger detailLedger = detailLedgerService.get(name, fund, DetailLedgerType.CUSTOMER);
         detailLedgerService.insert(detailLedger, userId, uuid);

@@ -2,13 +2,10 @@ package org.fund.accounting.detailLedger;
 
 import org.fund.accounting.detailLedger.constant.DetailLedgerType;
 import org.fund.administration.params.ParamService;
-import org.fund.baseInformation.customer.dto.CustomerDto;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
-import org.fund.model.Customer;
 import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
-import org.fund.model.FundBranch;
 import org.fund.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
