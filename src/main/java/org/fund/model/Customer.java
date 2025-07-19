@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
-import org.fund.baseInformation.customer.dto.CustomerDto;
+import org.fund.baseInformation.customer.dto.CustomerRequestDto;
+import org.fund.baseInformation.customer.dto.CustomerResponseDto;
 import org.fund.common.FundUtils;
-import org.fund.config.cache.CacheableEntity;
 
 @Table(name = "AHA_CUSTOMER")
 @Entity(name = "customer")
@@ -50,14 +50,45 @@ public class Customer extends BaseEntity {
     @Column(columnDefinition = "NUMBER(1)", name = "IS_EPAYMENT_CUSTOMER")
     private boolean isEpaymentCustomer;
 
-    public CustomerDto toDto() {
+    public CustomerRequestDto toDto() {
         ObjectMapper objectMapper = new ObjectMapper();
-        CustomerDto customerDto = objectMapper.convertValue(this, CustomerDto.class);
-        customerDto.setDetailLedgerId(detailLedger.getId());
-        customerDto.setCustomerStatusId(customerStatus.getId());
+        CustomerRequestDto customerRequestDto = objectMapper.convertValue(this, CustomerRequestDto.class);
+        customerRequestDto.setDetailLedgerId(detailLedger.getId());
+        customerRequestDto.setCustomerStatusId(customerStatus.getId());
         if (!FundUtils.isNull(customerBankAccount))
-            customerDto.setCustomerBankAccountId(customerBankAccount.getId());
-        customerDto.setPerson(person.toDto());
-        return customerDto;
+            customerRequestDto.setCustomerBankAccountId(customerBankAccount.getId());
+        customerRequestDto.setPerson(person.toDto());
+        return customerRequestDto;
+    }
+
+    public CustomerResponseDto toResponseDto() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CustomerResponseDto customerResponseDto = objectMapper.convertValue(this, CustomerResponseDto.class);
+        customerResponseDto.setId(id);
+        if (!FundUtils.isNull(detailLedger)) {
+            customerResponseDto.setDetailLedgerId(detailLedger.getId());
+            customerResponseDto.setDlNumber(detailLedger.getCode());
+        }
+        if (!FundUtils.isNull(customerStatus)) {
+            customerResponseDto.setCustomerStatusId(customerStatus.getId());
+            customerResponseDto.setCustomerStatusName(customerStatus.getName());
+        }
+        if (!FundUtils.isNull(customerBankAccount)) {
+            customerResponseDto.setCustomerBankAccountId(customerBankAccount.getId());
+            customerResponseDto.setCustomerBankName(customerBankAccount.getBankAccount().getBank().getName());
+            customerResponseDto.setAccountNumber(customerBankAccount.getBankAccount().getAccountNumber());
+            customerResponseDto.setShabaNumber(customerBankAccount.getBankAccount().getShabaNumber());
+        }
+        if (!FundUtils.isNull(person)) {
+            customerResponseDto.setPerson(person.toDto());
+        }
+        customerResponseDto.setComments(comments);
+        customerResponseDto.setSmsSend(isSmsSend);
+        customerResponseDto.setSejam(isSejam);
+        customerResponseDto.setProfitRate(profitRate);
+        customerResponseDto.setProfitIssue(isProfitIssue);
+        customerResponseDto.setVat(isVat);
+        customerResponseDto.setEpaymentCustomer(isEpaymentCustomer);
+        return customerResponseDto;
     }
 }

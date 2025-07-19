@@ -52,3 +52,7 @@ authentication:
 
 corsConfig:
   allowedOrigin: http://localhost:${server.port}
+
+PageRequest:
+  page: 0
+  size: 10

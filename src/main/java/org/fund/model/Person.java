@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
 import org.fund.authentication.user.dto.PersonDto;
-import org.fund.baseInformation.customer.dto.CustomerDto;
-import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;
 
