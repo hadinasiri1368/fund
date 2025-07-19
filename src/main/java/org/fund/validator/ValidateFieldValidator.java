@@ -22,39 +22,44 @@ public class ValidateFieldValidator implements ConstraintValidator<ValidateField
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
+        boolean valid = true;
         if (FundUtils.isNull(value)) {
             return true;
         }
-
-        try {
-            if (entityClass.isAnnotationPresent(CacheableEntity.class)) {
-                List<?> list = jpaRepository.findAll(annotation.entityClass());
-
+        if (entityClass.isAnnotationPresent(CacheableEntity.class)) {
+            List<?> list = jpaRepository.findAll(annotation.entityClass());
+            try {
                 for (Object entity : list) {
-                    Object fieldValue = getFieldValue(entity, fieldName);
-                    if (isValueMatch(fieldValue, value)) {
+                    Field field = getFieldFromClassHierarchy(entity.getClass(), fieldName);
+                    field.setAccessible(true);
+                    Object fieldValue = field.get(entity);
+                    if (!FundUtils.isNull(fieldValue) && fieldValue.toString().equals(value.toString())) {
                         return true;
                     }
                 }
-            } else {
-                Object entity = jpaRepository.findOne(entityClass, FundUtils.longValue(value));
-                if (entity != null) {
-                    Object fieldValue = getFieldValue(entity, fieldName);
-                    if (isValueMatch(fieldValue, value)) {
-                        return true;
-                    }
-                }
+                valid = false;
+            } catch (Exception e) {
+                valid = false;
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        } else {
+            try {
+                Object object = jpaRepository.findOne(entityClass, FundUtils.longValue(value));
+                Field field = getFieldFromClassHierarchy(entityClass, fieldName);
+                field.setAccessible(true);
+                Object fieldValue = field.get(object);
+                if (!FundUtils.isNull(fieldValue) && fieldValue.toString().equals(value.toString())) {
+                    return true;
+                }
+            } catch (Exception e) {
+                valid = false;
+            }
         }
-
-        context.disableDefaultConstraintViolation();
-        context.buildConstraintViolationWithTemplate(
-                annotation.message() + "&" + annotation.fieldName()
-        ).addConstraintViolation();
-
-        return false;
+        if (!valid) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(annotation.message() + "&" + annotation.fieldName()).addConstraintViolation();
+            return false;
+        }
+        return true;
     }
 
 
@@ -70,16 +75,5 @@ public class ValidateFieldValidator implements ConstraintValidator<ValidateField
         }
         throw new NoSuchFieldException("Field '" + fieldName + "' not found in class hierarchy.");
     }
-
-    private Object getFieldValue(Object entity, String fieldName) throws Exception {
-        Field field = getFieldFromClassHierarchy(entity.getClass(), fieldName);
-        field.setAccessible(true);
-        return field.get(entity);
-    }
-
-    private boolean isValueMatch(Object fieldValue, Object value) {
-        return fieldValue != null && value != null && fieldValue.toString().equals(value.toString());
-    }
-
 
 }
