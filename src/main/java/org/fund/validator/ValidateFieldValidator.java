@@ -12,12 +12,15 @@ import java.util.List;
 @Slf4j
 public class ValidateFieldValidator implements ConstraintValidator<ValidateField, Object> {
     private ValidateField annotation;
-    private Class<?> entityClass;
-    private String fieldName;
     private final JpaRepository jpaRepository;
 
     public ValidateFieldValidator(JpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
+    }
+
+    @Override
+    public void initialize(ValidateField constraintAnnotation) {
+        this.annotation = constraintAnnotation;
     }
 
     @Override
@@ -26,11 +29,11 @@ public class ValidateFieldValidator implements ConstraintValidator<ValidateField
         if (FundUtils.isNull(value)) {
             return true;
         }
-        if (entityClass.isAnnotationPresent(CacheableEntity.class)) {
+        if (annotation.entityClass().isAnnotationPresent(CacheableEntity.class)) {
             List<?> list = jpaRepository.findAll(annotation.entityClass());
             try {
                 for (Object entity : list) {
-                    Field field = getFieldFromClassHierarchy(entity.getClass(), fieldName);
+                    Field field = getFieldFromClassHierarchy(entity.getClass(), annotation.fieldName());
                     field.setAccessible(true);
                     Object fieldValue = field.get(entity);
                     if (!FundUtils.isNull(fieldValue) && fieldValue.toString().equals(value.toString())) {
@@ -43,8 +46,8 @@ public class ValidateFieldValidator implements ConstraintValidator<ValidateField
             }
         } else {
             try {
-                Object object = jpaRepository.findOne(entityClass, FundUtils.longValue(value));
-                Field field = getFieldFromClassHierarchy(entityClass, fieldName);
+                Object object = jpaRepository.findOne(annotation.entityClass(), FundUtils.longValue(value));
+                Field field = getFieldFromClassHierarchy(annotation.entityClass(), annotation.fieldName());
                 field.setAccessible(true);
                 Object fieldValue = field.get(object);
                 if (!FundUtils.isNull(fieldValue) && fieldValue.toString().equals(value.toString())) {

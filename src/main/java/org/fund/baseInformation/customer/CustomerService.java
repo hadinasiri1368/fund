@@ -147,14 +147,11 @@ public class CustomerService {
     }
 
     public List<CustomerResponseDto> list(Long id) {
-        List<Customer> customers = repository.findAll(Customer.class);
         if (FundUtils.isNull(id)) {
+        List<Customer> customers = repository.findAll(Customer.class);
             return customers.stream().map(Customer::toResponseDto).toList();
         }
-        return customers.stream()
-                .filter(customer -> customer.getId().equals(id))
-                .map(Customer::toResponseDto)
-                .toList();
+        return List.of(repository.findOne(Customer.class,id).toResponseDto());
     }
 
     public Page<CustomerResponseDto> listDto(Integer page, Integer size) {
