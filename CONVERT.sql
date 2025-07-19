@@ -801,19 +801,19 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (101, 'ثبت حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount/add', 1)
+    (101, 'ثبت حساب بانکی نهاد های مالی', '/baseInformation/financialInstitution/add', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (103, 'حذف حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount/remove', 1)
+    (103, 'حذف حساب بانکی نهاد های مالی', '/baseInformation/financialInstitution/remove', 1)
     /
 
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (104, 'نمایش حساب بانکی نهاد های مالی', '/baseInformation/financialInstitutionBankAccount', 1)
+    (104, 'نمایش حساب بانکی نهاد های مالی', '/baseInformation/financialInstitution', 1)
     /
 
 Insert into AHA_PERMISSION
@@ -1252,11 +1252,17 @@ ON (tc.customer_id = ac.id)
 UPDATE SET ac.f_customer_bank_account_id = tc.bank_account_id
 /
 ----------------------------------------------------------------------------------------------------
-INSERT INTO AHA_FINANCIAL_INSTITUTION_BANK_ACCOUNT
-select ROWNUM,dlt.name || ' - ' || dl.name ,dlba.dl_bank_account_id,DL_ID,NULL,NULL,NULL,NULL
+INSERT INTO AHA_FINANCIAL_INSTITUTION
+select dlba.dl_bank_account_id,dlt.name || ' - ' || dl.name ,dlba.dl_id,c.f_person_id,NULL,NULL,NULL,NULL
 from  detail_ledger_bank_account dlba
           inner join aha_detail_ledger dl on dl.id=dlba.dl_id
           inner join aha_detail_ledger_type dlt on dlt.id=dl.f_detail_ledger_type_id
+          left  join financial_company fc on fc.dl_bank_account_id=dlba.dl_bank_account_id
+          left  join aha_customer c on c.id=fc.customer_id
+/
+----------------------------------------------------------------------------------------------------
+insert into AHA_FINANCIAL_INSTITUTION_BANK_ACCOUNT
+select rownum,dlba.dl_bank_account_id,dlba.dl_bank_account_id,dlba.is_active,null,null,null,null from  detail_ledger_bank_account dlba
 /
 ----------------------------------------------------------------------------------------------------
 insert into AHA_TRADABLE_ITEM_DETAIL_LEDGER

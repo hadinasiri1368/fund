@@ -1,14 +1,12 @@
 package org.fund.baseInformation.tradableItem;
 
 import org.fund.administration.fund.FundService;
-import org.fund.baseInformation.financialInstitutionBankAccount.FinancialInstitutionBankAccountDto;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.dto.GenericDtoMapper;
 import org.fund.exception.FundException;
 import org.fund.exception.GeneralExceptionType;
-import org.fund.model.FinancialInstitutionBankAccount;
 import org.fund.model.TradableItemDetailLedger;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @Validated

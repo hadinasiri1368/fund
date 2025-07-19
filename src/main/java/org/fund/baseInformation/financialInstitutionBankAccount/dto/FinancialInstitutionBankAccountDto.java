@@ -1,15 +1,15 @@
-package org.fund.baseInformation.financialInstitutionBankAccount;
+package org.fund.baseInformation.financialInstitutionBankAccount.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import org.fund.baseInformation.bankAccount.BankAccountDto;
+import org.fund.common.FundUtils;
 import org.fund.dto.DtoConvertible;
 import org.fund.model.*;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -17,11 +17,12 @@ import java.util.List;
 @Setter
 public class FinancialInstitutionBankAccountDto implements DtoConvertible {
     private Long id;
-    @NotEmpty(fieldName = "name")
-    private String name;
+    @ValidateField(fieldName = "financialInstitutionId", entityClass = FinancialInstitutionRequestDto.class)
+    private Long financialInstitutionId;
+    @ValidateField(fieldName = "bankAccountId", entityClass = BankAccount.class)
     private BankAccountDto bankAccount;
-    @NotEmpty(fieldName = "detailLedgerTypeId")
-    private Long detailLedgerTypeId;
+    @NotEmpty(fieldName = "isActive")
+    private Boolean isActive;
 
     @Override
     public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
@@ -29,7 +30,8 @@ public class FinancialInstitutionBankAccountDto implements DtoConvertible {
         T entity = objectMapper.convertValue(this, targetType);
 
         if (entity instanceof FinancialInstitutionBankAccount financialInstitutionBankAccount) {
-            financialInstitutionBankAccount.setBankAccount(getBankAccount(repository, bankAccount));
+            if (!FundUtils.isNull(bankAccount) && !FundUtils.isNull(bankAccount.getId()))
+                financialInstitutionBankAccount.setBankAccount(getBankAccount(repository, bankAccount.getId()));
         }
 
         return entity;
@@ -40,8 +42,7 @@ public class FinancialInstitutionBankAccountDto implements DtoConvertible {
         return List.of();
     }
 
-    private BankAccount getBankAccount(JpaRepository repository, BankAccountDto bankAccount) {
-        return repository.findOne(BankAccount.class, bankAccount.getId());
+    private BankAccount getBankAccount(JpaRepository repository, Long bankAccountId) {
+        return repository.findOne(BankAccount.class, bankAccountId);
     }
-
 }

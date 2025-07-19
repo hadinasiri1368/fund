@@ -1,7 +1,10 @@
 package org.fund.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
+import org.fund.accounting.detailLedger.DetailLedgerDto;
+import org.fund.baseInformation.financialInstitutionBankAccount.dto.FinancialInstitutionResponseDto;
 import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;
@@ -27,4 +30,9 @@ public class DetailLedger extends BaseEntity implements Serializable {
     private DetailLedgerType detailLedgerType;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_ACTIVE", nullable = false)
     private Boolean isActive;
+
+    public DetailLedgerDto toDto() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(this, DetailLedgerDto.class);
+    }
 }
