@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 public class RolePermissionDto implements DtoConvertible {
-
+    private Long id;
     @NotEmpty(fieldName = "roleId")
     @ValidateField(fieldName = "roleId", entityClass = Role.class)
     private Long roleId;

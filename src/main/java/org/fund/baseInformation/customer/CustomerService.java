@@ -5,9 +5,10 @@ import org.fund.accounting.detailLedger.constant.DetailLedgerType;
 import org.fund.administration.calendar.CalendarService;
 import org.fund.administration.params.ParamService;
 import org.fund.baseInformation.bankAccount.BankAccountService;
-import org.fund.baseInformation.customer.dto.CustomerBankAccountDto;
-import org.fund.baseInformation.customer.dto.CustomerRequestDto;
-import org.fund.baseInformation.customer.dto.CustomerResponseDto;
+import org.fund.baseInformation.customer.dto.response.CustomerBankAccountResponseDto;
+import org.fund.baseInformation.customer.dto.request.CustomerBankAccountRequestDto;
+import org.fund.baseInformation.customer.dto.request.CustomerRequestDto;
+import org.fund.baseInformation.customer.dto.response.CustomerResponseDto;
 import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
@@ -183,7 +184,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public void saveCustomerBankAccount(CustomerBankAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
+    public void saveCustomerBankAccount(CustomerBankAccountRequestDto customerBankAccount, Long userId, String uuid) throws Exception {
         BankAccount bankAccount = mapper.toEntity(BankAccount.class, customerBankAccount.getBankAccount());
         bankAccountService.insert(bankAccount, userId, uuid);
         Long customerBankAccountCount = getCustomerBankAccountCount(customerBankAccount.getCustomerId());
@@ -198,7 +199,7 @@ public class CustomerService {
         }
     }
 
-    public void updateCustomerBankAccount(CustomerBankAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
+    public void updateCustomerBankAccount(CustomerBankAccountResponseDto customerBankAccount, Long userId, String uuid) throws Exception {
         repository.save(mapper.toEntity(CustomerBankAccount.class, customerBankAccount), userId, uuid);
     }
 
@@ -234,12 +235,24 @@ public class CustomerService {
     }
 
     private void deleteCustomerBankAccountByCustomerId(Long customerId, Long userId, String uuid) throws Exception {
-        List<CustomerBankAccount> customerBankAccounts = repository.findAll(CustomerBankAccount.class).stream().filter(a -> a.getCustomer().getId().equals(customerId)).toList();
-        repository.batchRemove(customerBankAccounts, userId, uuid);
+        List<CustomerBankAccount> customerBankAccounts = repository.findBy(CustomerBankAccount.class, "customer.id", customerId);
+        if (!FundUtils.isNull(customerBankAccounts)) {
+            repository.batchRemove(customerBankAccounts, userId, uuid);
+        }
     }
 
     private String getLastAppliedProfitDate() {
         throw new RuntimeException("AppliedProfit has not been launched yet");
     }
 
+    public CustomerBankAccountResponseDto getCustomerBankAccount(Long customerId) {
+        List<CustomerBankAccount> customerBankAccounts = repository.findBy(CustomerBankAccount.class, "customer.id", customerId);
+        if (FundUtils.isNull(customerBankAccounts)) {
+            throw new FundException(CustomerExceptionType.HAS_NOT_BANKACCOUNT, new Object[]{customerId});
+        }
+        CustomerBankAccountResponseDto customerBankAccountDto = new CustomerBankAccountResponseDto();
+        customerBankAccountDto.setCustomerId(customerId);
+        customerBankAccountDto.setBankAccountIds(customerBankAccounts.stream().map(a -> a.getBankAccount().getId()).toList());
+        return customerBankAccountDto;
+    }
 }

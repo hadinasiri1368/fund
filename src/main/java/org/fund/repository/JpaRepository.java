@@ -384,4 +384,14 @@ public class JpaRepository {
         Method m = entity.getClass().getMethod("getId");
         return (Long) m.invoke(entity);
     }
+
+    public <ENTITY> List<ENTITY> findBy(Class<ENTITY> entityClass, String fieldName, Object value) {
+        String entityName = entityClass.isAnnotationPresent(Entity.class) && !entityClass.getAnnotation(Entity.class).name().isEmpty()
+                ? entityClass.getAnnotation(Entity.class).name()
+                : entityClass.getSimpleName();
+        String jpql = "SELECT e FROM " + entityName + " e WHERE e." + fieldName + " = :value";
+        return entityManager.createQuery(jpql, entityClass)
+                .setParameter("value", value)
+                .getResultList();
+    }
 }

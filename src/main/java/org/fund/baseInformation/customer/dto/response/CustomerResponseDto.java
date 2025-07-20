@@ -1,4 +1,4 @@
-package org.fund.baseInformation.customer.dto;
+package org.fund.baseInformation.customer.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,6 @@
-package org.fund.baseInformation.customer.dto;
+package org.fund.baseInformation.customer.dto.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.fund.baseInformation.bankAccount.BankAccountDto;
@@ -9,16 +8,14 @@ import org.fund.dto.DtoConvertible;
 import org.fund.model.BankAccount;
 import org.fund.model.Customer;
 import org.fund.model.CustomerBankAccount;
-import org.fund.model.DetailLedger;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 
 import java.util.List;
-
 @Getter
 @Setter
-public class CustomerBankAccountDto implements DtoConvertible {
+public class CustomerBankAccountRequestDto  implements DtoConvertible  {
     private Long id;
     @NotEmpty(fieldName = "customerId")
     @ValidateField(fieldName = "customerId", entityClass = Customer.class)
@@ -54,3 +51,4 @@ public class CustomerBankAccountDto implements DtoConvertible {
         return repository.findOne(BankAccount.class, bankAccount.getId());
     }
 }
+

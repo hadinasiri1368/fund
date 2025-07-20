@@ -1,9 +1,10 @@
-package org.fund.baseInformation.customer.dto;
+package org.fund.baseInformation.customer.dto.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 import org.fund.authentication.user.dto.PersonDto;
+import org.fund.baseInformation.customer.dto.response.CustomerBankAccountResponseDto;
 import org.fund.common.FundUtils;
 import org.fund.dto.DtoConvertible;
 import org.fund.model.*;
@@ -22,7 +23,7 @@ public class CustomerRequestDto implements DtoConvertible {
     @ValidateField(fieldName = "customerStatusId", entityClass = CustomerStatus.class)
     @NotEmpty(fieldName = "customerStatusId")
     private Long customerStatusId;
-    @ValidateField(fieldName = "customerBankAccountId", entityClass = CustomerBankAccountDto.class)
+    @ValidateField(fieldName = "customerBankAccountId", entityClass = CustomerBankAccountResponseDto.class)
     private Long customerBankAccountId;
     private PersonDto person;
     private String comments;

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
-import org.fund.baseInformation.customer.dto.CustomerRequestDto;
-import org.fund.baseInformation.customer.dto.CustomerResponseDto;
+import org.fund.baseInformation.customer.dto.request.CustomerRequestDto;
+import org.fund.baseInformation.customer.dto.response.CustomerResponseDto;
 import org.fund.common.FundUtils;
 
 @Table(name = "AHA_CUSTOMER")

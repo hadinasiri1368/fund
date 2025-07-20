@@ -10,9 +10,12 @@ import org.fund.model.Fund;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Aspect
 @Component
@@ -75,7 +78,14 @@ public class CacheAspect {
                     } else if ("batchRemove".equals(methodName)) {
                         cacheService.batchRemove((List<?>) entity, RequestContext.getUserId(), RequestContext.getUuid());
                         return null;
+                    } else if ("findBy".equals(methodName)) {
+                        String filedName = joinPoint.getArgs()[1].toString();
+                        String value = joinPoint.getArgs()[2].toString();
+                        return cacheService.findAll((Class<?>) entity).stream()
+                                .filter(a -> getFieldValue(a, filedName).toString().equals(value))
+                                .toList();
                     }
+
                 }
             }
             return joinPoint.proceed();
@@ -85,12 +95,28 @@ public class CacheAspect {
     }
 
     private <ENTITY> Long getId(ENTITY entity) {
+        return FundUtils.longValue(getFieldValue(entity, "id"));
+    }
+
+    private <ENTITY> Object getFieldValue(ENTITY entity, String fieldPath) {
         try {
-            Method m = entity.getClass().getMethod("getId");
-            return (Long) m.invoke(entity);
+            String[] fields = fieldPath.split("\\.");
+            Object currentObject = entity;
+            for (String fieldName : fields) {
+                if (currentObject == null)
+                    return null;
+                Method getter = currentObject.getClass()
+                        .getMethod("get" + capitalizeFirstLetter(fieldName));
+                currentObject = getter.invoke(currentObject);
+            }
+            return currentObject;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private String capitalizeFirstLetter(String str) {
+        return str.isEmpty() ? str : str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
 

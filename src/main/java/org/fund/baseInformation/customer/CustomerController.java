@@ -1,9 +1,10 @@
 package org.fund.baseInformation.customer;
 
 import org.fund.administration.fund.FundService;
-import org.fund.baseInformation.customer.dto.CustomerBankAccountDto;
-import org.fund.baseInformation.customer.dto.CustomerRequestDto;
-import org.fund.baseInformation.customer.dto.CustomerResponseDto;
+import org.fund.baseInformation.customer.dto.request.CustomerBankAccountRequestDto;
+import org.fund.baseInformation.customer.dto.response.CustomerBankAccountResponseDto;
+import org.fund.baseInformation.customer.dto.request.CustomerRequestDto;
+import org.fund.baseInformation.customer.dto.response.CustomerResponseDto;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
 import org.fund.model.Customer;
@@ -60,12 +61,12 @@ public class CustomerController {
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccount/add")
-    public void insert(@RequestBody CustomerBankAccountDto customerBankAccountDto) throws Exception {
-        service.saveCustomerBankAccount(customerBankAccountDto, RequestContext.getUserId(), RequestContext.getUuid());
+    public void insert(@RequestBody CustomerBankAccountRequestDto customerBankAccount) throws Exception {
+        service.saveCustomerBankAccount(customerBankAccount, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccount/edit")
-    public void edit(@RequestBody CustomerBankAccountDto customerBankAccountDto) throws Exception {
+    public void edit(@RequestBody CustomerBankAccountResponseDto customerBankAccountDto) throws Exception {
         service.updateCustomerBankAccount(customerBankAccountDto, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
@@ -86,5 +87,10 @@ public class CustomerController {
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer")
     public Page<CustomerResponseDto> getCustomerList(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
         return service.listDto(page, size);
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccount/{customerId}")
+    public CustomerBankAccountResponseDto getCustomerBankAccountList(@PathVariable("customerId") @ValidateField(fieldName = "id", entityClass = Customer.class) Long customerId) {
+        return service.getCustomerBankAccount(customerId);
     }
 }

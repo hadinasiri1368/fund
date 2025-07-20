@@ -7,13 +7,13 @@ import org.fund.config.cache.CacheableEntity;
 import java.io.Serializable;
 
 @Table(name = "AHA_CUSTOMER_BANK_ACCOUNT")
-@Entity(name = "customerBankAccount")
+@Entity(name = "CustomerBankAccount")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@CacheableEntity
+//@CacheableEntity
 public class CustomerBankAccount extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
