@@ -4,9 +4,9 @@ import org.fund.accounting.detailLedger.DetailLedgerService;
 import org.fund.accounting.detailLedger.constant.DetailLedgerType;
 import org.fund.administration.calendar.CalendarService;
 import org.fund.administration.params.ParamService;
+import org.fund.baseInformation.bankAccount.BankAccountDto;
 import org.fund.baseInformation.bankAccount.BankAccountService;
-import org.fund.baseInformation.customer.dto.response.CustomerBankAccountResponseDto;
-import org.fund.baseInformation.customer.dto.request.CustomerBankAccountRequestDto;
+import org.fund.baseInformation.customer.dto.CustomerBAnkAccountDto;
 import org.fund.baseInformation.customer.dto.request.CustomerRequestDto;
 import org.fund.baseInformation.customer.dto.response.CustomerResponseDto;
 import org.fund.common.DateUtils;
@@ -184,11 +184,14 @@ public class CustomerService {
     }
 
     @Transactional
-    public void saveCustomerBankAccount(CustomerBankAccountRequestDto customerBankAccount, Long userId, String uuid) throws Exception {
-        BankAccount bankAccount = mapper.toEntity(BankAccount.class, customerBankAccount.getBankAccount());
+    public void saveCustomerBankAccount(CustomerBAnkAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
+        if (customerBankAccount.getBankAccounts().size()>1){
+            throw new FundException(CustomerExceptionType.CAN_NOT_INSERT_MORE_THAN_ONE_BANK_ACCOUNT);
+        }
+        BankAccount bankAccount = mapper.toEntity(BankAccount.class, customerBankAccount.getBankAccounts().get(0));
         bankAccountService.insert(bankAccount, userId, uuid);
         Long customerBankAccountCount = getCustomerBankAccountCount(customerBankAccount.getCustomerId());
-        boolean isFirst = FundUtils.isNull(customerBankAccount.getId()) && customerBankAccountCount == 0L ? true : false;
+        boolean isFirst = FundUtils.isNull(customerBankAccount.getId()) && customerBankAccountCount == 0L;
         CustomerBankAccount cba = mapper.toEntity(CustomerBankAccount.class, customerBankAccount);
         cba.setBankAccount(bankAccount);
         repository.save(cba, userId, uuid);
@@ -199,7 +202,7 @@ public class CustomerService {
         }
     }
 
-    public void updateCustomerBankAccount(CustomerBankAccountResponseDto customerBankAccount, Long userId, String uuid) throws Exception {
+    public void updateCustomerBankAccount(CustomerBAnkAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
         repository.save(mapper.toEntity(CustomerBankAccount.class, customerBankAccount), userId, uuid);
     }
 
@@ -245,14 +248,18 @@ public class CustomerService {
         throw new RuntimeException("AppliedProfit has not been launched yet");
     }
 
-    public CustomerBankAccountResponseDto getCustomerBankAccount(Long customerId) {
+    public CustomerBAnkAccountDto getCustomerBankAccount(Long customerId) {
         List<CustomerBankAccount> customerBankAccounts = repository.findBy(CustomerBankAccount.class, "customer.id", customerId);
+        List<BankAccountDto> bankAccountDtos=new ArrayList<>();
         if (FundUtils.isNull(customerBankAccounts)) {
             throw new FundException(CustomerExceptionType.HAS_NOT_BANKACCOUNT, new Object[]{customerId});
         }
-        CustomerBankAccountResponseDto customerBankAccountDto = new CustomerBankAccountResponseDto();
+        CustomerBAnkAccountDto customerBankAccountDto = new CustomerBAnkAccountDto();
         customerBankAccountDto.setCustomerId(customerId);
-        customerBankAccountDto.setBankAccountIds(customerBankAccounts.stream().map(a -> a.getBankAccount().getId()).toList());
+        for (CustomerBankAccount customerBankAccount : customerBankAccounts) {
+            bankAccountDtos.add(customerBankAccount.getBankAccount().toDto());
+        }
+        customerBankAccountDto.setBankAccounts(bankAccountDtos);
         return customerBankAccountDto;
     }
 }

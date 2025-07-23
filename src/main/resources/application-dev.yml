@@ -11,7 +11,7 @@ spring:
   jpa:
     hibernate.ddl-auto: none
     generate-ddl: false
-    show-sql: false
+    show-sql: true
     show-manual-log: true
   tenant-datasource:
     minimum-idle: 2

@@ -1,5 +1,6 @@
 package org.fund.baseInformation.bankAccount;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,16 +16,17 @@ import java.util.List;
 
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BankAccountDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "isActive")
     private Boolean isActive;
     @NotEmpty(fieldName = "bankAccountTypeId")
     @ValidateField(fieldName = "bankAccountTypeId",entityClass = BankAccountType.class)
-    private Long bankAccountTypeId;
+    private BankAccountTypeDto bankAccountType;
     @NotEmpty(fieldName = "bankId")
     @ValidateField(fieldName = "bankId",entityClass = Bank.class)
-    private Long bankId;
+    private  BankDto bank;
     @NotEmpty(fieldName = "accountNumber")
     private String accountNumber;
     private Long annualinterest;

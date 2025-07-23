@@ -1,10 +1,14 @@
 package org.fund.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
 import org.fund.authentication.user.dto.PersonDto;
 import org.fund.baseInformation.bankAccount.BankAccountDto;
+import org.fund.baseInformation.bankAccount.BankAccountTypeDto;
+import org.fund.baseInformation.bankAccount.BankDto;
+import org.fund.common.FundUtils;
 import org.fund.config.cache.CacheableEntity;
 import org.fund.model.view.external.Bank;
 
@@ -39,6 +43,15 @@ public class BankAccount extends BaseEntity implements Serializable {
 
     public BankAccountDto toDto() {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(this, BankAccountDto.class);
+        BankAccountDto bankAccountDto = objectMapper.convertValue(this, BankAccountDto.class);
+        if (!FundUtils.isNull(bankAccountType)) {
+            BankAccountTypeDto bankAccountTypeDto = bankAccountType.toDto();
+            bankAccountDto.setBankAccountType(bankAccountTypeDto);
+        }
+        if (!FundUtils.isNull(bank)) {
+            BankDto bankDto = bank.toDto();
+            bankAccountDto.setBank(bankDto);
+        }
+        return bankAccountDto;
     }
 }

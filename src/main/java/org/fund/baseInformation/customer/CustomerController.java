@@ -1,14 +1,19 @@
 package org.fund.baseInformation.customer;
 
 import org.fund.administration.fund.FundService;
-import org.fund.baseInformation.customer.dto.request.CustomerBankAccountRequestDto;
-import org.fund.baseInformation.customer.dto.response.CustomerBankAccountResponseDto;
+import org.fund.baseInformation.bankAccount.BankAccountService;
+import org.fund.baseInformation.bankAccount.BankAccountTypeDto;
+import org.fund.baseInformation.bankAccount.BankDto;
+import org.fund.baseInformation.customer.dto.CustomerBAnkAccountDto;
 import org.fund.baseInformation.customer.dto.request.CustomerRequestDto;
 import org.fund.baseInformation.customer.dto.response.CustomerResponseDto;
+import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;
+import org.fund.model.BankAccountType;
 import org.fund.model.Customer;
 import org.fund.model.CustomerBankAccount;
+import org.fund.model.view.external.Bank;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 import org.springframework.data.domain.Page;
@@ -23,10 +28,12 @@ import java.util.List;
 public class CustomerController {
     private final CustomerService service;
     private final FundService fundService;
+    private final BankAccountService bankAccountService;
 
-    public CustomerController(CustomerService service, FundService fundService) {
+    public CustomerController(CustomerService service, FundService fundService, BankAccountService bankAccountService) {
         this.service = service;
         this.fundService = fundService;
+        this.bankAccountService = bankAccountService;
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/add")
@@ -61,12 +68,12 @@ public class CustomerController {
     }
 
     @PostMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccount/add")
-    public void insert(@RequestBody CustomerBankAccountRequestDto customerBankAccount) throws Exception {
+    public void insert(@RequestBody CustomerBAnkAccountDto customerBankAccount) throws Exception {
         service.saveCustomerBankAccount(customerBankAccount, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
     @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccount/edit")
-    public void edit(@RequestBody CustomerBankAccountResponseDto customerBankAccountDto) throws Exception {
+    public void edit(@RequestBody CustomerBAnkAccountDto customerBankAccountDto) throws Exception {
         service.updateCustomerBankAccount(customerBankAccountDto, RequestContext.getUserId(), RequestContext.getUuid());
     }
 
@@ -90,7 +97,30 @@ public class CustomerController {
     }
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccount/{customerId}")
-    public CustomerBankAccountResponseDto getCustomerBankAccountList(@PathVariable("customerId") @ValidateField(fieldName = "id", entityClass = Customer.class) Long customerId) {
+    public CustomerBAnkAccountDto getCustomerBankAccountList(@PathVariable("customerId") @ValidateField(fieldName = "id", entityClass = Customer.class) Long customerId) {
         return service.getCustomerBankAccount(customerId);
     }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bank")
+    public List<BankDto> getBankList() {
+        return bankAccountService.getBankList(null);
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccountType")
+    public List<BankAccountTypeDto> getBankAccountTypeList() {
+        return bankAccountService.getBankAccountTypeList(null);
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bank/{bankId}")
+    public BankDto getBankList(@PathVariable("bankId") @ValidateField(fieldName = "id", entityClass = Bank.class) Long bankId) {
+        List<BankDto> banks = bankAccountService.getBankList(bankId);
+        return !FundUtils.isNull(banks) ? banks.getFirst() : null;
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/bankAccountType/{bankAccountTypeId}")
+    public BankAccountTypeDto getBankAccountTypeList(@PathVariable("bankAccountTypeId") @ValidateField(fieldName = "id", entityClass = BankAccountType.class) Long bankAccountTypeId) {
+        List<BankAccountTypeDto> bankAccountTypes = bankAccountService.getBankAccountTypeList(bankAccountTypeId);
+        return !FundUtils.isNull(bankAccountTypes) ? bankAccountTypes.getFirst() : null;
+    }
+
 }

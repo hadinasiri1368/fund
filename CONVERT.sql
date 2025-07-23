@@ -507,7 +507,7 @@ Values
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
 Values
-    (23, 'حذف نقش ها', '/authentication/role/remove', 1)
+    (23, 'حذف نقش ها', '/authentication/role/remove/{id}', 1)
     /
 Insert into AHA_PERMISSION
 (ID, NAME, URL, IS_SENSITIVE)
@@ -971,6 +971,92 @@ Insert into AHA_PERMISSION
 Values
     ((select max(id)+1 from AHA_PERMISSION), 'کد دوعاملی برای ورود کاربر', '/sendOtpForLogin', 0)
 /
+
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'دریافت لیست حساب های بانکی سرمایه گذار', '/baseInformation/customer/bankAccount/{customerId}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'دریافت لیست گروه های کاربری کاربر', '/authentication/user/userGroupPerUserId/{userId}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'دریافت مجوزهای یک کاربر', '/authentication/user/userPermissionPerUserId/{userId}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'دریافت مجوزهای یک نقش', '/authentication/role/rolePermissionPerRoleId/{roleId}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'مشاهده گروه کاربری', '/authentication/userGroup/{id}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'دریافت گروه های کاربری', '/authentication/userGroup', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'دریافت نقش های  گروه کاربری', '/authentication/userGroup/userGroupRolePerUserGroup/{userGroupId}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'مشاهده اطلاعات کاربر', '/authentication/user/{id}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'مشاهده اطلاعات کاربران', '/authentication/user', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'مشاهده نقش های کاربر', '/authentication/user/userRolePerUser/{userId}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'دریافت نقش ها', '/authentication/role', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'مشاهده نقش', '/authentication/role/{id}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'دریافت بانک ها', '/baseInformation/customer/bank', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'دریافت نوع حساب های بانکی', '/baseInformation/customer/bankAccountType', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'مشاهده نوع حساب', '/baseInformation/customer/bankAccountType/{bankAccountTypeId}', 1)
+/
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'مشاهده نوع حساب', '/baseInformation/customer/bankAccountType/{bankAccountTypeId}', 1)
+Insert into AHA_PERMISSION
+(ID, NAME, URL, IS_SENSITIVE)
+Values
+    (100, 'مشاهده بانک', '/baseInformation/customer/bank/{bankId}', 1)
+/
+
 
 ----------------------------------------------------------------------------------------------------
 Insert into AHA_ROLE

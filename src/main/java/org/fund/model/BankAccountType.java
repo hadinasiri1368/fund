@@ -1,7 +1,9 @@
 package org.fund.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
+import org.fund.baseInformation.bankAccount.BankAccountTypeDto;
 import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;
@@ -20,4 +22,9 @@ public class BankAccountType extends BaseEntity implements Serializable {
     private Long id;
     @Column(columnDefinition = "NVARCHAR2(100)", name = "NAME", nullable = false)
     private String name;
+
+    public BankAccountTypeDto toDto() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(this, BankAccountTypeDto.class);
+    }
 }
