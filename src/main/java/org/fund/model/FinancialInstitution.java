@@ -15,7 +15,7 @@ import org.fund.config.cache.CacheableEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@CacheableEntity
+//@CacheableEntity
 public class FinancialInstitution {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")

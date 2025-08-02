@@ -14,7 +14,8 @@ public enum CustomerExceptionType {
     HAS_NOT_DETAILLEDGER(HttpStatus.INTERNAL_SERVER_ERROR, "customer.has_not_detailLedger"),
     HAS_NOT_BANKACCOUNT(HttpStatus.INTERNAL_SERVER_ERROR, "customer.has_not_bankAccount"),
     EMAIL_IS_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "customer.email_is_invalid"),
-    CAN_NOT_INSERT_MORE_THAN_ONE_BANK_ACCOUNT(HttpStatus.INTERNAL_SERVER_ERROR, "customer.can_not_insert_bank_account_more_than_one");
+    CAN_NOT_INSERT_MORE_THAN_ONE_BANK_ACCOUNT(HttpStatus.INTERNAL_SERVER_ERROR, "customer.can_not_insert_bank_account_more_than_one"),
+    CAN_NOT_EDIT_CUSTOMER_BANK_ACCOUNT(HttpStatus.INTERNAL_SERVER_ERROR, "customer.can_not_edit_customer_bank_account"),;
     private final HttpStatus httpStatus;
     private final String messageKey;
 

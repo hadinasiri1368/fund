@@ -38,17 +38,17 @@ public class Customer extends BaseEntity {
     @Column(columnDefinition = "NVARCHAR2(1000)", name = "COMMENTS")
     private String comments;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_SMS_SEND")
-    private boolean isSmsSend;
+    private Boolean isSmsSend;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_SEJAM")
-    private boolean isSejam;
+    private Boolean isSejam;
     @Column(columnDefinition = "NUMBER", name = "PROFIT_RATE")
     private float profitRate;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_PROFIT_ISSUE")
-    private boolean isProfitIssue;
+    private Boolean isProfitIssue;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_VAT")
-    private boolean isVat;
+    private Boolean isVat;
     @Column(columnDefinition = "NUMBER(1)", name = "IS_EPAYMENT_CUSTOMER")
-    private boolean isEpaymentCustomer;
+    private Boolean isEpaymentCustomer;
 
     public CustomerRequestDto toDto() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -66,29 +66,17 @@ public class Customer extends BaseEntity {
         CustomerResponseDto customerResponseDto = objectMapper.convertValue(this, CustomerResponseDto.class);
         customerResponseDto.setId(id);
         if (!FundUtils.isNull(detailLedger)) {
-            customerResponseDto.setDetailLedgerId(detailLedger.getId());
-            customerResponseDto.setDlNumber(detailLedger.getCode());
+            customerResponseDto.setDetailLedger(detailLedger.toDto());
         }
         if (!FundUtils.isNull(customerStatus)) {
-            customerResponseDto.setCustomerStatusId(customerStatus.getId());
-            customerResponseDto.setCustomerStatusName(customerStatus.getName());
+            customerResponseDto.setCustomerStatus(customerStatus.toDto());
         }
         if (!FundUtils.isNull(customerBankAccount)) {
-            customerResponseDto.setCustomerBankAccountId(customerBankAccount.getId());
-            customerResponseDto.setCustomerBankName(customerBankAccount.getBankAccount().getBank().getName());
-            customerResponseDto.setAccountNumber(customerBankAccount.getBankAccount().getAccountNumber());
-            customerResponseDto.setShabaNumber(customerBankAccount.getBankAccount().getShabaNumber());
+            customerResponseDto.setBankAccount(customerBankAccount.getBankAccount().toDto());
         }
         if (!FundUtils.isNull(person)) {
             customerResponseDto.setPerson(person.toDto());
         }
-        customerResponseDto.setComments(comments);
-        customerResponseDto.setSmsSend(isSmsSend);
-        customerResponseDto.setSejam(isSejam);
-        customerResponseDto.setProfitRate(profitRate);
-        customerResponseDto.setProfitIssue(isProfitIssue);
-        customerResponseDto.setVat(isVat);
-        customerResponseDto.setEpaymentCustomer(isEpaymentCustomer);
         return customerResponseDto;
     }
 }

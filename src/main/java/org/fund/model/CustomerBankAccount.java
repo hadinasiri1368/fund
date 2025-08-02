@@ -1,7 +1,12 @@
 package org.fund.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
+import org.fund.baseInformation.customer.dto.CustomerBankAccountDto;
+import org.fund.baseInformation.customer.dto.request.CustomerRequestDto;
+import org.fund.common.FundUtils;
 import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;
@@ -13,6 +18,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+//@JsonIgnoreProperties(ignoreUnknown = true)
 //@CacheableEntity
 public class CustomerBankAccount extends BaseEntity implements Serializable {
     @Id
@@ -24,4 +30,12 @@ public class CustomerBankAccount extends BaseEntity implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "F_BANK_ACCOUNT_ID")
     private BankAccount bankAccount;
+
+    public CustomerBankAccountDto toDto() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CustomerBankAccountDto customerBankAccountDto = objectMapper.convertValue(this, CustomerBankAccountDto.class);
+        customerBankAccountDto.setCustomerId(customer.getId());
+        customerBankAccountDto.setBankAccount(bankAccount.toDto());
+        return customerBankAccountDto;
+    }
 }

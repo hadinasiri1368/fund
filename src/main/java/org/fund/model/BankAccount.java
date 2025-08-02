@@ -21,7 +21,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@CacheableEntity
+//@CacheableEntity
 public class BankAccount extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")

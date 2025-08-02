@@ -1,5 +1,6 @@
 package org.fund.baseInformation.customer.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,27 +13,26 @@ import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
-public class CustomerBAnkAccountDto implements DtoConvertible {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CustomerBankAccountDto implements DtoConvertible , Serializable {
     private Long id;
     @NotEmpty(fieldName = "customerId")
     @ValidateField(fieldName = "customerId", entityClass = Customer.class)
     private Long customerId;
-    private List<BankAccountDto> bankAccounts;
+    private BankAccountDto bankAccount;
 
     @Override
     public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
         ObjectMapper objectMapper = new ObjectMapper();
         T entity = objectMapper.convertValue(this, targetType);
-
         if (entity instanceof CustomerBankAccount customerBankAccount) {
             customerBankAccount.setCustomer(getCustomer(repository, customerId));
-            for (BankAccountDto bankAccount : bankAccounts) {
-                customerBankAccount.setBankAccount(getBankAccount(repository, bankAccount));
-            }
+            customerBankAccount.setBankAccount(getBankAccount(repository, bankAccount));
         }
 
         return entity;

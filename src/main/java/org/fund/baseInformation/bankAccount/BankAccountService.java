@@ -24,7 +24,7 @@ public class BankAccountService {
     }
 
     public void update(BankAccount bankAccount, Long userId, String uuid) throws Exception {
-        repository.save(bankAccount, userId, uuid);
+        repository.update(bankAccount, userId, uuid);
     }
 
     public void delete(Long bankAccountId, Long userId, String uuid) throws Exception {

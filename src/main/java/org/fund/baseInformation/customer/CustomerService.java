@@ -6,7 +6,7 @@ import org.fund.administration.calendar.CalendarService;
 import org.fund.administration.params.ParamService;
 import org.fund.baseInformation.bankAccount.BankAccountDto;
 import org.fund.baseInformation.bankAccount.BankAccountService;
-import org.fund.baseInformation.customer.dto.CustomerBAnkAccountDto;
+import org.fund.baseInformation.customer.dto.CustomerBankAccountDto;
 import org.fund.baseInformation.customer.dto.request.CustomerRequestDto;
 import org.fund.baseInformation.customer.dto.response.CustomerResponseDto;
 import org.fund.common.DateUtils;
@@ -48,6 +48,7 @@ public class CustomerService {
         this.bankAccountService = bankAccountService;
         this.mapper = mapper;
     }
+
     @Value("${PageRequest.page}")
     private Integer page;
     @Value("${PageRequest.size}")
@@ -93,7 +94,7 @@ public class CustomerService {
 
     private void checkBeforUpdate(CustomerRequestDto newCustomer, Fund fund, NavDataRec navDataRec) throws Exception {
         Customer oldCustomer = repository.findOne(Customer.class, newCustomer.getId());
-        if (oldCustomer.isSejam()) throw new FundException(CustomerExceptionType.CAN_NOT_EDIT_SEJAM_CUSTOMER);
+        if (oldCustomer.getIsSejam()) throw new FundException(CustomerExceptionType.CAN_NOT_EDIT_SEJAM_CUSTOMER);
 
         if (navDataRec.lastAppliedProfitDateNavCount() == 2L && navDataRec.nextWorkingDateAfterLastAppliedProfitDateNavCount() == 0)
             throw new FundException(CustomerExceptionType.CAN_NOT_EDIT_CUSTOMER_IN_APPLIED_PROFIT);
@@ -149,10 +150,10 @@ public class CustomerService {
 
     public List<CustomerResponseDto> list(Long id) {
         if (FundUtils.isNull(id)) {
-        List<Customer> customers = repository.findAll(Customer.class);
+            List<Customer> customers = repository.findAll(Customer.class);
             return customers.stream().map(Customer::toResponseDto).toList();
         }
-        return List.of(repository.findOne(Customer.class,id).toResponseDto());
+        return List.of(repository.findOne(Customer.class, id).toResponseDto());
     }
 
     public Page<CustomerResponseDto> listDto(Integer page, Integer size) {
@@ -184,11 +185,8 @@ public class CustomerService {
     }
 
     @Transactional
-    public void saveCustomerBankAccount(CustomerBAnkAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
-        if (customerBankAccount.getBankAccounts().size()>1){
-            throw new FundException(CustomerExceptionType.CAN_NOT_INSERT_MORE_THAN_ONE_BANK_ACCOUNT);
-        }
-        BankAccount bankAccount = mapper.toEntity(BankAccount.class, customerBankAccount.getBankAccounts().get(0));
+    public void saveCustomerBankAccount(CustomerBankAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
+        BankAccount bankAccount = mapper.toEntity(BankAccount.class, customerBankAccount.getBankAccount());
         bankAccountService.insert(bankAccount, userId, uuid);
         Long customerBankAccountCount = getCustomerBankAccountCount(customerBankAccount.getCustomerId());
         boolean isFirst = FundUtils.isNull(customerBankAccount.getId()) && customerBankAccountCount == 0L;
@@ -202,17 +200,36 @@ public class CustomerService {
         }
     }
 
-    public void updateCustomerBankAccount(CustomerBAnkAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
-        repository.save(mapper.toEntity(CustomerBankAccount.class, customerBankAccount), userId, uuid);
+    @Transactional
+    public void updateCustomerBankAccount(CustomerBankAccountDto customerBankAccount, Long userId, String uuid) throws Exception {
+        BankAccount bankAccount = mapper.toEntity(BankAccount.class, customerBankAccount.getBankAccount());
+        checkBankAccountUsage(bankAccount.getId());
+        bankAccountService.update(bankAccount, userId, uuid);
     }
 
+    @Transactional
     public void deleteCustomerBankAccount(Long customerBankAccountId, Long userId, String uuid) throws Exception {
-        Customer customer = repository.findAll(Customer.class).stream().filter(row -> !FundUtils.isNull(row.getCustomerBankAccount()) && row.getCustomerBankAccount().getId().equals(customerBankAccountId)).findFirst().orElse(null);
+        CustomerBankAccount customerBankAccount = repository.findOne(CustomerBankAccount.class, customerBankAccountId);
+        Long bankAccountId = customerBankAccount.getBankAccount().getId();
+        checkBankAccountUsage(bankAccountId);
+        Long customerId = customerBankAccount.getCustomer().getId();
+        Customer customer = repository.findOne(Customer.class, customerId);
         if (!FundUtils.isNull(customer)) {
             customer.setCustomerBankAccount(null);
             repository.update(customer, userId, uuid);
         }
         repository.removeById(CustomerBankAccount.class, customerBankAccountId, userId, uuid);
+        bankAccountService.delete(bankAccountId, userId, uuid);
+    }
+
+    private void checkBankAccountUsage(Long bankAccountId) {
+        long paymentDetailCount = repository.findBy(PaymentDetail.class, "bankAccount.id", bankAccountId)
+                .stream()
+                .filter(Objects::nonNull)
+                .count();
+        if (paymentDetailCount > 0) {
+            throw new FundException(CustomerExceptionType.CAN_NOT_EDIT_CUSTOMER_BANK_ACCOUNT);
+        }
     }
 
     public void setCustomerDefaultBankAccount(Long customerId, Long customerBankAccountId, Long userId, String uuid) throws Exception {
@@ -222,7 +239,10 @@ public class CustomerService {
     }
 
     private Long getCustomerBankAccountCount(Long customerId) {
-        return repository.findAll(CustomerBankAccount.class).stream().filter(a -> a.getCustomer().getId().equals(customerId)).count();
+        return repository.findBy(CustomerBankAccount.class, "customer.id", customerId)
+                .stream()
+                .filter(Objects::nonNull)
+                .count();
     }
 
     private Long insertDetailLedger(CustomerRequestDto newCustomer, Fund fund, Long userId, String uuid) throws Exception {
@@ -248,18 +268,17 @@ public class CustomerService {
         throw new RuntimeException("AppliedProfit has not been launched yet");
     }
 
-    public CustomerBAnkAccountDto getCustomerBankAccount(Long customerId) {
+    public List<CustomerBankAccountDto> getCustomerBankAccount(Long customerId) {
         List<CustomerBankAccount> customerBankAccounts = repository.findBy(CustomerBankAccount.class, "customer.id", customerId);
-        List<BankAccountDto> bankAccountDtos=new ArrayList<>();
+        List<BankAccountDto> bankAccountDtos = new ArrayList<>();
         if (FundUtils.isNull(customerBankAccounts)) {
             throw new FundException(CustomerExceptionType.HAS_NOT_BANKACCOUNT, new Object[]{customerId});
         }
-        CustomerBAnkAccountDto customerBankAccountDto = new CustomerBAnkAccountDto();
-        customerBankAccountDto.setCustomerId(customerId);
+        List<CustomerBankAccountDto> customerBankAccountDtos = new ArrayList<>();
+
         for (CustomerBankAccount customerBankAccount : customerBankAccounts) {
-            bankAccountDtos.add(customerBankAccount.getBankAccount().toDto());
+            customerBankAccountDtos.add(customerBankAccount.toDto());
         }
-        customerBankAccountDto.setBankAccounts(bankAccountDtos);
-        return customerBankAccountDto;
+        return customerBankAccountDtos;
     }
 }

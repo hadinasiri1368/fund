@@ -1,5 +1,6 @@
 package org.fund.accounting.detailLedger;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DetailLedgerDto implements DtoConvertible {
     private Long id;
     private String name;

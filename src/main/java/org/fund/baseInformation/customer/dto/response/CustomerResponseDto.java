@@ -2,26 +2,25 @@ package org.fund.baseInformation.customer.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.fund.accounting.detailLedger.DetailLedgerDto;
 import org.fund.authentication.user.dto.PersonDto;
+import org.fund.baseInformation.bankAccount.BankAccountDto;
+import org.fund.baseInformation.customer.dto.CustomerStatusDto;
+
 
 @Getter
 @Setter
 public class CustomerResponseDto {
     private Long id;
-    private Long detailLedgerId;
-    private String dlNumber;
-    private Long customerStatusId;
-    private String customerStatusName;
-    private Long customerBankAccountId;
-    private String customerBankName;
-    private String accountNumber;
-    private String shabaNumber;
+    private DetailLedgerDto detailLedger;
+    private CustomerStatusDto customerStatus;
     private PersonDto person;
+    private BankAccountDto bankAccount;
     private String comments;
-    private boolean isSmsSend;
-    private boolean isSejam;
+    private Boolean isSmsSend;
+    private Boolean isSejam;
     private float profitRate;
-    private boolean isProfitIssue;
-    private boolean isVat;
-    private boolean isEpaymentCustomer;
+    private Boolean isProfitIssue;
+    private Boolean isVat;
+    private Boolean isEpaymentCustomer;
 }
