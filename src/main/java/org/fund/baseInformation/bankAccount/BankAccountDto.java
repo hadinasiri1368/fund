@@ -22,10 +22,10 @@ public class BankAccountDto implements DtoConvertible {
     @NotEmpty(fieldName = "isActive")
     private Boolean isActive;
     @NotEmpty(fieldName = "bankAccountTypeId")
-    @ValidateField(fieldName = "bankAccountTypeId",entityClass = BankAccountType.class)
+    @ValidateField(fieldName = "id",entityClass = BankAccountType.class)
     private BankAccountTypeDto bankAccountType;
     @NotEmpty(fieldName = "bankId")
-    @ValidateField(fieldName = "bankId",entityClass = Bank.class)
+    @ValidateField(fieldName = "id",entityClass = Bank.class)
     private  BankDto bank;
     @NotEmpty(fieldName = "accountNumber")
     private String accountNumber;

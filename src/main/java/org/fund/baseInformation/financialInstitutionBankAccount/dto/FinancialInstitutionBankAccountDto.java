@@ -17,9 +17,9 @@ import java.util.List;
 @Setter
 public class FinancialInstitutionBankAccountDto implements DtoConvertible {
     private Long id;
-    @ValidateField(fieldName = "financialInstitutionId", entityClass = FinancialInstitutionRequestDto.class)
+    @ValidateField(fieldName = "id", entityClass = FinancialInstitution.class)
     private Long financialInstitutionId;
-    @ValidateField(fieldName = "bankAccountId", entityClass = BankAccount.class)
+    @ValidateField(fieldName = "id", entityClass = BankAccount.class)
     private BankAccountDto bankAccount;
     @NotEmpty(fieldName = "isActive")
     private Boolean isActive;

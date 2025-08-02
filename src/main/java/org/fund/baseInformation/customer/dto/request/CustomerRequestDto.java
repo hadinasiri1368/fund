@@ -18,12 +18,12 @@ import java.util.List;
 @Setter
 public class CustomerRequestDto implements DtoConvertible {
     private Long id;
-    @ValidateField(fieldName = "detailLedgerId", entityClass = DetailLedger.class)
+    @ValidateField(fieldName = "id", entityClass = DetailLedger.class)
     private Long detailLedgerId;
-    @ValidateField(fieldName = "customerStatusId", entityClass = CustomerStatus.class)
+    @ValidateField(fieldName = "id", entityClass = CustomerStatus.class)
     @NotEmpty(fieldName = "customerStatusId")
     private Long customerStatusId;
-    @ValidateField(fieldName = "customerBankAccountId", entityClass = CustomerBankAccountDto.class)
+    @ValidateField(fieldName = "id", entityClass = CustomerBankAccount.class)
     private Long customerBankAccountId;
     private PersonDto person;
     private String comments;

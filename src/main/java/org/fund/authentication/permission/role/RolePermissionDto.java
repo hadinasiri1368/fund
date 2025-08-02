@@ -20,7 +20,7 @@ import java.util.List;
 public class RolePermissionDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "roleId")
-    @ValidateField(fieldName = "roleId", entityClass = Role.class)
+    @ValidateField(fieldName = "id", entityClass = Role.class)
     private Long roleId;
     @NotEmpty(fieldName = "permissionIds")
     private List<Long> permissionIds;

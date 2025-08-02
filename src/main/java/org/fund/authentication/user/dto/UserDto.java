@@ -27,7 +27,7 @@ public class UserDto implements DtoConvertible {
     @NotEmpty(fieldName = "isActive")
     private Boolean isActive;
     private Person person;
-    @ValidateField(fieldName = "verificationCodeId", entityClass = VerificationCode.class)
+    @ValidateField(fieldName = "id", entityClass = VerificationCode.class)
     private Long verificationCodeId;
     @NotEmpty(fieldName = "username")
     private String username;

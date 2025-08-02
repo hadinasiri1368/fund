@@ -22,7 +22,7 @@ public class FinancialInstitutionRequestDto implements DtoConvertible {
     @NotEmpty(fieldName = "name")
     private String name;
     @NotEmpty(fieldName = "detailLedgerTypeId")
-    @ValidateField(fieldName = "detailLedgerTypeId", entityClass = DetailLedgerType.class)
+    @ValidateField(fieldName = "id", entityClass = DetailLedgerType.class)
     private Long detailLedgerTypeId;
     private PersonDto person;
     List<FinancialInstitutionBankAccountDto> bankAccounts;

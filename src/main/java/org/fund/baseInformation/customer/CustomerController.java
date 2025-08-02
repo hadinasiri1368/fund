@@ -85,9 +85,9 @@ public class CustomerController {
 
     @PutMapping(path = Consts.DEFAULT_VERSION_API_URL + "/baseInformation/customer/{customerId}/bankAccount/default/{accountId}")
     public void setCustomerDefaultBankAccount(@PathVariable("customerId") @NotEmpty(fieldName = "customerId")
-                                              @ValidateField(fieldName = "customerId", entityClass = Customer.class) Long customerId,
+                                              @ValidateField(fieldName = "id", entityClass = Customer.class) Long customerId,
                                               @PathVariable("accountId") @NotEmpty(fieldName = "accountId")
-                                              @ValidateField(fieldName = "accountId", entityClass = CustomerBankAccount.class) Long accountId) throws Exception {
+                                              @ValidateField(fieldName = "id", entityClass = CustomerBankAccount.class) Long accountId) throws Exception {
         service.setCustomerDefaultBankAccount(customerId, accountId, RequestContext.getUserId(), RequestContext.getUuid());
     }
 

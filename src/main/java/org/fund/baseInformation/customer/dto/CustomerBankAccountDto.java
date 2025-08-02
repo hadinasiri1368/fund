@@ -22,7 +22,7 @@ import java.util.List;
 public class CustomerBankAccountDto implements DtoConvertible , Serializable {
     private Long id;
     @NotEmpty(fieldName = "customerId")
-    @ValidateField(fieldName = "customerId", entityClass = Customer.class)
+    @ValidateField(fieldName = "id", entityClass = Customer.class)
     private Long customerId;
     private BankAccountDto bankAccount;
 

@@ -29,15 +29,15 @@ public class ParamDto implements DtoConvertible {
     @NotEmpty(fieldName = "isEditable")
     private Boolean isEditable;
     @NotEmpty(fieldName = "paramTypeId")
-    @ValidateField(fieldName = "paramTypeId", entityClass = ParamsType.class)
+    @ValidateField(fieldName = "id", entityClass = ParamsType.class)
     private Long paramsTypeId;
     @NotEmpty(fieldName = "fundId")
-    @ValidateField(fieldName = "fundId", entityClass = Fund.class)
+    @ValidateField(fieldName = "id", entityClass = Fund.class)
     private Long fundId;
     private Long detailLedgerId;
     private Long subsidiaryLedgerId;
     @NotEmpty(fieldName = "paramsValueTypeId")
-    @ValidateField(fieldName = "paramsValueTypeId", entityClass = ParamsValueType.class)
+    @ValidateField(fieldName = "id", entityClass = ParamsValueType.class)
     private Long paramsValueTypeId;
     private Boolean isGlobal;
 

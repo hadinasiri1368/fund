@@ -23,7 +23,7 @@ import java.util.List;
 public class TradableItemDetailLedgerDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "tradableItemId")
-    @ValidateField(fieldName = "tradableItemId", entityClass = TradableItem.class)
+    @ValidateField(fieldName = "id", entityClass = TradableItem.class)
     private Long tradableItemId;
     @NotEmpty(fieldName = "tradableItemTypeId")
     private Long tradableItemTypeId;

@@ -23,11 +23,11 @@ import java.util.List;
 @Setter
 public class WageRateDetailDto implements DtoConvertible {
     private Long id;
-    @ValidateField(fieldName = "wageRateId", entityClass = WageRate.class)
+    @ValidateField(fieldName = "id", entityClass = WageRate.class)
     private Long wageRateId;
-    @ValidateField(fieldName = "industryId", entityClass = Industry.class)
+    @ValidateField(fieldName = "id", entityClass = Industry.class)
     private Long industryId;
-    @ValidateField(fieldName = "instrumentId", entityClass = Instrument.class)
+    @ValidateField(fieldName = "id", entityClass = Instrument.class)
     private Long instrumentId;
     @NotEmpty(fieldName = "issueDate")
     private String issueDate;

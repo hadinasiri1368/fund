@@ -21,13 +21,13 @@ import java.util.List;
 public class WageRateDto implements DtoConvertible {
     private Long id;
     @NotEmpty(fieldName = "fundId")
-    @ValidateField(fieldName = "fundId", entityClass = Fund.class)
+    @ValidateField(fieldName = "id", entityClass = Fund.class)
     private Long fundId;
     @NotEmpty(fieldName = "instrumentTypeId")
-    @ValidateField(fieldName = "instrumentTypeId", entityClass = InstrumentType.class)
+    @ValidateField(fieldName = "id", entityClass = InstrumentType.class)
     private Long instrumentTypeId;
     @NotEmpty(fieldName = "instTypeDerivativesId")
-    @ValidateField(fieldName = "instTypeDerivativesId", entityClass = InstrumentTypeDerivatives.class)
+    @ValidateField(fieldName = "id", entityClass = InstrumentTypeDerivatives.class)
     private Long instTypeDerivativesId;
     private Boolean isOtc;
     private Boolean isPurchase;
