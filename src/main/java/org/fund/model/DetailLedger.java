@@ -1,9 +1,11 @@
 package org.fund.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
 import org.fund.accounting.detailLedger.DetailLedgerDto;
+import org.fund.baseInformation.customer.dto.CustomerBankAccountDto;
 import org.fund.baseInformation.financialInstitutionBankAccount.dto.FinancialInstitutionResponseDto;
 import org.fund.config.cache.CacheableEntity;
 
@@ -17,6 +19,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @CacheableEntity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DetailLedger extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
@@ -33,6 +36,8 @@ public class DetailLedger extends BaseEntity implements Serializable {
 
     public DetailLedgerDto toDto() {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(this, DetailLedgerDto.class);
+        DetailLedgerDto detailLedgerDto = objectMapper.convertValue(this, DetailLedgerDto.class);
+        detailLedgerDto.setDetailLedgerTypeId(detailLedgerType.getId());
+        return detailLedgerDto;
     }
 }

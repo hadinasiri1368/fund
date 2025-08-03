@@ -45,11 +45,23 @@ public class DetailLedgerController {
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/accounting/detailLedger/{id}")
     public DetailLedger getDetailLedgerList(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = DetailLedger.class) Long detailLedgerId) {
         List<DetailLedger> detailLedgers = service.list(detailLedgerId);
-        return !FundUtils.isNull(detailLedgers) ? detailLedgers.get(0) : null;
+        return !FundUtils.isNull(detailLedgers) ? detailLedgers.getFirst() : null;
     }
 
     @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/accounting/detailLedger")
     public List<DetailLedger> getAllDetailLedgerList() {
         return service.list(null);
     }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/accounting/detailLedger/type")
+    public List<DetailLedgerType> getDetailLedgerTypeList() {
+        return service.getDetailLedgerType(null);
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/accounting/detailLedger/type/{id}")
+    public DetailLedgerType getDetailLedgerType(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = DetailLedgerType.class) Long detailLedgerTypeId) {
+        List<DetailLedgerType> detailLedgerTypes = service.getDetailLedgerType(detailLedgerTypeId);
+        return !FundUtils.isNull(detailLedgerTypes) ? detailLedgerTypes.getFirst() : null;
+    }
+
 }

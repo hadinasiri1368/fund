@@ -15,8 +15,8 @@ import java.util.Map;
 
 @Service
 public class DetailLedgerService {
-    private JpaRepository repository;
-    private ParamService paramService;
+    private final JpaRepository repository;
+    private final ParamService paramService;
 
     public DetailLedgerService(JpaRepository repository, ParamService paramService) {
         this.repository = repository;
@@ -86,5 +86,12 @@ public class DetailLedgerService {
         }
         sb.append('1');
         return sb.toString();
+    }
+
+    public List<org.fund.model.DetailLedgerType> getDetailLedgerType(Long id) {
+        if (FundUtils.isNull(id)) {
+            return repository.findAll(org.fund.model.DetailLedgerType.class);
+        }
+        return List.of(repository.findOne(org.fund.model.DetailLedgerType.class, id));
     }
 }
