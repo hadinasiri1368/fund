@@ -10,6 +10,7 @@ import org.fund.model.FundBranch;
 import org.fund.model.FundOwnership;
 import org.fund.model.view.external.BourseFund;
 import org.fund.model.view.external.Instrument;
+import org.fund.model.view.internal.TradableItem;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 
@@ -20,8 +21,8 @@ import java.util.List;
 @Builder
 public class FundOwnershipRequest implements DtoConvertible {
     private Long id;
-    private Long bourseFundId;
-    private Long instrumentId;
+    private Long tradableItemId;
+    private Long tradableItemGroup;
 
     @Override
     public <T> T toEntity(Class<T> targetType, JpaRepository repository) {

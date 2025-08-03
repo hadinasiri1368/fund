@@ -5,11 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.fund.accounting.detailLedger.DetailLedgerDto;
+import org.fund.baseInformation.tradableItem.dto.TradableItemDto;
 import org.fund.dto.DtoConvertible;
 import org.fund.model.DetailLedger;
+import org.fund.model.DetailLedgerType;
 import org.fund.model.FundOwnership;
 import org.fund.model.view.external.BourseFund;
 import org.fund.model.view.external.Instrument;
+import org.fund.model.view.internal.TradableItem;
 import org.fund.repository.JpaRepository;
 
 import java.util.List;
@@ -19,14 +22,12 @@ import java.util.List;
 @Builder
 public class FundOwnershipResponse implements DtoConvertible {
     private Long id;
-    private BourseFund bourseFund;
-    private Instrument instrument;
-    private DetailLedger detailLedger;
+    private TradableItemDto tradableItem;
+    private DetailLedgerDto detailLedger;
 
     @Override
     public <T> T toEntity(Class<T> targetType, JpaRepository repository) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(this, targetType);
+         return null;
     }
 
     @Override

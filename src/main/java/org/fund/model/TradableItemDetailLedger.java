@@ -1,10 +1,7 @@
 package org.fund.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
-import org.fund.baseInformation.tradableItem.TradableItemDetailLedgerDto;
 import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;

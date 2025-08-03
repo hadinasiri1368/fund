@@ -1,6 +1,7 @@
 package org.fund.baseInformation.tradableItem;
 
 import org.fund.administration.fund.FundService;
+import org.fund.baseInformation.tradableItem.dto.TradableItemDetailLedgerDto;
 import org.fund.common.FundUtils;
 import org.fund.config.request.RequestContext;
 import org.fund.constant.Consts;

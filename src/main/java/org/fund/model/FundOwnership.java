@@ -5,6 +5,7 @@ import lombok.*;
 import org.fund.config.cache.CacheableEntity;
 import org.fund.model.view.external.BourseFund;
 import org.fund.model.view.external.Instrument;
+import org.fund.model.view.internal.TradableItem;
 
 import java.io.Serializable;
 
@@ -21,9 +22,8 @@ public class FundOwnership extends BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "F_BOURSE_FUND_ID")
-    private BourseFund bourseFund;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "F_INSTRUMENT_ID")
-    private Instrument instrument;
+    @JoinColumn(name = "TRADABLE_ITEM_ID")
+    private TradableItem tradableItem;
+    @Column(columnDefinition = "NUMBER", name = "TRADABLE_ITEM_GROUP")
+    private Long tradableItemGroup;
 }

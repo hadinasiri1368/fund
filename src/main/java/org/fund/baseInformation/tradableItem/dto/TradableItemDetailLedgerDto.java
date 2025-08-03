@@ -1,20 +1,14 @@
-package org.fund.baseInformation.tradableItem;
+package org.fund.baseInformation.tradableItem.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.fund.dto.DtoConvertible;
-import org.fund.model.DetailLedger;
-import org.fund.model.DetailLedgerType;
-import org.fund.model.FinancialInstitutionBankAccount;
 import org.fund.model.TradableItemDetailLedger;
 import org.fund.model.view.internal.TradableItem;
 import org.fund.repository.JpaRepository;
 import org.fund.validator.NotEmpty;
 import org.fund.validator.ValidateField;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
