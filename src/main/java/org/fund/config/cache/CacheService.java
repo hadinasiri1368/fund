@@ -9,6 +9,7 @@ import org.fund.repository.JpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,47 +37,74 @@ public class CacheService {
         return jpaRepository.findAllByPage(entityClass, pageable);
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY> void save(ENTITY entity, Long userId, String uuid) throws Exception {
         jpaRepository.save(entity, userId, uuid);
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY> void update(ENTITY entity, Long userId, String uuid) throws Exception {
         jpaRepository.update(entity, userId, uuid);
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY, ID> void removeById(Class<ENTITY> entityClass, ID id, Long userId, String uuid) throws Exception {
         jpaRepository.removeById(entityClass, id, userId, uuid);
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY, ID> void remove(ENTITY entity, Long userId, String uuid) throws Exception {
         jpaRepository.remove(entity, userId, uuid);
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY> void batchInsert(List<ENTITY> entities, Long userId, String uuid) throws Exception {
         jpaRepository.batchInsert(entities, userId, uuid);
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY> void batchUpdate(List<ENTITY> entities, Long userId, String uuid) throws Exception {
         jpaRepository.batchUpdate(entities, userId, uuid);
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY> void batchRemove(List<ENTITY> entities, Long userId, String uuid) throws Exception {
         jpaRepository.batchRemove(entities, userId, uuid);
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY> int executeUpdate(Class<ENTITY> entityClass, String sql, Long userId, String uuid) throws Exception {
         return jpaRepository.executeUpdate(sql, userId, uuid);
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY> int executeUpdate(Class<ENTITY> entityClass, String sql, Map<String, Object> params, Long userId, String uuid) throws Exception {
         return jpaRepository.executeUpdate(sql, params, userId, uuid);
     }
@@ -86,7 +114,10 @@ public class CacheService {
         log.info("All cache entries have been cleared");
     }
 
-    @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantKeyGenerator")
+    @Caching(evict = {
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllKeyGenerator"),
+            @CacheEvict(value = Consts.CACHE_NAME, keyGenerator = "tenantDeleteFindAllByPageKeyGenerator")
+    })
     public <ENTITY> void clearCache(Class<ENTITY> entityClass) {
         log.info("entity {} has been cleared", FundUtils.getClassName(entityClass));
     }
