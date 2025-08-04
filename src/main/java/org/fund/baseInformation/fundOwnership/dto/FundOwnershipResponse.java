@@ -24,6 +24,7 @@ public class FundOwnershipResponse implements DtoConvertible {
     private Long id;
     private TradableItemDto tradableItem;
     private DetailLedgerDto detailLedger;
+    private Long fundId;
 
     @Override
     public <T> T toEntity(Class<T> targetType, JpaRepository repository) {

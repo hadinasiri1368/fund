@@ -1376,7 +1376,7 @@ from  BROKERAGE_DL bd
 /
 ----------------------------------------------------------------------------------------------------
 insert into aha_fund_ownership
-select rownum,nvl(bf.id,ins.id),nvl(bf.tradable_item_group,ins.tradable_item_group),null,null,null,null
+select rownum,nvl(bf.id,ins.id),nvl(bf.tradable_item_group,ins.tradable_item_group),fo.fund_id,null,null,null,null
 from  fund_ownership fo
           left join VW_TRADABLE_ITEM bf on bf.id=fo.bourse_fund_id and bf.tradable_item_group=3
           left join VW_TRADABLE_ITEM ins on bf.id=fo.instrument_id and bf.tradable_item_group=1

@@ -21,9 +21,12 @@ public class FundOwnership extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     private Long id;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TRADABLE_ITEM_ID")
     private TradableItem tradableItem;
     @Column(columnDefinition = "NUMBER", name = "TRADABLE_ITEM_GROUP")
     private Long tradableItemGroup;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "F_FUND_ID")
+    private Fund fund;
 }

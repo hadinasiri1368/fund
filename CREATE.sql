@@ -1049,6 +1049,7 @@ CREATE TABLE AHA_FUND_OWNERSHIP
     ID                      NUMBER(18)          NOT NULL,
     TRADABLE_ITEM_ID        NUMBER(18)              NULL,
     TRADABLE_ITEM_GROUP     NUMBER(18)              NULL,
+    F_FUND_ID               NUMBER(18)          NOT NULL,
     INSERTED_DATE_TIME      TIMESTAMP(6)            NULL,
     INSERTED_USER_ID        NUMBER(18)              NULL,
     UPDATED_DATE_TIME       TIMESTAMP(6)            NULL,

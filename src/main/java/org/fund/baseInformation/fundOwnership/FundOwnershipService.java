@@ -2,6 +2,7 @@ package org.fund.baseInformation.fundOwnership;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.fund.accounting.detailLedger.DetailLedgerDto;
+import org.fund.accounting.detailLedger.DetailLedgerService;
 import org.fund.baseInformation.fundOwnership.dto.FundOwnershipRequest;
 import org.fund.baseInformation.fundOwnership.dto.FundOwnershipResponse;
 import org.fund.baseInformation.tradableItem.TradableItemGroup;
@@ -25,11 +26,9 @@ import java.util.*;
 @Service
 public class FundOwnershipService {
     private final JpaRepository repository;
-    private final TradableItemService tradableItemService;
 
-    public FundOwnershipService(JpaRepository jpaRepository, TradableItemService tradableItemService) {
+    public FundOwnershipService(JpaRepository jpaRepository) {
         this.repository = jpaRepository;
-        this.tradableItemService = tradableItemService;
     }
 
     public void insert(FundOwnershipRequest fundOwnershipRequest, Long userId, String uuid) throws Exception {
@@ -39,7 +38,7 @@ public class FundOwnershipService {
             throw new FundException(GeneralExceptionType.FIELD_NOT_VALID, new Object[]{"tradableItemGroup"});
         FundOwnership fundOwnership = FundOwnership.builder()
                 .tradableItem(repository.findOne(TradableItem.class, fundOwnershipRequest.getTradableItemId()))
-                .tradableItemGroup(fundOwnershipRequest.getTradableItemGroup())
+                .tradableItemGroup(fundOwnershipRequest.getTradableItemGroup().longValue())
                 .build();
         repository.save(fundOwnership, userId, uuid);
     }
