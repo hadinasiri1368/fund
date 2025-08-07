@@ -30,6 +30,8 @@ public class Consts {
     public static final String PARAMS_BO_CUST_REGISTER_MANUAL = "BO_CUST_REGISTER_MANUAL";
     public static final String PARAMS_IS_NEW_FOREIGN_CUSTOMER_VALID = "IS_NEW_FOREIGN_CUSTOMER_VALID";
     public static final String PARAMS_DETAIL_LEDGER_LENGTH = "DL_LENGTH";
+    public static final String PARAMS_BANK_SL_DEPOSIT_NSTR = "BANK_SL_DEPOSIT_NSTR";
+    public static final String PARAMS_BANK_SL_NSTR = "BANK_SL_NSTR";
     //////////////////////////////////////////////////////SMS_Type/////////////////////////////////////////////////////////
     public static final String SMS_TYPE_HIGH_PRIORITY_SENDING = "99";
     public static final String SMS_TYPE_COMMON = "2";

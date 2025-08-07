@@ -1,5 +1,7 @@
 package org.fund.paymentModule.payment;
 
+import org.fund.accounting.voucher.VoucherService;
+import org.fund.administration.params.ParamService;
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
 import org.fund.exception.PaymentExceptionType;
@@ -18,9 +20,13 @@ import java.util.stream.Collectors;
 @Service
 public abstract class PaymentAbstract implements IPayment {
     protected final JpaRepository repository;
+    protected final VoucherService voucherService;
+    protected final ParamService paramService;
 
-    public PaymentAbstract(JpaRepository repository) {
+    public PaymentAbstract(JpaRepository repository, VoucherService voucherService, ParamService paramService) {
         this.repository = repository;
+        this.voucherService = voucherService;
+        this.paramService = paramService;
     }
 
     @Transactional
@@ -47,6 +53,7 @@ public abstract class PaymentAbstract implements IPayment {
         createOrReplaceVoucher(payment, paymentDetails, false, userId, uuid);
     }
 
+    @Transactional
     @Override
     public void delete(Long paymentId, Long userId, String uuid) throws Exception {
         Payment payment = repository.findOne(Payment.class, paymentId);
@@ -69,10 +76,13 @@ public abstract class PaymentAbstract implements IPayment {
 
     protected abstract void validatePaymentDetailDataForUpdate(List<PaymentDetail> paymentDetails) throws Exception;
 
+    @Transactional
     protected abstract void createOrReplaceVoucher(Payment payment, List<PaymentDetail> paymentDetails, boolean afterInsert, Long userId, String uuid) throws Exception;
 
+    @Transactional
     public abstract void delete(List<PaymentDetail> paymentDetails, Long userId, String uuid) throws Exception;
 
+    @Transactional
     public abstract void changeStatus(Payment oldPayment, PaymentStatus toPaymentStatus, Long userId, String uuid) throws Exception;
 
     private void validatePaymentDate(Fund fund, String paymentDate) throws Exception {

@@ -27,6 +27,9 @@ import java.util.List;
 public class PaymentDto implements DtoConvertible {
     private Long id;
     private String code;
+    @NotEmpty(fieldName = "fundBranchId")
+    @ValidateField(fieldName = "fundBranchId", entityClass = FundBranch.class)
+    private Long fundBranchId;
     @NotEmpty(fieldName = "paymentReasonId")
     @ValidateField(fieldName = "paymentReasonId", entityClass = PaymentReason.class)
     private Long paymentReasonId;

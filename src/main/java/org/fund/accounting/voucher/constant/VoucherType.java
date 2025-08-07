@@ -29,7 +29,8 @@ public enum VoucherType {
     FUTURE_TRADE(33L, "سند معاملات آتي"),
     GUARANTEE_GOODS_REQUEST(38L, "تضمين درخواست كالا"),
     ADJUST_CALCULATIONS(50L, "تعدیل محاسبات"),
-    BILATERAL_TRANSFER (51L, "انتقال دوطرفه");
+    BILATERAL_TRANSFER(51L, "انتقال دوطرفه"),
+    RECEIPT_PAYMENT(52L, "دریافت و پرداخت");
 
     private final Long id;
     private final String title;
@@ -47,10 +48,12 @@ public enum VoucherType {
         this.title = title;
     }
 
+
+
     public static VoucherType getItemById(Long id) {
         return Arrays.stream(values())
                 .filter(item -> Objects.equals(item.getId(), id))
                 .findFirst()
                 .orElse(null);
     }
-    }
+}

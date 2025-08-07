@@ -1,20 +1,23 @@
 package org.fund.accounting.voucher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.fund.accounting.voucher.constant.VoucherType;
 import org.fund.accounting.voucher.dto.VoucherDetailDto;
 import org.fund.accounting.voucher.dto.VoucherDetailResponseDto;
 import org.fund.accounting.voucher.dto.VoucherDto;
 import org.fund.accounting.voucher.dto.VoucherResponseDto;
+import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
 import org.fund.exception.VoucherExceptionType;
-import org.fund.model.Voucher;
-import org.fund.model.VoucherDetail;
-import org.fund.model.VoucherStatus;
+import org.fund.model.*;
 import org.fund.repository.JpaRepository;
+import org.springframework.data.jpa.support.PageableUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,18 @@ public class VoucherService {
         validateData(voucherDetails);
         repository.save(voucher, userId, uuid);
         preparationVoucherDetailData(voucher, voucherDetails);
+        repository.batchInsert(voucherDetails, userId, uuid);
+    }
+
+    @Transactional
+    public void insert(Voucher voucher, Long userId, String uuid) throws Exception {
+        preparationVoucherData(voucher);
+        repository.save(voucher, userId, uuid);
+    }
+
+    @Transactional
+    public void insert(List<VoucherDetail> voucherDetails, Long userId, String uuid) throws Exception {
+        validateData(voucherDetails);
         repository.batchInsert(voucherDetails, userId, uuid);
     }
 
@@ -72,6 +87,20 @@ public class VoucherService {
         if (deleteVoucher)
             repository.remove(voucherDetails.getFirst().getVoucher(), userId, uuid);
 
+    }
+
+    @Transactional
+    public void deleteByReferenceId(List<Long> referenceIds, VoucherType voucherType, String voucherDate, Long userId, String uuid) throws Exception {
+        String hql = "select vd from voucherDetail vd where vd.referenceId in (:referenceIds) " +
+                "and vd.voucher.voucherType.id=:voucherTypeId "+
+                "and vd.voucher.voucherDate=:voucherDate";
+        Map<String, Object> params = new HashMap<>();
+        params.put("referenceIds", referenceIds);
+        params.put("voucherTypeId", voucherType.getId());
+        params.put("voucherDate", voucherDate);
+        List<VoucherDetail> voucherDetails = repository.listObjectByQuery(hql, params);
+        if (!FundUtils.isNull(voucherDetails) && voucherDetails.size() > 0)
+            delete(voucherDetails, userId, uuid);
     }
 
     public List<VoucherResponseDto> list(Long id) {
@@ -200,6 +229,23 @@ public class VoucherService {
 
     private void validateVoucherDate(Voucher voucher) {
 //        throw new RuntimeException("nav has not been launched yet");
+    }
+
+    public VoucherDetail createVoucherDetail(
+            SubsidiaryLedger subsidiaryLedger,
+            DetailLedger detailLedger,
+            Long debitAmount,
+            Long creditAmount,
+            String comments,
+            Long referenceId) {
+        return VoucherDetail.builder()
+                .subsidiaryLedger(subsidiaryLedger)
+                .detailLedger(detailLedger)
+                .debitAmount(debitAmount)
+                .creditAmount(creditAmount)
+                .comments(comments)
+                .referenceId(referenceId)
+                .build();
     }
 
 }

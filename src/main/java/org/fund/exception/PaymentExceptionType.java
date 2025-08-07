@@ -13,6 +13,10 @@ public enum PaymentExceptionType {
     PAYMNET_STATUS_IS_NOT_YOURS(HttpStatus.INTERNAL_SERVER_ERROR, "payment.paymnet_status_is_not_yours"),
     PAYMNET_ORIGIN_IS_NOT_GROUP_WITHDRAWAL_ONLINE(HttpStatus.INTERNAL_SERVER_ERROR, "payment.paymnet_origin_is_not_group_withdrawal_online"),
     PAYMNET_ORDER_ID_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "payment.paymnet_order_id_is_null"),
+    PAYMNET_BANK_ACCOUNT_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "payment.paymnet_bank_account_is_null"),
+    PAYMENTDETAIL_FROM_SL_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "payment.paymentDetail_from_sl_is_null"),
+    PAYMENTDETAIL_TO_SL_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "payment.paymentDetail_to_sl_is_null"),
+    PAYMENTDETAIL_TO_DL_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "payment.paymentDetail_to_dl_is_null"),
     PAYMENTDETAIL_CAN_NOT_LIST(HttpStatus.INTERNAL_SERVER_ERROR, "payment.paymentDetail_can_not_list");
     private final HttpStatus httpStatus;
     private final String messageKey;

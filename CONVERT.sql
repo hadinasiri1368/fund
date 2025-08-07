@@ -1525,7 +1525,25 @@ where pol.payment_id is null
 /
 ----------------------------------------------------------------------------------------------------
 insert into AHA_VOUCHER_TYPE
-select VOUCHER_TYPE_ID,VOUCHER_TYPE_NAMe,null,null,null,null from  voucher_type
+select
+    CASE WHEN VOUCHER_TYPE_ID=(SELECT MAX(VOUCHER_TYPE_ID) VOUCHER_TYPE_ID
+                               FROM voucher_type
+                               WHERE     fix_farsi_chars (VOUCHER_TYPE_NAME) LIKE
+                                         TRIM (fix_farsi_chars ('%دریافت%'))
+                                 AND fix_farsi_chars (VOUCHER_TYPE_NAME) LIKE
+                                     TRIM (fix_farsi_chars ('%پرداخت%'))
+                                 AND voucher_type_id <> 3
+                                 AND VOUCHER_TYPE_ID IN
+                                     (SELECT MAX (VOUCHER_TYPE_ID)
+                                      FROM voucher_type
+                                      WHERE     fix_farsi_chars (VOUCHER_TYPE_NAME) LIKE
+                                                TRIM (fix_farsi_chars ('%دریافت%'))
+                                        AND fix_farsi_chars (VOUCHER_TYPE_NAME) LIKE
+                                            TRIM (fix_farsi_chars ('%پرداخت%'))
+                                        AND voucher_type_id <> 3)
+                                 AND VOUCHER_TYPE_ID IN
+                                     (SELECT VOUCHER_TYPE_ID FROM rp_voucher_template)) THEN 52 ELSE  VOUCHER_TYPE_ID END VOUCHER_TYPE_ID
+     ,VOUCHER_TYPE_NAMe,null,null,null,null from  voucher_type
 /
 ----------------------------------------------------------------------------------------------------
 insert into aha_VOUCHER_STATUS
@@ -1533,7 +1551,25 @@ select VOUCHER_STATUS_ID,VOUCHER_STATUS_NAME,null,null,null,null from  VOUCHER_S
 /
 ----------------------------------------------------------------------------------------------------
 INSERT INTO AHA_VOUCHER
-select VOUCHER_ID,VOUCHER_TYPE_ID,BRANCH_ID,VOUCHER_STATUS_ID,FUND_ID,VOUCHER_NUMBER,VOUCHER_DATE,COMMENTS,IS_MANUAL
+select VOUCHER_ID,
+    CASE WHEN VOUCHER_TYPE_ID=(SELECT MAX(VOUCHER_TYPE_ID) VOUCHER_TYPE_ID
+                               FROM voucher_type
+                               WHERE     fix_farsi_chars (VOUCHER_TYPE_NAME) LIKE
+                                         TRIM (fix_farsi_chars ('%دریافت%'))
+                                 AND fix_farsi_chars (VOUCHER_TYPE_NAME) LIKE
+                                     TRIM (fix_farsi_chars ('%پرداخت%'))
+                                 AND voucher_type_id <> 3
+                                 AND VOUCHER_TYPE_ID IN
+                                     (SELECT MAX (VOUCHER_TYPE_ID)
+                                      FROM voucher_type
+                                      WHERE     fix_farsi_chars (VOUCHER_TYPE_NAME) LIKE
+                                                TRIM (fix_farsi_chars ('%دریافت%'))
+                                        AND fix_farsi_chars (VOUCHER_TYPE_NAME) LIKE
+                                            TRIM (fix_farsi_chars ('%پرداخت%'))
+                                        AND voucher_type_id <> 3)
+                                 AND VOUCHER_TYPE_ID IN
+                                     (SELECT VOUCHER_TYPE_ID FROM rp_voucher_template)) THEN 52 ELSE  VOUCHER_TYPE_ID END VOUCHER_TYPE_ID
+     ,BRANCH_ID,VOUCHER_STATUS_ID,FUND_ID,VOUCHER_NUMBER,VOUCHER_DATE,COMMENTS,IS_MANUAL
      ,convert_to_timestamp(CREATION_DATE,CREATION_TIME),APPUSER_ID,convert_to_timestamp(MODIFICATION_DATE,MODIFICATION_TIME),APPUSER_ID
 from  VOUCHER_MASTER
 /

@@ -23,6 +23,9 @@ public class Payment extends BaseEntity implements Serializable {
     @Column(columnDefinition = "NVARCHAR2(300)", name = "CODE", nullable = false)
     private String code;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "F_FUND_BRANCH_ID")
+    private FundBranch fundBranch;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "F_PAYMENT_REASON_ID")
     private PaymentReason paymentReason;
     @ManyToOne(fetch = FetchType.LAZY)
