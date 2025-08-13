@@ -1,7 +1,9 @@
 package org.fund.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import lombok.*;
+import org.fund.administration.params.ParamTypeDto;
 import org.fund.config.cache.CacheableEntity;
 
 import java.io.Serializable;
@@ -20,4 +22,9 @@ public class ParamsType extends BaseEntity implements Serializable {
     private Long id;
     @Column(columnDefinition = "NVARCHAR2(50)", name = "NAME", nullable = false)
     private String name;
+
+    public ParamTypeDto toDto() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(this, ParamTypeDto.class);
+    }
 }

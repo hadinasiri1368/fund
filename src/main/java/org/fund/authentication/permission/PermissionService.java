@@ -1,5 +1,7 @@
 package org.fund.authentication.permission;
 
+import org.fund.administration.params.ParamTypeDto;
+import org.fund.authentication.permission.role.RoleParamsTypeDto;
 import org.fund.authentication.permission.role.RolePermissionDto;
 import org.fund.authentication.permission.role.RoleUserGroupDto;
 import org.fund.authentication.user.UserService;
@@ -192,13 +194,37 @@ public class PermissionService {
                 .collect(Collectors.toList());
     }
 
-    public RolePermissionDto findRolePermission (Long roleId) {
+    public RolePermissionDto findRolePermission(Long roleId) {
         List<RolePermission> rolePermissions = repository.findAll(RolePermission.class).stream()
-                .filter(a->a.getRole().getId().equals(roleId)).toList();
+                .filter(a -> a.getRole().getId().equals(roleId)).toList();
         RolePermissionDto rolePermissionDto = new RolePermissionDto();
         rolePermissionDto.setRoleId(roleId);
-        rolePermissionDto.setPermissionIds(rolePermissions.stream().map(a-> a.getPermission().getId()).toList());
+        rolePermissionDto.setPermissionIds(rolePermissions.stream().map(a -> a.getPermission().getId()).toList());
         return rolePermissionDto;
+    }
+
+    @Transactional
+    public void assignParamsTypeToRole(List<RoleParamsTypeDto> roleParamsTypes, Long userId, String uuid) throws Exception {
+        List<RoleParamsType> list;
+        for (RoleParamsTypeDto roleParamsTypeDto : roleParamsTypes) {
+            list = repository.findAll(RoleParamsType.class).stream()
+                    .filter(a -> a.getRole().getId().equals(roleParamsTypeDto.getRoleId()))
+                    .toList();
+            repository.batchRemove(list, userId, uuid);
+            list = new ArrayList<>();
+            for (ParamsType paramsType : mapper.toEntityList(ParamsType.class, roleParamsTypeDto)) {
+                list.add(new RoleParamsType(null, mapper.toEntity(Role.class, roleParamsTypeDto), paramsType));
+            }
+        }
+    }
+
+    public List<RoleParamsTypeDto> findRoleParamsType(Long roleId) {
+        List<RoleParamsType> roleParamsTypes = repository.findBy(RoleParamsType.class, "role.id", roleId );
+        List<RoleParamsTypeDto> roleParamsTypeDto = new ArrayList<>();
+        for (RoleParamsType roleParamsType : roleParamsTypes) {
+            roleParamsTypeDto.add(roleParamsType.toDto());
+        }
+        return roleParamsTypeDto;
     }
 
 }

@@ -7,7 +7,6 @@ import org.fund.model.SubsidiaryLedger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -153,5 +152,13 @@ public class ParamVisitor {
             }
         }
         return null;
+    }
+
+    public List<Params> listAllParams(Fund fund, long userId) {
+        return getParam().listAllParams(fund, userId);
+    }
+
+    public Params getParamById(Long id) {
+        return getParam().getParamById(id);
     }
 }

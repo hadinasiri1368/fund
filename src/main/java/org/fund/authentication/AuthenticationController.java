@@ -5,6 +5,7 @@ import org.fund.authentication.otp.dto.OtpRequestDto;
 import org.fund.authentication.permission.PermissionDto;
 import org.fund.authentication.permission.PermissionService;
 import org.fund.authentication.permission.role.RoleDto;
+import org.fund.authentication.permission.role.RoleParamsTypeDto;
 import org.fund.authentication.permission.role.RolePermissionDto;
 import org.fund.authentication.permission.role.RoleUserGroupDto;
 import org.fund.authentication.user.UserService;
@@ -224,4 +225,13 @@ public class AuthenticationController {
         return userService.findUserGroupDetail(userId);
     }
 
+    @PostMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/assignParamsTypeToRole")
+    public void assignParamsTypeToRole(@RequestBody List<RoleParamsTypeDto> roleParamsTypeDtos) throws Exception {
+        permissionService.assignParamsTypeToRole(roleParamsTypeDtos, RequestContext.getUserId(), RequestContext.getUuid());
+    }
+
+    @GetMapping(Consts.DEFAULT_PREFIX_API_URL + Consts.DEFAULT_VERSION_API_URL + "/authentication/role/roleParamsTypePerRoleId/{roleId}")
+    public List<RoleParamsTypeDto> roleParamsType(@PathVariable Long roleId) {
+        return permissionService.findRoleParamsType(roleId);
+    }
 }

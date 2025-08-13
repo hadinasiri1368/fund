@@ -10,6 +10,8 @@ import org.fund.model.Params;
 import org.fund.model.SubsidiaryLedger;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ParamService {
     private final ParamVisitor paramVisitor;
@@ -137,5 +139,16 @@ public class ParamService {
         return paramVisitor.getDetailLedger(fund, paramCode);
     }
 
+    public List<Params> listParams(Fund fund, long userId) {
+        return paramVisitor.listAllParams(fund, userId);
+    }
+
+    public List<Params> listParams(long userId) {
+        return paramVisitor.listAllParams(null, userId);
+    }
+
+    public Params getParamById(Long id) {
+        return paramVisitor.getParamById(id);
+    }
 
 }

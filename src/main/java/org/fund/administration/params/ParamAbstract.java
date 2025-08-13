@@ -1,5 +1,8 @@
 package org.fund.administration.params;
 
+import org.fund.authentication.permission.PermissionService;
+import org.fund.authentication.user.UserService;
+import org.fund.authentication.user.dto.UserRoleDto;
 import org.fund.common.DateUtils;
 import org.fund.common.FundUtils;
 import org.fund.constant.Consts;
@@ -13,14 +16,20 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public abstract class ParamAbstract implements Param {
     protected final JpaRepository repository;
+    protected final PermissionService permissionService;
+    protected final UserService userService;
 
-    public ParamAbstract(JpaRepository repository) {
+    public ParamAbstract(JpaRepository repository, PermissionService permissionService, UserService userService) {
         this.repository = repository;
+        this.permissionService = permissionService;
+        this.userService = userService;
     }
 
     public abstract void validateBeforInsert(Params param);
@@ -363,4 +372,20 @@ public abstract class ParamAbstract implements Param {
     public DetailLedger getDetailLedger(Fund fund, String paramCode) {
         return getDetailLedgerValue(fund, paramCode);
     }
+
+    protected Set<Long> getRoleParamsTypesIds(long userId) {
+        UserRoleDto userRole = userService.findUserRole(userId);
+        List<Long> roleIds = userRole.getRoleIds();
+        userRole.getRoleIds().forEach(permissionService::findRoleParamsType);
+        return  repository.findAll(RoleParamsType.class).stream()
+                .filter(a -> roleIds.contains(a.getRole().getId()))
+                .map(a -> a.getParamsType().getId())
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Params getParamById(Long id) {
+        return repository.findOne(Params.class, id);
+    }
+
 }
