@@ -1,15 +1,11 @@
 package org.fund.administration.params;
 
-import org.fund.authentication.otp.constant.OtpStrategyType;
-import org.fund.common.FundUtils;
-import org.fund.exception.FundException;
-import org.fund.exception.GeneralExceptionType;
 import org.fund.model.DetailLedger;
 import org.fund.model.Fund;
 import org.fund.model.Params;
 import org.fund.model.SubsidiaryLedger;
-import org.fund.repository.JpaRepository;
-import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 public interface Param {
@@ -82,5 +78,9 @@ public interface Param {
     DetailLedger getDetailLedger(String paramCode);
 
     DetailLedger getDetailLedger(Fund fund, String paramCode);
+
+    List<Params> listAllParams(Fund fund, long userId);
+
+    Params getParamById (Long id);
 
 }

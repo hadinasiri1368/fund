@@ -1,25 +1,43 @@
 package org.fund.administration.params.impl;
 
+import org.fund.authentication.permission.PermissionService;
+import org.fund.authentication.user.UserService;
 import org.fund.common.FundUtils;
 import org.fund.exception.FundException;
 import org.fund.exception.ParamExceptionType;
-import org.fund.model.Fund;
-import org.fund.model.Params;
+import org.fund.model.*;
 import org.fund.administration.params.ParamAbstract;
 import org.fund.administration.params.constant.ParamType;
 import org.fund.administration.params.constant.ParamValueType;
 import org.fund.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class ParamMarketingFundImpl extends ParamAbstract {
-    public ParamMarketingFundImpl(JpaRepository repository) {
-        super(repository);
+    public ParamMarketingFundImpl(JpaRepository repository,
+                                  UserService userService,
+                                  PermissionService permissionService) {
+        super(repository, permissionService, userService);
     }
 
     @Override
     public boolean accept() {
         return repository.findAll(Fund.class).size() > 0;
+    }
+
+    @Override
+    public List<Params> listAllParams(Fund fund, long userId) {
+        Users user = userService.listUsers(userId).stream().findFirst().orElse(null);
+        if (user.getIsAdmin())
+            return repository.findAll(Params.class);
+        Set<Long> roleParamsTypesIds = getRoleParamsTypesIds(userId);
+        return repository.findAll(Params.class).stream()
+                .filter(a -> roleParamsTypesIds.contains(a.getParamsType().getId())
+                        && (a.getFund().equals(fund)))
+                .toList();
     }
 
     @Override

@@ -145,4 +145,5 @@ public class UserService {
         groupDetailDto.setUserGroupIds(userGroupDetails.stream().map(a -> a.getUserGroup().getId()).toList());
         return groupDetailDto;
     }
+
 }

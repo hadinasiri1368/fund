@@ -15,6 +15,7 @@ import org.fund.validator.ValidateField;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,7 +25,7 @@ public class ParamController {
     private final ParamService service;
     private final FundService fundService;
 
-    public ParamController(ParamService service,FundService fundService) {
+    public ParamController(ParamService service, FundService fundService) {
         this.service = service;
         this.fundService = fundService;
     }
@@ -141,8 +142,22 @@ public class ParamController {
             return service.getDetailLedger(getFund(fundId), code);
     }
 
-
     private Fund getFund(Long fundId) {
         return fundService.getFund(fundId);
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/listParam/{id}")
+    public List<Params> paramsByFundId(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = Fund.class) Long fundId) {
+        return service.listParams(fundService.getFund(fundId), RequestContext.getUserId().longValue());
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/listParam")
+    public List<Params> params() {
+        return service.listParams(RequestContext.getUserId().longValue());
+    }
+
+    @GetMapping(path = Consts.DEFAULT_VERSION_API_URL + "/administration/param/getParamById/{id}")
+    public Params getParamById(@PathVariable("id") @ValidateField(fieldName = "id", entityClass = Params.class) Long id) {
+            return service.getParamById(id);
     }
 }
